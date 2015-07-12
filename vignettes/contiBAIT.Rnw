@@ -1,0 +1,67 @@
+\documentclass{article}
+\usepackage{cite, hyperref}
+
+\title{contiBAIT: Improving Genome Assemblies Using Strand-seq Data}
+\author{Kieran O'Neill, Mark Hills and Mike Gottlieb}
+
+%\VignetteIndexEntry{flowBi}ngit 
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+\setkeys{Gin}{width=0.65\textwidth}
+\setkeys{Gin}{height=0.65\textwidth}
+
+\maketitle
+\begin{center}
+{\tt koneill@bcgsc.ca}
+\end{center}
+
+\textnormal{\normalfont}
+
+\tableofcontents
+\newpage
+
+\section{Licensing}
+Under the Two-Clause BSD License, you are free to use and redistribute this software.
+
+\section{Introduction}
+Strand-seq is a method for determining template strand inheritance in single cells.
+When strand-seq is collected for many cells from the same organism, spatially close genomic regions show similar patterns of template strand inheritance.
+ContiBAIT allows users to leverage this property to carry out three tasks to improve draft genomes.
+Firstly, in genomes made up entirely of contigs or scaffolds not yet assigned to chromosomes, these contigs can be clustered into chromosomes.
+Secondly, in genomes wherein scaffolds have been assigned to chromosomes, but not yet placed on those chromosomes, those scaffolds can be placed in order relative to each other.
+
+%\section{Correcting misorientations within scaffolds} %coming soon
+
+\section{Reading in strand-seq BAM files}
+
+\section{Assigning contigs or scaffolds to chromosomes}
+
+<<examplea, fig=TRUE>>=
+#Loading
+library(contiBAIT)
+
+plot(hist(rnorm(1000)))
+@
+
+
+\section{Ordering contigs or scaffolds within chromosomes}
+First we load our artificial murine chromosome data. Some words about the meaning of linkage.group, animal.tab, and reorientedTable or whatever it's called.
+<<exampleb, fig=FALSE>>=
+#   data(contigOrderingExample)
+#   reorientedTable <-  vignetteTestData[[1]]
+#   animal.tab <- vignetteTestData[[2]][[1]]
+#   linkage.group <- vignetteTestData[[3]][[1]]
+#   set.seed(666)
+@
+Next we sort the artificial mouse contigs using contiBAIT.
+<<examplec, fig=FALSE>>=
+  ordering <- 'ordering'
+@
+The resulting ordering can then be plotted.
+
+\section{Writing out to a BED file}
+This file can be passed to bedtools along with the original (draft) reference genome to create a new FASTA file containing the assembled genome.
+
+
+\end{document}
