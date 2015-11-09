@@ -42,7 +42,7 @@ plotLinkageGroup <- function(groupMembers, allStrands, lgChr=NULL, labels=TRUE, 
     labCol=rep('', length(groupMembers))
   }
   
-	breaks <- c(0/15, 1/15, 2/15, 3/15, 4/15, 5/15, 6/15, 7/15, 8/15, 9/15, 10/15, 11/15, 12/15, 12/15, 14/15, 15/15)
+	breaks <- c(0/15, 1/15, 2/15, 3/15, 4/15, 5/15, 6/15, 7/15, 8/15, 9/15, 10/15, 11/15, 12/15, 13/15, 14/15, 15/15)
 	cols <- c("cyan","cyan3","blue","blue4","gray22","gray0","gray0","gray0","gray0","gray0","gray22","red4","red3","red","darkorange")
   if(is.null(lgChr))
   {

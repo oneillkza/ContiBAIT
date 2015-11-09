@@ -47,6 +47,7 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 		for (contig.num in 2:nrow(object))
 			#for (contig.num in 2:200)
 		{
+      #if(contig.num==40) browser()
 			if(verbose){message(paste('Clustering contig ', contigs[contig.num], ' [', contig.num, '/', nrow(object), ']', sep=""))}
 			computePairwiseSim <- function(linkage.num, contig.num)
 			{
@@ -56,6 +57,8 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 				#if(numCommon < minimumLibraryOverlap)
 				#	return(NA)
 				#suppressWarnings(1 - daisy(rbind(contigStrand, linkageStrand) )[1] )
+				contigStrand[which(contigStrand==3)] <- 2
+				linkageStrand[which(linkageStrand==3)] <- 2	
 				computeSim(contigStrand, linkageStrand, minimumLibraryOverlap)
 			}
 			similarities <- sapply(1:nrow(linkageStrands), computePairwiseSim, contig.num)

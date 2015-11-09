@@ -11,7 +11,8 @@ Description: Using strand inheritance data from multiple single cells from the
     those chromosomes.
 License: BSD_2_clause
 Depends:
-    BH (>= 1.51.0-3)
+    BH (>= 1.51.0-3),
+    Rsamtools (>= 1.21)
 LinkingTo: Rcpp, BH
 Imports:
     clue,
@@ -20,9 +21,9 @@ Imports:
     gplots,
     IRanges,
     S4Vectors,
-    Rsamtools,
     Rcpp,
-    TSP
+    TSP,
+    GenomicFiles
 Suggests:
     snow,
     BiocStyle
@@ -37,11 +38,13 @@ Collate:
     'computeConsensus.R'
     'computeQCMatrix.R'
     'computeSim.R'
+    'contiBAIT.R'
     'countDirectionReads.R'
     'expandMergedContigs.R'
     'extractReads.R'
     'heatPlotLinkageGroupCalls.R'
     'makeBoxPlot.R'
+    'makeChrTable.R'
     'mergeLinkageGroups.R'
     'orderContigsGreedy.R'
     'orderContigsTSP.R'
@@ -49,10 +52,9 @@ Collate:
     'plotContigOrder.R'
     'plotLGDistances.R'
     'plotLinkageGroup.R'
-    'plotWCvsQuality.R'
     'preprocessStrandTable.R'
-    'readStrandCountsFromBAM.R'
     'reorientLinkageGroups.R'
     'reorientStrandTable.R'
-    'runContiBAIT.R'
+    'strandSeqFreqTable.R'
     'write.bed.R'
+RoxygenNote: 5.0.0
