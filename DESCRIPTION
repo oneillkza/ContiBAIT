@@ -22,7 +22,8 @@ Imports:
     S4Vectors,
     Rsamtools,
     Rcpp,
-    TSP
+    TSP,
+    GenomicFiles
 Suggests:
     snow,
     BiocStyle
@@ -37,6 +38,7 @@ Collate:
     'computeConsensus.R'
     'computeQCMatrix.R'
     'computeSim.R'
+    'contiBAIT.R'
     'countDirectionReads.R'
     'expandMergedContigs.R'
     'extractReads.R'
@@ -49,10 +51,9 @@ Collate:
     'plotContigOrder.R'
     'plotLGDistances.R'
     'plotLinkageGroup.R'
-    'plotWCvsQuality.R'
     'preprocessStrandTable.R'
-    'readStrandCountsFromBAM.R'
     'reorientLinkageGroups.R'
     'reorientStrandTable.R'
-    'runContiBAIT.R'
+    'strandSeqFreqTable.R'
     'write.bed.R'
+RoxygenNote: 5.0.0
