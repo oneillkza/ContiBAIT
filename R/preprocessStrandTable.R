@@ -17,6 +17,7 @@
 #' @param filterThreshold=0.8 maximum number of libraries a contig can be NA or WC in
 #' @param orderMethod='libsAndConc' the method to oder contigs. currently libsAndConc only option. Set to FALSE to not order contigs based on library quality
 #' @param lowQualThreshold=0.9 background threshold at which to toss an entire library
+#' @param ignoreInternalQual=FALSE logical that prevents function for making an overall assessment of library quality. Very chimeric assemblies can appear low quality across all libraries. 
 #' @param verbose=TRUE messages written to terminal
 #' 
 #' @return A list of three matrices -- 1: WW/WC/WW; 2: WW/CC; 3: sex contigs
@@ -25,7 +26,7 @@
 #
 ####################################################################################################
 
-preprocessStrandTable <- function(strandTable, strandTableThreshold=0.8, filterThreshold=0.8, orderMethod='libsAndConc', lowQualThreshold=0.9, verbose=TRUE, minLib=10)
+preprocessStrandTable <- function(strandTable, strandTableThreshold=0.8, filterThreshold=0.8, orderMethod='libsAndConc', lowQualThreshold=0.9, verbose=TRUE, minLib=10, ignoreInternalQual=FALSE)
 {
 	strandTableLength <- nrow(strandTable)
 	
@@ -35,6 +36,9 @@ preprocessStrandTable <- function(strandTable, strandTableThreshold=0.8, filterT
 	# Filter low quality libraries.  Scan "WW" and "CC" background regions.
 	lowQualList <- matrix(ncol=2, nrow=0)
 	qualList <- matrix(ncol=2, nrow=0)
+
+if(ignoreInternalQual == FALSE)
+{
 	if(verbose){message("-> Checking for high quality libraries")}
 
 	for( col in seq(1:ncol(strandTable)) )
@@ -58,10 +62,10 @@ preprocessStrandTable <- function(strandTable, strandTableThreshold=0.8, filterT
 	} else if(nrow(lowQualList) == 0) { 
 		if(verbose){message("-> All libraries of good quality" )}
 	} else {
-		if(verbose){message(paste("-> Removed ", nrow(lowQualList), " libraries from a total of ", ncol(strandTable), sep="") )}
+		if(verbose){message(paste("-> Removed ", nrow(lowQualList), " libraries from a total of ", ncol(strandTable), ". ", ncol(strandTable)-nrow(lowQualList), " remaining (", round((ncol(strandTable)-nrow(lowQualList))/ncol(strandTable), digits=1), "%)", sep="") )}
 		strandTable <- strandTable[,!(names(strandTable) %in% lowQualList[,1])]
 	}	
-
+}
 	rawTable <- strandTable
 	
 	strandTable[strandTable >= strandTableThreshold] <- 1
@@ -169,6 +173,7 @@ preprocessStrandTable <- function(strandTable, strandTableThreshold=0.8, filterT
 		strandMatrixSex <- strandMatrixSex[,which(apply(strandMatrixSex, 2, function(x){length(which(is.na(x)))} <= nrow(strandMatrixSex)*filterThreshold ))]
 		
 		strandMatrixSex <- data.frame(lapply(strandMatrixSex, function(x){factor(x, levels=c(1,2,3))}))  
+		strandMatrixSex <- new('StrandStateMatrix', strandMatrixSex)
 	}
 	
 	#Filter out contigs that look like allosomes:
@@ -178,7 +183,7 @@ preprocessStrandTable <- function(strandTable, strandTableThreshold=0.8, filterT
 
 	strandMatrix <- new('StrandStateMatrix', strandMatrix)
 	strandMatrix2 <- new('StrandStateMatrix', strandMatrix2)
-	strandMatrixSex <- new('StrandStateMatrix', strandMatrixSex)
+
 	
 	return(list(strandMatrix=strandMatrix, strandMatrixWWCC=strandMatrix2, strandMatrixSex=strandMatrixSex, qualList=qualList, lowQualList=lowQualList, AWCcontigs=row.names(strandTableAWC)))
 }

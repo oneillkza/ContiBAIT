@@ -41,7 +41,6 @@ Collate:
     'contiBAIT.R'
     'countDirectionReads.R'
     'expandMergedContigs.R'
-    'extractReads.R'
     'heatPlotLinkageGroupCalls.R'
     'makeBoxPlot.R'
     'makeChrTable.R'
@@ -56,5 +55,4 @@ Collate:
     'reorientLinkageGroups.R'
     'reorientStrandTable.R'
     'strandSeqFreqTable.R'
-    'write.bed.R'
 RoxygenNote: 5.0.0

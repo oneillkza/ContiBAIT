@@ -9,14 +9,14 @@
 runContiBAIT <- function(path=".", cluster=1, dataNames='contiBAIT', clusNum=1, verbose=TRUE, saveFiles=TRUE)
 {
   #Create directory to store all the files
-  bamFileList <- list.files(path=path, pattern=".bam$")
+  bamFileList <- list.files(path=path, pattern=".bam$", full.names=TRUE)
 
   if(verbose){message('RUNNING CONTIBAIT ON ', length(bamFileList), ' BAM FILES!')}
 
 
  if(verbose){message('-> Creating read table from bam files [1/6]')}
  # animal.tab <- readStrandCountsFromBAM(path, field=1, dups=TRUE, readLimit=20, freq=TRUE, filter=filter)
- animal.tab <- generateContiBAITtable(bamFileList, filter=filter, qual=10)
+ animal.tab <- strandSeqFreqTable(bamFileList, filter=filter, qual=10)
 
   # subset data with: animal.tab[[1]][which(animal.tab[[2]] < 100)] <- NA
   if(saveFiles){save(animal.tab, file=paste(dataNames, '_table.Rd', sep="")) }

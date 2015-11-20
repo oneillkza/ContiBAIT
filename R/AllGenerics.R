@@ -55,7 +55,7 @@ setMethod("show",
 		  {
         d <- dim(object)
   
-		  	cat('A strand state matrix for ', d[[1]], ' contigs over ',d[[2]],' libraries.')
+		  	cat('A strand state matrix for ', d[[1]], ' contigs over ',d[[2]],' libraries.\n')
 		  }
 )
 

@@ -45,10 +45,8 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 		if(verbose){message(paste('Inicializing contig ', contigs[1], ' [1/', nrow(object), '] as LG1', sep=""))}		
 
 		for (contig.num in 2:nrow(object))
-			#for (contig.num in 2:200)
 		{
-      #if(contig.num==40) browser()
-			if(verbose){message(paste('Clustering contig ', contigs[contig.num], ' [', contig.num, '/', nrow(object), ']', sep=""))}
+			if(verbose){message('Clustering contig ', contigs[contig.num], ' [', contig.num, '/', nrow(object), ']   \r', appendLF=FALSE )}
 			computePairwiseSim <- function(linkage.num, contig.num)
 			{
 				contigStrand <- object[contig.num,]
@@ -71,7 +69,7 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 			}else
 				#Otherwise, add this to the best matched group, and recompute the strand state for that group:
 			{
-				if(verbose){message(paste('  -> Adding ', contigs[contig.num],' to LG', best.match, ' for a cluster of ',length(linkageGroups[[best.match]])+1 , sep=""))}
+				if(verbose){message(paste('\n  -> Adding ', contigs[contig.num],' to LG', best.match, ' for a cluster of ',length(linkageGroups[[best.match]])+1 , sep=""))}
 				linkageGroups[[best.match]] <- append(linkageGroups[[best.match]], contig.num)
 				strandVec <- computeConsensus(linkageGroups[[best.match]], object)
 				linkageStrands[best.match,] <- strandVec

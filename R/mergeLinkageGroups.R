@@ -56,6 +56,7 @@ mergeLinkageGroups.func <- function(object, allStrands, similarityCutoff=0.7)
 #' @aliases mergeLinkageGroups mergeLinkageGroups,LinkageGroupList,LinkageGroupList-method
 #' @export
 #' @importFrom cluster daisy
+#' @include AllClasses.R
 ####################################################################################################
 
 setMethod('mergeLinkageGroups',
