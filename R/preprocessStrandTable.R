@@ -1,13 +1,23 @@
+# Copyright (c) 2015, Mark Hills & Kieran O'Neill
+# All rights reserved.
+
+# Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+#    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
 ####################################################################################################
 #' preprocessStrandTable -- remove low quality libraries and contigs before attempting to build
 #' a genome
 #' @param strandTable data.frame containing the strand table to use as input
-#' @param strandTableThreshold =0.8 threshold at which to call a contig WW or CC rather than WC
-#' @param filterThreshold =0.8 maximum number of libraries a contig can be NA or WC in
-#' @param orderContigs =TRUE whether to sort contigs by background quality or read as is
-#' @param orderMethod ='libsAndConc' the method to oder contigs. currently libsAndConc only option
-#' @param lowQualThreshold =0.9 background threshold at which to toss an entire library
-#' @param verbose =TRUE messages written to terminal
+#' @param strandTableThreshold=0.8 threshold at which to call a contig WW or CC rather than WC
+#' @param filterThreshold=0.8 maximum number of libraries a contig can be NA or WC in
+#' @param orderMethod='libsAndConc' the method to oder contigs. currently libsAndConc only option. Set to FALSE to not order contigs based on library quality
+#' @param lowQualThreshold=0.9 background threshold at which to toss an entire library
+#' @param verbose=TRUE messages written to terminal
 #' 
 #' @return A list of three matrices -- 1: WW/WC/WW; 2: WW/CC; 3: sex contigs
 #' 
@@ -15,12 +25,12 @@
 #
 ####################################################################################################
 
-preprocessStrandTable <- function(strandTable, strandTableThreshold=0.8, filterThreshold=0.8, orderContigs=TRUE, orderMethod='libsAndConc', lowQualThreshold=0.9, verbose=TRUE)
+preprocessStrandTable <- function(strandTable, strandTableThreshold=0.8, filterThreshold=0.8, orderMethod='libsAndConc', lowQualThreshold=0.9, verbose=TRUE, minLib=10)
 {
 	strandTableLength <- nrow(strandTable)
 	
 	if(!is.data.frame(strandTable))
-		strandTable <- data.frame(strandTable)
+			strandTable <- data.frame(strandTable)
 	
 	# Filter low quality libraries.  Scan "WW" and "CC" background regions.
 	lowQualList <- matrix(ncol=2, nrow=0)
@@ -33,7 +43,8 @@ preprocessStrandTable <- function(strandTable, strandTableThreshold=0.8, filterT
 		
 		if(libraryQual < lowQualThreshold || libraryQual == "NaN")
 		{
-			if(verbose){message(paste("    -> ", colnames(strandTable[col], do.NULL=FALSE), " has high background (", (1-libraryQual)*100, " %). Removing", sep=""))}
+			if(libraryQual == "NaN" & verbose){message(paste("    -> ", colnames(strandTable[col], do.NULL=FALSE), " has insufficient reads. Removing", sep=""))}else{
+			if(verbose){message(paste("    -> ", colnames(strandTable[col], do.NULL=FALSE), " has high background (", (1-libraryQual)*100, " %). Removing", sep=""))}}
 			lowQualList <- rbind(lowQualList, cbind(colnames(strandTable[col], do.NULL=FALSE), libraryQual))
 		} else {
 			qualList <- rbind(qualList, cbind(colnames(strandTable[col], do.NULL=FALSE), libraryQual))
@@ -57,11 +68,11 @@ preprocessStrandTable <- function(strandTable, strandTableThreshold=0.8, filterT
 	strandTable[strandTable <= -strandTableThreshold] <- 3
 	strandTable[strandTable < strandTableThreshold & strandTable > -strandTableThreshold] <- 2
 
-	preFilterData <- function(strandTable, filterThreshold=0.8, onlyWC=FALSE)
+	preFilterData <- function(strandTable, filterThreshold=0.8, onlyWC=FALSE, minLib=minLib)
 	{
 		##### PRE-FILTER CONTIGS ##### 
 		#Ignore contigs present in fewer than 10 libraries
-		strandTable <- strandTable[which(apply(strandTable, 1, function(x){length(which(!is.na(x)))} >= 10)),]
+		strandTable <- strandTable[which(apply(strandTable, 1, function(x){length(which(!is.na(x)))} >= minLib)),]
 
 		#Ignore contigs that are entirely WC (likely contain inversions) (NB all <10 contigs have already been excluded)
 		if(onlyWC)
@@ -79,69 +90,60 @@ preprocessStrandTable <- function(strandTable, strandTableThreshold=0.8, filterT
 	}
 
 	#Create new data.frame of contigs that are entirely WC to investigate further
-	strandTableAWC <- preFilterData(strandTable, filterThreshold=filterThreshold, onlyWC=TRUE)
+	strandTableAWC <- preFilterData(strandTable, filterThreshold=filterThreshold, onlyWC=TRUE, minLib=minLib)
 
-	strandTable <- preFilterData(strandTable, filterThreshold=filterThreshold)
+	strandTable <- preFilterData(strandTable, filterThreshold=filterThreshold, minLib=minLib)
 	rawTable <- rawTable[rownames(strandTable),]
 	rawTable <- rawTable[,colnames(strandTable)]
 
 	#Order rows of strandTable by contig quality (best first)
-	if(orderContigs)
+	if(orderMethod=='libsAndConc')
 	{
 		if(verbose){message("-> Computing QA measures for contigs and sorting by best quality first")}
 		contigNAs <- apply(strandTable, 1, function(x){length(which(!is.na(x)))}) / ncol(strandTable) #number of libraries contig is non-NA 
-		if(orderMethod=='libsAndConc')
+		#Compute the divergence between the call for a contig and the raw value used to make that call:
+		computeOneAgreement <- function(contigName)
 		{
-			#Compute the divergence between the call for a contig and the raw value used to make that call:
-			computeOneAgreement <- function(contigName)
+			contigDists <- vector()
+			for(lib in 1:ncol(strandTable))
 			{
-				contigDists <- vector()
-				for(lib in 1:ncol(strandTable))
+				contigCall <- strandTable[contigName, lib]
+				if(!is.na(contigCall))
 				{
-					contigCall <- strandTable[contigName, lib]
-					if(!is.na(contigCall))
+					contigRaw <- rawTable[contigName, lib]
+					if(contigCall == 2)
 					{
-						contigRaw <- rawTable[contigName, lib]
-						if(contigCall == 2)
-						{
-							contigDist <- (strandTableThreshold - abs(contigRaw)) / strandTableThreshold
-						}else
-						{
-							contigDist <- (abs(contigRaw) - strandTableThreshold) / (1-strandTableThreshold)
-						}
-						contigDists <- append(contigDists, contigDist)
+						contigDist <- (strandTableThreshold - abs(contigRaw)) / strandTableThreshold
+					}else
+					{
+						contigDist <- (abs(contigRaw) - strandTableThreshold) / (1-strandTableThreshold)
 					}
+					contigDists <- append(contigDists, contigDist)
 				}
-				mean(contigDists)
 			}
-		
-			contigAgreement <- sapply(rownames(strandTable), computeOneAgreement)
-			contigQA <- contigAgreement * contigNAs #compute a compound QA measure
-		} else
-		{
-			contigQA <- contigNAs #compute a compound QA measure
+			mean(contigDists)
 		}
 		
-		
+		contigAgreement <- sapply(rownames(strandTable), computeOneAgreement)
+		contigQA <- contigAgreement * contigNAs #compute a compound QA measure
 		strandTable <- strandTable[names(sort(contigQA, decreasing=T)),] # and sort
 	}
+		
+	# Convert NaNs to NAs
+	strandTable[is.na(strandTable)] <- NA
 		
 	#Create new table where WC reads are converted to NA, so only WW and CC relationships are considered
 	strandTable2 <- replace(strandTable, strandTable == 2, NA)
 	#Filter this table to exclude contigs that are now only present in fewer than 10 libraries
-	strandTable2 <- strandTable2[which(apply(strandTable2, 1, function(x){length(which(!is.na(x)))} >= 10)),]
+	strandTable2 <- strandTable2[which(apply(strandTable2, 1, function(x){length(which(!is.na(x)))} >= minLib)),]
 	strandTable <- strandTable[rownames(strandTable2),]
-#	strandTable <- strandTable[which(apply(strandTable2, 1, function(x){length(which(!is.na(x)))} >= 10)),]
 
 	#Scan for sex chromosomes based on no WC inheritance
 	#First, count non-WC's for each line...
 	if(verbose){message("-> Searching for contigs on sex chromosomes (no WC in libraries)")}
-	numSex <- apply(strandTable, c(1), function(x){length(which(x != 2))})
 	
-	#Then, count number of NAs in each line
-	naNum <- apply(strandTable, c(1), function(x){length(which(x != "NA"))})
-	
-	includeSex <- which(numSex > naNum*strandTableThreshold )
+	#First, count non-WC's for each line and divide by total number of libraries (which aren't NA).Only include if above strandTableThreshold
+	includeSex <- which(apply(strandTable, 1, function(x){length(which(x != 2)) /length(which(x != "NA")) }) >= strandTableThreshold) 
 	
 	if( length(includeSex) > 1)
 	{
@@ -149,33 +151,38 @@ preprocessStrandTable <- function(strandTable, strandTableThreshold=0.8, filterT
 		if(verbose){message(paste("    -> ", nrow(strandMatrixSex), " found!", sep="") )}
 	} else {
 		if(verbose){message("    -> None found")}
-		strandMatrixSex <-matrix(nrow=1, ncol=1)
-	}
-	#Turn each column into factors (categorical -- we don't want the distance metric to interpret 1,2,3 as numerical)
-  strandMatrix <- data.frame(lapply(strandTable, function(x){factor(x, levels=c(1,2,3))}))  
-  rownames(strandMatrix) <- rownames(strandTable)
-	strandMatrix2 <- data.frame(lapply(strandTable2, function(x){factor(x, levels=c(1,2,3))}))	
-  rownames(strandMatrix2) <- rownames(strandTable2)
+    #The next two lines should be reviewed
+		strandMatrixSex <- matrix(nrow=2, ncol=ncol(strandTable))
+		strandMatrixSex <- data.frame(apply(strandMatrixSex, 2, function(x){as.factor(x)}) )
+ 	}
 
-	if (nrow(strandMatrixSex) > 3)
+	strandMatrix <- data.frame(lapply(strandTable, function(x){factor(x, levels=c(1,2,3))}))  
+	rownames(strandMatrix) <- rownames(strandTable)
+	strandMatrix2 <- data.frame(lapply(strandTable2, function(x){factor(x, levels=c(1,2,3))}))	
+	rownames(strandMatrix2) <- rownames(strandTable2)
+
+
+	if (nrow(strandMatrixSex) > 2)
 	{
 		#Ignore contigs present in fewer than 10 libraries
-		strandMatrixSex <- strandMatrixSex[which(apply(strandMatrixSex, 1, function(x){length(which(!is.na(x)))} >= 10)),]
+		strandMatrixSex <- strandMatrixSex[which(apply(strandMatrixSex, 1, function(x){length(which(!is.na(x)))} >= minLib)),]
 		#And ignore libraries that are entirely NA (indicating no cell present)	
-		strandMatrixSexTemp <- strandMatrixSex[,which(apply(strandMatrixSex, 2, function(x){length(which(is.na(x)))} <= nrow(strandMatrixSex)*filterThreshold ))]
-		strandMatrixSex <- data.frame(apply(strandMatrixSex, c(2), function(x){factor(x, levels=c(1,2,3))})) 
+		strandMatrixSex <- strandMatrixSex[,which(apply(strandMatrixSex, 2, function(x){length(which(is.na(x)))} <= nrow(strandMatrixSex)*filterThreshold ))]
+		
 		strandMatrixSex <- data.frame(lapply(strandMatrixSex, function(x){factor(x, levels=c(1,2,3))}))  
-		rownames(strandMatrixSex) <- rownames(strandMatrixSexTemp)
 	}
 	
 	#Filter out contigs that look like allosomes:
 	strandMatrix <- strandMatrix[setdiff(rownames(strandMatrix),rownames(strandMatrixSex)),]
 	strandMatrix2 <- strandMatrix2[setdiff(rownames(strandMatrix2),rownames(strandMatrixSex)),]
-	
+
+
 	strandMatrix <- new('StrandStateMatrix', strandMatrix)
 	strandMatrix2 <- new('StrandStateMatrix', strandMatrix2)
+  if (!all(is.na(strandMatrixSex))){ 
 	strandMatrixSex <- new('StrandStateMatrix', strandMatrixSex)
-
-	
+  } else {
+    strandMatrixSex <- NULL
+  }
 	return(list(strandMatrix=strandMatrix, strandMatrixWWCC=strandMatrix2, strandMatrixSex=strandMatrixSex, qualList=qualList, lowQualList=lowQualList, AWCcontigs=row.names(strandTableAWC)))
 }

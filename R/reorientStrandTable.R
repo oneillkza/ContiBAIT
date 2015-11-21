@@ -25,7 +25,7 @@ reorientStrandTable.func <- function(object, linkageGroups, orientation)
 }
 
 ####################################################################################################
-#' Reorient a strand table, given the orientation vector computed from \code{reorientLinkageGroups}
+#' Reorient a strand table, given the orientation vector computed from reorientLinkageGroups
 #' @param object Strand table to reorient
 #' @param linkageGroups List of vectors containing names of contigs belonging to each LG
 #' @param orientation vector of linkage group orientations, as '+' or '-'
