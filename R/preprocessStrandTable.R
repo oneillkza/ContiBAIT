@@ -151,6 +151,7 @@ preprocessStrandTable <- function(strandTable, strandTableThreshold=0.8, filterT
 		if(verbose){message(paste("    -> ", nrow(strandMatrixSex), " found!", sep="") )}
 	} else {
 		if(verbose){message("    -> None found")}
+    #The next two lines should be reviewed
 		strandMatrixSex <- matrix(nrow=2, ncol=ncol(strandTable))
 		strandMatrixSex <- data.frame(apply(strandMatrixSex, 2, function(x){as.factor(x)}) )
  	}
@@ -178,7 +179,10 @@ preprocessStrandTable <- function(strandTable, strandTableThreshold=0.8, filterT
 
 	strandMatrix <- new('StrandStateMatrix', strandMatrix)
 	strandMatrix2 <- new('StrandStateMatrix', strandMatrix2)
+  if (!all(is.na(strandMatrixSex))){ 
 	strandMatrixSex <- new('StrandStateMatrix', strandMatrixSex)
-	
+  } else {
+    strandMatrixSex <- NULL
+  }
 	return(list(strandMatrix=strandMatrix, strandMatrixWWCC=strandMatrix2, strandMatrixSex=strandMatrixSex, qualList=qualList, lowQualList=lowQualList, AWCcontigs=row.names(strandTableAWC)))
 }
