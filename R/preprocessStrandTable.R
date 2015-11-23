@@ -153,7 +153,9 @@ preprocessStrandTable <- function(strandTable, strandTableThreshold=0.8, filterT
 		if(verbose){message("    -> None found")}
     #The next two lines should be reviewed
 		strandMatrixSex <- matrix(nrow=2, ncol=ncol(strandTable))
-		strandMatrixSex <- data.frame(apply(strandMatrixSex, 2, function(x){as.factor(x)}) )
+    	strandMatrixSex <- data.frame(apply(strandMatrixSex, 2, as.factor))
+		strandMatrixSex <- data.frame(lapply(strandMatrixSex, function(x){levels(x) <- c(1,2,3); x}) )
+    	
  	}
 
 	strandMatrix <- data.frame(lapply(strandTable, function(x){factor(x, levels=c(1,2,3))}))  
@@ -179,10 +181,7 @@ preprocessStrandTable <- function(strandTable, strandTableThreshold=0.8, filterT
 
 	strandMatrix <- new('StrandStateMatrix', strandMatrix)
 	strandMatrix2 <- new('StrandStateMatrix', strandMatrix2)
-  if (!all(is.na(strandMatrixSex))){ 
-	strandMatrixSex <- new('StrandStateMatrix', strandMatrixSex)
-  } else {
-    strandMatrixSex <- NULL
-  }
+  	strandMatrixSex <- new('StrandStateMatrix', strandMatrixSex)
+  
 	return(list(strandMatrix=strandMatrix, strandMatrixWWCC=strandMatrix2, strandMatrixSex=strandMatrixSex, qualList=qualList, lowQualList=lowQualList, AWCcontigs=row.names(strandTableAWC)))
 }
