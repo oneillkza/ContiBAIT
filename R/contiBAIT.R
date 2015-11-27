@@ -96,13 +96,31 @@ runContiBAIT <- function(path=".", cluster=1, dataNames='contiBAIT', clusNum=1, 
     if(verbose){message('  -> None found')}
   }
 
+
+  orderedGroups <- data.frame(LG=vector(), name=vector())
+  pdf('pig_ordered_chr.pdf')
   for( lg in seq(1, length(linkage.merged)))
   {
     if(verbose){message(paste('  -> Ordering fragments in LG', lg, sep=""))}
-    outOfOrder <-  orderWithinGroup(linkage.merged[[lg]], animal.strands[[1]], animal.tab[[1]])
-    orderFrame <- cbind(LG=rep(lg, length(outOfOrder[[1]])), name=outOfOrder[[1]])
-    orderedGroups <- rbind(orderedGroups, orderFrame)
+    if(length(linkage.merged[[lg]]) > 1)
+    {
+      outOfOrder <-  orderWithinGroup(linkage.merged[[lg]], animal.tab[[1]], animal.strands[[1]], contigWeight=libWeight)
+      orderFrame <- cbind(LG=rep(lg, length(outOfOrder[[1]])), name=outOfOrder[[1]])
+      orderedGroups <- rbind(orderedGroups, orderFrame)
+
+
+      chromosome <- strsplit(linkage.merged[[lg]][1],':')[[1]][1]
+      theseLinkageStrands <- animal.strands[[1]][which(rownames(animal.strands[[1]]) %in% outOfOrder[[1]]),]
+      theseLinkageStrands <- theseLinkageStrands[order(match(rownames(theseLinkageStrands), outOfOrder[[1]])),]
+
+      similarLinkageStrands <- as.matrix(1-daisy(theseLinkageStrands))
+      breaks <- c(0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1.0)
+      cols <- c("gray0","gray0","gray0","gray22","red4","red3","red","darkorange")
+      suppressWarnings(heatmap.2(similarLinkageStrands, Rowv=NA, Colv=NA, col=cols, breaks=breaks, trace='none', main=paste('greedy-ordered ', chromosome, sep="")))
+    }
   }
+  dev.off()
+
 }
 
 #orderedGroups <- data.frame(LG=vector(), name=vector())

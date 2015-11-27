@@ -62,7 +62,7 @@ if(ignoreInternalQual == FALSE)
 	} else if(nrow(lowQualList) == 0) { 
 		if(verbose){message("-> All libraries of good quality" )}
 	} else {
-		if(verbose){message(paste("-> Removed ", nrow(lowQualList), " libraries from a total of ", ncol(strandTable), ". ", ncol(strandTable)-nrow(lowQualList), " remaining (", round((ncol(strandTable)-nrow(lowQualList))/ncol(strandTable), digits=1), "%)", sep="") )}
+		if(verbose){message(paste("-> Removed ", nrow(lowQualList), " libraries from a total of ", ncol(strandTable), ". ", ncol(strandTable)-nrow(lowQualList), " remaining (", round((ncol(strandTable)-nrow(lowQualList))/ncol(strandTable)*100, digits=1), "%)", sep="") )}
 		strandTable <- strandTable[,!(names(strandTable) %in% lowQualList[,1])]
 	}	
 }
@@ -155,8 +155,11 @@ if(ignoreInternalQual == FALSE)
 		if(verbose){message(paste("    -> ", nrow(strandMatrixSex), " found!", sep="") )}
 	} else {
 		if(verbose){message("    -> None found")}
+    #The next two lines should be reviewed
 		strandMatrixSex <- matrix(nrow=2, ncol=ncol(strandTable))
-		strandMatrixSex <- data.frame(apply(strandMatrixSex, 2, function(x){as.factor(x)}) )
+    	strandMatrixSex <- data.frame(apply(strandMatrixSex, 2, as.factor))
+		strandMatrixSex <- data.frame(lapply(strandMatrixSex, function(x){levels(x) <- c(1,2,3); x}) )
+    	
  	}
 
 	strandMatrix <- data.frame(lapply(strandTable, function(x){factor(x, levels=c(1,2,3))}))  
@@ -184,6 +187,5 @@ if(ignoreInternalQual == FALSE)
 	strandMatrix <- new('StrandStateMatrix', strandMatrix)
 	strandMatrix2 <- new('StrandStateMatrix', strandMatrix2)
 
-	
 	return(list(strandMatrix=strandMatrix, strandMatrixWWCC=strandMatrix2, strandMatrixSex=strandMatrixSex, qualList=qualList, lowQualList=lowQualList, AWCcontigs=row.names(strandTableAWC)))
 }
