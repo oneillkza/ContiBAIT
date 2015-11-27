@@ -1,15 +1,16 @@
 ####################################################################################################
 #' reorientLinkageGroups uses a greedy algorithm to try to find the correct orientations of linkage groups
-#' @param linkageGroups List of vectors containing names of contigs belonging to each LG
+#' @param linkageGroups List of vectors containing names of contigs belonging to each LG.
 #' @param allStrands Table of strand state for all contigs.
-#' @param dissimilarityCutoff Try to reorient all LGs more dissimilar than this to any other LG
-#' @param maxiter Maximum number of iterations to try reoriented for (to prevent possible infinite loops)
-#' @return a vector of orientations, as '+' or '-', in the order of linkageGroups
+#' @param dissimilarityCutoff Try to reorient all LGs more dissimilar than this to any other LG. Default is 0.3
+#' @param maxiter Maximum number of iterations to try reoriented for (to prevent possible infinite loops). Default is 100.
+#' @param verbose Outputs information to the terminal. Default is TRUE.
+#' @return a vector of orientations, as '+' or '-', in the order of linkageGroups.
 #' 
 #' @export
 ####################################################################################################
 
-reorientLinkageGroups <- function(linkageGroups, allStrands, dissimilarityCutoff=0.3, maxiter=100)
+reorientLinkageGroups <- function(linkageGroups, allStrands, dissimilarityCutoff=0.3, maxiter=100, verbose=TRUE)
 {
 	linkageStrands <- data.frame(do.call(rbind, lapply(linkageGroups, computeConsensus, allStrands)))
 	orientation <- rep('+', nrow(linkageStrands))
@@ -40,8 +41,8 @@ reorientLinkageGroups <- function(linkageGroups, allStrands, dissimilarityCutoff
 		suppressWarnings(toInvertStrands[which(toInvertStrands==1)] <- 3)
 		suppressWarnings(toInvertStrands[which(toInvertStrands==2)] <- 1)
 		suppressWarnings(linkageStrands[toInvert, ] <- toInvertStrands)
-		
-		message('Reorienting LG ', toInvert)
+
+		if(verbose){message("Reorienting LG ", toInvert , "   \r", appendLF=FALSE)}
 		
 		if(orientation[as.numeric(toInvert)]=='+') 
 		{
@@ -50,8 +51,10 @@ reorientLinkageGroups <- function(linkageGroups, allStrands, dissimilarityCutoff
 		{
 			suppressWarnings(orientation[as.numeric(toInvert)] <- '+')
 		}
-		if(iteration==maxiter)
+		if(iteration==maxiter){
+			if(verbose){message("\n")}
 			warning('Maximum iterations reached while reorienting without convergence.')
+		}
 	}	
 	return(orientation)
 }
