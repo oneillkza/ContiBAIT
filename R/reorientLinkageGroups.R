@@ -41,8 +41,8 @@ reorientLinkageGroups <- function(linkageGroups, allStrands, dissimilarityCutoff
 		suppressWarnings(toInvertStrands[which(toInvertStrands==1)] <- 3)
 		suppressWarnings(toInvertStrands[which(toInvertStrands==2)] <- 1)
 		suppressWarnings(linkageStrands[toInvert, ] <- toInvertStrands)
-		
-		if(verbose){message('Reorienting LG ', toInvert)}
+
+		if(verbose){message("Reorienting LG ", toInvert , "   \r", appendLF=FALSE)}
 		
 		if(orientation[as.numeric(toInvert)]=='+') 
 		{
@@ -51,8 +51,10 @@ reorientLinkageGroups <- function(linkageGroups, allStrands, dissimilarityCutoff
 		{
 			suppressWarnings(orientation[as.numeric(toInvert)] <- '+')
 		}
-		if(iteration==maxiter)
+		if(iteration==maxiter){
+			if(verbose){message("\n")}
 			warning('Maximum iterations reached while reorienting without convergence.')
+		}
 	}	
 	return(orientation)
 }

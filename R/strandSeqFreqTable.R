@@ -34,16 +34,8 @@
 
 strandSeqFreqTable <- function(bamFileList, fieldSep='.', field=1, qual=0, rmdup=TRUE, verbose=TRUE, filter=FALSE, tileChunk=100000, pairedEnd=TRUE)
 {
-
 	##### DEFINE FUNCTIONS
 
-	findIndex <- function(fileName, fieldSep=".", field=1) {
-		#removes the ./ as the start of fileName if present
-		fileName <- sub("./","", fileName)
-		indexer <- as.character(paste("echo ", fileName, "| awk -F", fieldSep, " '{print $", field, "}' ", sep=""))
-		return(index=system(indexer, intern=TRUE))
-	}
-	
 	#Function to tidy up the matrices, convert first row (index) to the column name
 	#And remove convert value from strandTable to NA if number of reads is less than countLimit
 	limitStrandCounts <- function(strandTable) {
@@ -96,14 +88,15 @@ strandSeqFreqTable <- function(bamFileList, fieldSep='.', field=1, qual=0, rmdup
 	}
 
 	strandTable <- matrix(nrow=lengthOfContigs, ncol=bamFileLength)
-	colnames(strandTable) <- sapply(bamFileList, function(x) findIndex(x))
+	colnames(strandTable) <- sapply(bamFileList, function(x) strsplit(basename(x), paste('\\', fieldSep, sep=""))[[1]][field] )
 	rownames(strandTable) <- filter[,4]
 	countTable <- strandTable
 
 	for(fileName in bamFileList)
 	{
 		# Find the index
-		index <- findIndex(fileName, fieldSep=fieldSep, field=field)
+		index <- strsplit(basename(fileName), paste('\\', fieldSep, sep=""))[[1]][field]
+
 		# Make GRanges object from filter
 		grfilter <- makeGRangesFromDataFrame(filter)
 		# Read bamfile into tileChunk pieces
@@ -120,9 +113,10 @@ strandSeqFreqTable <- function(bamFileList, fieldSep='.', field=1, qual=0, rmdup
 		strandTable[,indexCounter] <- strandCall 
 		countTable[,indexCounter] <- absCount
 
-		if(verbose){message(paste('-> Creating contig table for index ', index, " [", indexCounter, "/", bamFileLength, "]", sep=""))}
+		if(verbose){message(paste('-> Creating contig table for index ', index, " [", indexCounter, "/", bamFileLength, "]      ", sep=""), "\r", appendLF=FALSE)}
 		indexCounter <- indexCounter+1
 	}
+	if(verbose){message(" ")}
 
   return(list(strandTable, countTable))
 }
