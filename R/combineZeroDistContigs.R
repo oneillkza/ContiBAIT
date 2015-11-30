@@ -11,7 +11,7 @@ combineZeroDistContigs <- function(linkageStrands, rawStrandTable)
 	linkageMat <- as.matrix(linkageStrands)
 	linkageMat <- apply(linkageMat, 2, as.numeric)
 	
-	rawStrandTable <- rawStrandTable[rownames(linkageStrands), colnames(linkageStrands)]
+	rawStrandTable <- rawStrandTable[rownames(linkageStrands), ]
 	linkageMat[which(abs(rawStrandTable) > 0.2 & abs(rawStrandTable) < 0.9 ) ] <- NA
 	
 	linkageStrands <- data.frame(linkageMat)
@@ -21,7 +21,7 @@ combineZeroDistContigs <- function(linkageStrands, rawStrandTable)
 	
 	
 	##Combine zero dist contigs:
-	strandDist <- daisy(linkageStrands)
+	strandDist <- cluster::daisy(linkageStrands)
 	strandDist <- as.matrix(strandDist)
 	
 	mergedContigs <- list()
