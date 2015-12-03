@@ -70,7 +70,8 @@ setMethod("show",
 		  definition=function(object)
 		  {
 		  	cat('A linkage group list containing ', length(object), ' linkage groups.\n\n')
-		  	show(data.frame(NumberOfContigs=sapply(object, length)))
+		  	show(data.frame(NumberOfContigs=head(sapply(object, length)), row.names=NULL))
+		  	show(data.frame("...           "=tail(sapply(object, length)), row.names=seq(length(object)-5, length(object) )))
 		  }
 )
 
@@ -86,5 +87,23 @@ setMethod("show",
 		  {
 		  	cat('A data.frame containing ', nrow(object), ' reads.\n\n')
 		  	#show(data.frame(NumberOfContigs=sapply(object, length)))
+		  }
+)
+
+## show ContigOrdering
+#' @name show,ContigOrdering-method
+#' @export
+#' @docType methods
+#' @title show-methods
+#' @param object a ContigOrdering
+setMethod("show",
+		  signature=signature(object="ContigOrdering"),
+		  definition=function(object)
+		  {
+		  	cat('A data.frame containing', length(unique(str_split_fixed(object$LG, "\\.", 2)[,1])), 'LGs split into', length(unique(str_split_fixed(object$LG, "\\.", 2)[,2])),  'sub-groups from', nrow(object), 'ordered fragments.\n\n')
+		  	show(head(table(object[,1])))
+		  	cat('...')
+		  	show(tail(table(object[,1])))
+
 		  }
 )
