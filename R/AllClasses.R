@@ -99,14 +99,14 @@ NULL
 #' A class for storing contig ordering of a linkage group
 #'
 #' \describe{
-#'  This class is list of two character vectors that represent the calculated ordering of a linkage group. 
-#'  The first element of this list is the names of each contig in the calculated order.
-#'  The second element is the names of the merged contigs, i.e. those with equal strand states across all libraries,
-#'  in the calculated order.
+#'  This class is data.frame of two character vectors that represent the calculated ordering of a linkage group. 
+#'  The first element of this data.frame is the Linkage Group sub-setted by contigs with equal strand states across all libraries
+#'  in the calculated order. 
+#'  The second element is the names of names of each contig in the calculated order.
 #' }
 #
 #' @export
 #' @rdname ContigOrdering
 
 setClass("ContigOrdering",
-         contains='list')
+         contains='data.frame')

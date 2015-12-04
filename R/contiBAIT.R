@@ -1,12 +1,12 @@
 #library(contiBAIT)
 #path="."
-#cluster=12
-#dataNames='contiBAIT'
-#clusNum=6
+#cluster=6
+#dataNames='Dec04'
+#clusNum=2
 #verbose=TRUE
 #saveFiles=TRUE
 #filter=read.table('ferret_merged_sce_events.bed')
-runContiBAIT <- function(path=".", cluster=1, dataNames='contiBAIT', clusNum=1, verbose=TRUE, saveFiles=TRUE)
+runContiBAIT <- function(path=".", cluster=1, dataNames='contiBAIT', clusNum=1, verbose=TRUE, saveFiles=TRUE, readLimit=10)
 {
   #Create directory to store all the files
   bamFileList <- list.files(path=path, pattern=".bam$", full.names=TRUE)
@@ -22,7 +22,7 @@ runContiBAIT <- function(path=".", cluster=1, dataNames='contiBAIT', clusNum=1, 
   if(saveFiles){save(animal.tab, file=paste(dataNames, '_table.Rd', sep="")) }
   
   #subset data to only include data above readlimit
-  animal.tab[[1]][which(animal.tab[[2]] < readlimit)] <- NA 
+  animal.tab[[1]][which(animal.tab[[2]] < readLimit)] <- NA 
   
 
   if(verbose){message('-> Processing table and filtering data [2/6]')}
@@ -70,6 +70,8 @@ runContiBAIT <- function(path=".", cluster=1, dataNames='contiBAIT', clusNum=1, 
   # perform reorientation of linkage groups that belong together but are misoriented with each other
   # convert the strand table to account for the reorientations
   reorientedTable <- reorientStrandTable(animal.strands[[1]], linkage.groups, reorientedGroups)
+  colnames(reorientedTable) <-  sub("^X", "", colnames(reorientedTable))
+
   if(saveFiles){save(reorientedTable, file=paste(dataNames, '_reclust_reoriented.Rd', sep=""))}
 
   if(verbose){message('-> Merging related linkage groups [5/6]')}
@@ -97,32 +99,52 @@ runContiBAIT <- function(path=".", cluster=1, dataNames='contiBAIT', clusNum=1, 
   }
 
 
+
+contigOrder <- orderAllLinkageGroups(linkage.merged, animal.tab, reorientedTable, contigWeight=libWeight, dataNames=dataNames)
+
+
+orderAllLinkageGroups <- function(linkage.merged, animal.tab, reorientedTable, contigWeight=NA, dataNames=FALSE, verbose=TRUE)
+{
   orderedGroups <- data.frame(LG=vector(), name=vector())
-  pdf('pig_ordered_chr.pdf')
+  if(dataNames != FALSE) {pdf(paste(dataNames, 'contig_order.pdf'))}
+
   for( lg in seq(1, length(linkage.merged)))
   {
     if(verbose){message(paste('  -> Ordering fragments in LG', lg, sep=""))}
     if(length(linkage.merged[[lg]]) > 1)
     {
-      outOfOrder <-  orderWithinGroup(linkage.merged[[lg]], animal.tab[[1]], animal.strands[[1]], contigWeight=libWeight)
-      orderFrame <- cbind(LG=rep(lg, length(outOfOrder[[1]])), name=outOfOrder[[1]])
+      outOfOrder <- orderContigsGreedy(linkage.merged, animal.tab[[1]], reorientedTable, lg, libWeight=libWeight)
+#      outOfOrder <-  orderWithinGroup(linkage.merged, animal.tab[[1]], reorientedTable, lg, contigWeight=contigWeight)
+      orderFrame <- outOfOrder[[3]]
       orderedGroups <- rbind(orderedGroups, orderFrame)
-
-
       chromosome <- strsplit(linkage.merged[[lg]][1],':')[[1]][1]
-      theseLinkageStrands <- animal.strands[[1]][which(rownames(animal.strands[[1]]) %in% outOfOrder[[1]]),]
-      theseLinkageStrands <- theseLinkageStrands[order(match(rownames(theseLinkageStrands), outOfOrder[[1]])),]
+      #     theseLinkageStrands <- reorientedTable[which(rownames(reorientedTable) %in% outOfOrder[[1]]),]
+      #     theseLinkageStrands <- theseLinkageStrands[order(match(rownames(theseLinkageStrands), outOfOrder[[1]])),]
 
-      similarLinkageStrands <- as.matrix(1-daisy(theseLinkageStrands))
-      breaks <- c(0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1.0)
-      cols <- c("gray0","gray0","gray0","gray22","red4","red3","red","darkorange")
-      suppressWarnings(heatmap.2(similarLinkageStrands, Rowv=NA, Colv=NA, col=cols, breaks=breaks, trace='none', main=paste('greedy-ordered ', chromosome, sep="")))
+      #     similarLinkageStrands <- as.matrix(1-daisy(theseLinkageStrands))
+      if(dataNames != FALSE)
+      {
+        similarLinkageStrands <- as.matrix(1-daisy(outOfOrder[[2]]))
+        diag(similarLinkageStrands) <- 1
+        if(nrow(similarLinkageStrands) > 1)
+        {
+          breaks <- seq(0, 100, length.out=101)/100 
+          cols <- colorRampPalette(c("cyan", "blue", "grey30", "black", "grey30", "red", "orange"))
+          suppressWarnings(heatmap.2(similarLinkageStrands, Rowv=NA, Colv=NA, dendrogram="none", col=cols(100), breaks=breaks, trace='none', main=paste('greedy-ordered ', chromosome, sep="")))
+        }
+      }
     }
   }
-  dev.off()
+  if(dataNames != FALSE){dev.off()}
+  orderedGroups <- new("ContigOrdering", orderedGroups)
+
+  return(orderedGroups)
+}
+
 
 }
 
+#unlist(sapply(seq(1, length(result[[2]])), function(x) rep(names(result[[2]][x]), length(result[[2]][[x]]) ) ))
 #orderedGroups <- data.frame(LG=vector(), name=vector())
 #runContiBAIT()
 
