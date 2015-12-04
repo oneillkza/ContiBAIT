@@ -11,7 +11,7 @@
 #' @return list of two members: 1) contig names in order, 2) contigs that were combined due to being zero-distance from each other
 
 
-orderWithinGroup <- function(linkageGroup, readTable, allStrands, method = 'greedy', contigWeight = NA)
+orderWithinGroup <- function(linkageGroup, readTable, allStrands, method = 'greedy', contigWeight = NULL)
 {
   if (method == 'greedy'){
     return( orderContigsGreedy(linkageGroup,readTable,allStrands,contigWeight))
