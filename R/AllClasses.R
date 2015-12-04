@@ -1,8 +1,25 @@
 # This file also contains roxygen entries for example data
 
+
 # =========================================================================
-#' A class for storing a matrix of read count-based strand states 
-#' of a set of contigs over several libraries
+#' A class for storing read counts for a set of contigs over several libraries
+#' 
+#' \describe{
+#'  The information stored in this class is simple read counts, so should be integers >=0.
+#' }
+#
+#' @export
+#' @rdname StrandReadMatrix
+
+setClass("StrandReadMatrix", 
+		 contains='matrix', 
+		 validity=function(object){is.integer(object)})
+
+
+
+# =========================================================================
+#' A class for storing a matrix of frequencies of Watson to Crick reads
+#' for a set of contigs over several libraries
 #' 
 #' \describe{
 #'  The strand information stored in this object is the ratio of Watson to Crick reads
@@ -11,9 +28,9 @@
 #' }
 #
 #' @export
-#' @rdname StrandMatrix
+#' @rdname StrandFreqMatrix
 
-setClass("StrandMatrix", 
+setClass("StrandFreqMatrix", 
 		 contains='matrix', 
 		 validity=function(object){is.double(object)})
 

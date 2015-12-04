@@ -24,15 +24,24 @@
 #' since paired reads will be the same direction, only first mate read of pair is used in output
 #' @param verbose prints messages to the terminal (default is TRUE)
 #' 
-#' @return all reads in bed format if frequencies=FALSE, or list of frequency of strand calls for each contig and number of reads if frequencies=TRUE
+#' @return a list containing two matrices: a StrandFreqMatrix of W:C read frequencies, and a StrandReadMatrix of read counts
 #' @import Rsamtools
 #' @import GenomicFiles
 #' @importFrom S4Vectors DataFrame
+#' @example inst/examples/strandSeqFreqTable.R
 #' @export
 #' @include AllClasses.R
 ####################################################################################################
 
-strandSeqFreqTable <- function(bamFileList, fieldSep='.', field=1, qual=0, rmdup=TRUE, verbose=TRUE, filter=FALSE, tileChunk=100000, pairedEnd=TRUE)
+strandSeqFreqTable <- function(bamFileList, 
+							   fieldSep='.', 
+							   field=1, 
+							   qual=0, 
+							   rmdup=TRUE, 
+							   verbose=TRUE, 
+							   filter=FALSE, 
+							   tileChunk=100000, 
+							   pairedEnd=TRUE)
 {
 	##### DEFINE FUNCTIONS
 
@@ -113,10 +122,10 @@ strandSeqFreqTable <- function(bamFileList, fieldSep='.', field=1, qual=0, rmdup
 		strandTable[,indexCounter] <- strandCall 
 		countTable[,indexCounter] <- absCount
 
-		if(verbose){message(paste('-> Creating contig table for index ', index, " [", indexCounter, "/", bamFileLength, "]      ", sep=""), "\r", appendLF=FALSE)}
+		if(verbose){message(paste('-> Creating contig table for index ', index, " [", indexCounter, "/", bamFileLength, "]", sep=""), appendLF = TRUE)}
 		indexCounter <- indexCounter+1
 	}
 	if(verbose){message(" ")}
 
-  return(list(strandTable, countTable))
+  return(list(strandTable=new('StrandFreqMatrix', strandTable), countTable=new('StrandReadMatrix', countTable)))
 }

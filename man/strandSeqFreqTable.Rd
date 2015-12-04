@@ -30,9 +30,16 @@ since paired reads will be the same direction, only first mate read of pair is u
 \item{filed}{The field of the bam file name to use as an index (default is 1)}
 }
 \value{
-all reads in bed format if frequencies=FALSE, or list of frequency of strand calls for each contig and number of reads if frequencies=TRUE
+a list containing two matrices: a StrandFreqMatrix of W:C read frequencies, and a StrandReadMatrix of read counts
 }
 \description{
 strandSeqFreqTable -- function to process bam files for contiBAIT
+}
+\examples{
+bam.files <- dir('inst//extdata', full.names=TRUE)
+strand.freq <- strandSeqFreqTable(bam.files, pairedEnd = FALSE)
+
+show(strand.freq[[1]])
+show(strand.freq[[2]])
 }
 

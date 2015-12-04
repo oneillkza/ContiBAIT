@@ -59,6 +59,40 @@ setMethod("show",
 		  }
 )
 
+
+## show StrandFreqMatrix
+#' @name show,StrandFreqMatrix-method
+#' @export
+#' @docType methods
+#' @title show-methods
+#' @param object a StrandFreqMatrix
+setMethod("show",
+		  signature=signature(object="StrandFreqMatrix"),
+		  definition=function(object)
+		  {
+		  	d <- dim(object)
+		  	
+		  	cat('A matrix of strand frequencies for ', d[[1]], ' contigs over ',d[[2]],' libraries.\n')
+		  }
+)
+
+## show StrandReadMatrix
+#' @name show,StrandReadMatrix-method
+#' @export
+#' @docType methods
+#' @title show-methods
+#' @param object a StrandReadMatrix
+setMethod("show",
+		  signature=signature(object="StrandReadMatrix"),
+		  definition=function(object)
+		  {
+		  	d <- dim(object)
+		  	
+		  	cat('A matrix of read counts for ', d[[1]], ' contigs over ',d[[2]],' libraries.\n')
+		  }
+)
+
+
 ## show LinkageGroupList
 #' @name show,LinkageGroupList-method
 #' @export

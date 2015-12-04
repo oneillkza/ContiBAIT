@@ -4,19 +4,21 @@
 \alias{orderWithinGroup}
 \title{Attempt to order contigs within}
 \usage{
-orderWithinGroup(linkageGroup, readTable, allStrands, method = "greedy",
+orderWithinGroup(linkageGroups, readTable, allStrands, lg, method = "greedy",
   contigWeight = NA)
 }
 \arguments{
-\item{linkageGroup}{vector of names of contigs in this linkage group to try to order}
-
 \item{readTable}{table of W:C read proportions (used for QC)}
 
 \item{allStrands}{table of strand calls for all contigs}
 
+\item{lg}{numeric value defining which linkage groups}
+
 \item{method}{algorithm to order the contigs}
 
 \item{contigWeight}{optional order in which to place contigs using greedy algorithm}
+
+\item{linkageGroup}{vector of names of contigs in this linkage group to try to order}
 }
 \value{
 list of two members: 1) contig names in order, 2) contigs that were combined due to being zero-distance from each other
