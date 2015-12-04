@@ -48,6 +48,7 @@ Collate:
     'orderContigsGreedy.R'
     'orderContigsTSP.R'
     'orderWithinGroup.R'
+    'otherWriteBed.R'
     'plotContigOrder.R'
     'plotLGDistances.R'
     'plotLinkageGroup.R'
@@ -55,4 +56,4 @@ Collate:
     'reorientLinkageGroups.R'
     'reorientStrandTable.R'
     'strandSeqFreqTable.R'
-RoxygenNote: 5.0.0
+RoxygenNote: 5.0.1

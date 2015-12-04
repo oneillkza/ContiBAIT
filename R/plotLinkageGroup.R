@@ -49,6 +49,6 @@ plotLinkageGroup <- function(groupMembers, allStrands, lgChr=NULL, labels=TRUE, 
     heatmap.2(groupDist, trace='none', col=cols(100), breaks=breaks, labRow=labRow, labCol=labCol, ...)
   } else
   {
-	 heatmap.2(groupDist, trace='none', col=cols(100), breaks=breaks, labRow=labRow, labCol=labCol, RowSideColors=rowCols, ColSideColors=colCols,  ...)
+	 heatmap.2(groupDist, trace='none', col=cols(100), labRow=labRow, breaks=breaks, labCol=labCol, RowSideColors=rowCols, ColSideColors=colCols,  ...)
   }
 }

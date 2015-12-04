@@ -100,7 +100,7 @@ setMethod("show",
 		  signature=signature(object="ContigOrdering"),
 		  definition=function(object)
 		  {
-		  	cat('A data.frame containing', length(unique(str_split_fixed(object$LG, "\\.", 2)[,1])), 'LGs split into', length(unique(str_split_fixed(object$LG, "\\.", 2)[,2])),  'sub-groups from', nrow(object), 'ordered fragments.\n\n')
+		  	cat('A data.frame of', length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object$LG), "\\.")[[x]][1]))), 'LGs split into', length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object$LG), "\\.")[[x]][2]))), 'sub-groups from', nrow(object), 'ordered fragments.\n')
 		  	show(head(table(object[,1])))
 		  	cat('...')
 		  	show(tail(table(object[,1])))

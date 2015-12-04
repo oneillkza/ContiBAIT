@@ -2,6 +2,7 @@
 #' @param linkageStrands correctly oriented strandTable, but only containing the rows for this linkage group
 #' @return a two-member list, first=new strand table, second=list mapping new merged contigs to old
 #' @include AllClasses.R
+#' @importFrom cluster daisy
 
 combineZeroDistContigs <- function(linkageStrands, rawStrandTable, lg)
 {
@@ -12,7 +13,7 @@ combineZeroDistContigs <- function(linkageStrands, rawStrandTable, lg)
 	linkageMat <- as.matrix(linkageStrands)
 	linkageMat <- apply(linkageMat, 2, as.numeric)
 	
-	rawStrandTable <- rawStrandTable[rownames(linkageStrands), colnames(linkageStrands)]
+	rawStrandTable <- rawStrandTable[rownames(linkageStrands), ]
 	linkageMat[which(abs(rawStrandTable) > 0.2 & abs(rawStrandTable) < 0.9 ) ] <- NA
 	
 	linkageStrands <- data.frame(linkageMat)
@@ -47,7 +48,7 @@ combineZeroDistContigs <- function(linkageStrands, rawStrandTable, lg)
 		}
 	}
 	
-	orderedContigMatrix <- data.frame(LG=unlist(sapply(1:length(mergedContigs), function(x) rep(names(mergedContigs[x]), length(mergedContigs[[x]]) ))), contig=unlist(mergedContigs), row.names=NULL )
+	orderedContigMatrix <- data.frame(LG=unlist(sapply(1:length(mergedContigs), function(x) rep(names(mergedContigs[x]), length(mergedContigs[[x]]) ))), contig=unlist(mergedContigs), row.names=NULL, stringsAsFactors=FALSE )
 	orderedContigMatrix <- new("ContigOrdering", orderedContigMatrix)
 
 	mergedStrands <- data.frame(lapply(mergedStrands, function(x){factor(x, levels=c(1,2,3))}))  
