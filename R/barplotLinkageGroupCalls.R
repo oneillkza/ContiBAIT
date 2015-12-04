@@ -15,6 +15,7 @@
 #' 
 #' @export
 #' @importFrom colorspace rainbow_hcl
+#' @importFrom gtools mixedsort
 ####################################################################################################
 
 barplotLinkageGroupCalls <- function(linkageGroups, assemblyBED, by='lg', returnTable=FALSE, saveFile=FALSE,  ...)
@@ -31,13 +32,13 @@ barplotLinkageGroupCalls <- function(linkageGroups, assemblyBED, by='lg', return
 
 	chr.table <- computeBarPlotMatrix(linkageGroups, assemblyBED)
 
-	if( length(grep('chr', rownames(chr.table))) == length(rownames(chr.table)) )
-	{ 
-		orderWithoutChr <- function(x) {x[order(as.numeric(substring(rownames(x),4))),]}
-		chr.table <- orderWithoutChr(chr.table)
-	}else{
-		chr.table <- chr.table[order(rownames(chr.table)),]
-	}
+#	if( length(grep('chr', rownames(chr.table))) == length(rownames(chr.table)) )
+#	{ 
+#		orderWithoutChr <- function(x) {x[order(as.numeric(substring(rownames(x),4))),]}
+#		chr.table <- orderWithoutChr(chr.table)
+#	}else{
+		chr.table <- chr.table[mixedsort(rownames(chr.table)),]
+#	}
 
 	roundUpNice <- function(x, nice=c(1,2,3,4,5,6,7,8,9,10)) 
 	{

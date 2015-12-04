@@ -1,6 +1,6 @@
 
-# @useDynLib contiBAIT
-# @import Rcpp
+#' @useDynLib contiBAIT
+#' @import Rcpp
 
 
 
@@ -10,7 +10,9 @@ orderContigsGreedy <- function(linkageGroup,readTable,allStrands,libWeight, rand
   for (i in 1:ncol(linkageGroupReadTable)){
     linkageGroupReadTable[,i] <- as.numeric(as.character( linkageGroupReadTable[,i]))
   }
+
   linkageGroupReadTable[is.na(linkageGroupReadTable)] <- 0
+
   best_order <- list(order = 1:length(linkageGroup),score = 0)
   best_table <- linkageGroupReadTable
   if (!is.null(libWeight)){
@@ -20,6 +22,8 @@ orderContigsGreedy <- function(linkageGroup,readTable,allStrands,libWeight, rand
     best_order <- .Call('orderContigsGreedy', best_table)
   }
   for (i in 1:randomAttempts){
+temp_order <- list(order = 1:length(linkageGroup),score = 0)
+
     temp_table <- as.matrix(linkageGroupReadTable[sample(length(linkageGroup)),])
     temp_order <- .Call('orderContigsGreedy', temp_table)
     if ( temp_order$score >best_order$score){

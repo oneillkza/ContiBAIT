@@ -101,8 +101,6 @@ RcppExport  SEXP orderContigsGreedy(
   for (int i = 0; i < nRows; i++){
     result[i] = best_order[i] + 1;
   }
- return Rcpp::List::create(Rcpp::Named("order") = result,
-                       Rcpp::Named("score") = score_order(best_order));
-    
+ return result;
 }
 

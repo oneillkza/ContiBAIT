@@ -6,9 +6,9 @@ plotLGDistances.func <- function(object, allStrands)
   sim <- 1-as.matrix(daisy(data.frame(linkageStrands)))
   rownames(sim) <- rownames(linkageStrands)
   colnames(sim) <- rownames(linkageStrands)
-  breaks <- c(0/15, 1/15, 2/15, 3/15, 4/15, 5/15, 6/15, 7/15, 8/15, 9/15, 10/15, 11/15, 12/15, 12/15, 14/15, 15/15)
-  cols <- c("cyan","cyan3","blue","blue4","gray22","gray0","gray0","gray0","gray0","gray0","gray22","red4","red3","red","darkorange")
-  heatmap.2(sim, trace='none', col=cols, breaks=breaks)	
+  breaks <- seq(0, 100, length.out=101)/100 
+  cols <- colorRampPalette(c("cyan", "blue", "grey30", "black", "grey30", "red", "orange"))
+  heatmap.2(sim, trace='none', col=cols(100), breaks=breaks )
 }
 ####################################################################################################
 #' plotLGDistances -- plots a heatmap of the distances between linkage groups 

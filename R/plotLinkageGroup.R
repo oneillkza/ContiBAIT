@@ -42,13 +42,13 @@ plotLinkageGroup <- function(groupMembers, allStrands, lgChr=NULL, labels=TRUE, 
     labCol=rep('', length(groupMembers))
   }
   
-	breaks <- c(0/15, 1/15, 2/15, 3/15, 4/15, 5/15, 6/15, 7/15, 8/15, 9/15, 10/15, 11/15, 12/15, 13/15, 14/15, 15/15)
-	cols <- c("cyan","cyan3","blue","blue4","gray22","gray0","gray0","gray0","gray0","gray0","gray22","red4","red3","red","darkorange")
+  breaks <- seq(0, 100, length.out=101)/100 
+  cols <- colorRampPalette(c("cyan", "blue", "grey30", "black", "grey30", "red", "orange"))
   if(is.null(lgChr))
   {
-    heatmap.2(groupDist, trace='none', col=cols, breaks=breaks, labRow=labRow, labCol=labCol, ...)
+    heatmap.2(groupDist, trace='none', col=cols(100), breaks=breaks, labRow=labRow, labCol=labCol, ...)
   } else
   {
-	 heatmap.2(groupDist, trace='none', col=cols, breaks=breaks, labRow=labRow, labCol=labCol, RowSideColors=rowCols, ColSideColors=colCols,  ...)
+	 heatmap.2(groupDist, trace='none', col=cols(100), labRow=labRow, breaks=breaks, labCol=labCol, RowSideColors=rowCols, ColSideColors=colCols,  ...)
   }
 }
