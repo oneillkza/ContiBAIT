@@ -95,7 +95,13 @@ strandSeqFreqTable <- function(bamFileList, fieldSep='.', field=1, qual=0, rmdup
 	for(fileName in bamFileList)
 	{
 		# Find the index
-		index <- strsplit(basename(fileName), paste('\\', fieldSep, sep=""))[[1]][field]
+		if(field != FALSE)
+		{
+			index <- strsplit(basename(fileName), paste('\\', fieldSep, sep=""))[[1]][field]
+			if(is.numeric(index)){ index <- paste('lib_', index, sep='')}
+		}else{
+			index <- fileName
+		}
 
 		# Make GRanges object from filter
 		grfilter <- makeGRangesFromDataFrame(filter)

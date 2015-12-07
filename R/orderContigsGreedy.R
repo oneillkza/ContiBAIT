@@ -14,19 +14,19 @@ orderContigsGreedy <- function(linkageGroups,readTable,allStrands, lg, libWeight
   linkageGroupReadTable[is.na(linkageGroupReadTable)] <- 0
 
   best_order <- list(order = 1:length(linkageGroup),score = 0)
+   temp_order <- list(order = 1:length(linkageGroup),score = 0)
   best_table <- linkageGroupReadTable
   if (!is.null(libWeight)){
   
     contigWeights <- libWeight[linkageGroup]
     contigWeights <- sort(contigWeights,decreasing = TRUE)
     best_table <- as.matrix(linkageGroupReadTable[names(contigWeights),])
-    best_order$score <- .Call('orderContigsGreedy', best_table)
+    best_order <- .Call('orderContigsGreedy', best_table)
   }
   for (i in 1:randomAttempts){
-temp_order <- list(order = 1:length(linkageGroup),score = 0)
-
+    #temp_order <- list(order = 1:length(linkageGroup),score = 0)
     temp_table <- as.matrix(linkageGroupReadTable[sample(length(linkageGroup)),])
-    temp_order$score <- .Call('orderContigsGreedy', temp_table)
+    temp_order <- .Call('orderContigsGreedy', temp_table)
     print(temp_order$score)
     if ( temp_order$score > best_order$score){
       print(temp_order$score)
