@@ -20,6 +20,8 @@
 #' @param ignoreInternalQual=FALSE logical that prevents function for making an overall assessment of library quality. Very chimeric assemblies can appear low quality across all libraries. 
 #' @param verbose=TRUE messages written to terminal
 #' 
+#' @example inst/examples/preprocessStrandTable.R
+#' 
 #' @return A list of three matrices -- 1: WW/WC/WW; 2: WW/CC; 3: sex contigs
 #' 
 #' @export

@@ -96,6 +96,20 @@ setClass("LinkageGroupList",
 		 contains='list')
 
 
+# ========================================================================
+# Data sets
+#
+# ========================================================================
+
+#' Example of strand frequencies extracted from BAMS by strandSeqFreqTable
+#'
+#' @name strandFrequencies
+#' @docType data
+# @author Kieran O'Neill \email{blahblah@@roxygen.org}
+#' @keywords data
+NULL
+
+
 #' An example StrandStateMatrix containing WW, CC and WC calls for contigs
 #'
 #' @name exampleWCMatrix
