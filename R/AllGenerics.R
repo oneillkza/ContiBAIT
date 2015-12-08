@@ -59,6 +59,40 @@ setMethod("show",
 		  }
 )
 
+
+## show StrandFreqMatrix
+#' @name show,StrandFreqMatrix-method
+#' @export
+#' @docType methods
+#' @title show-methods
+#' @param object a StrandFreqMatrix
+setMethod("show",
+		  signature=signature(object="StrandFreqMatrix"),
+		  definition=function(object)
+		  {
+		  	d <- dim(object)
+		  	
+		  	cat('A matrix of strand frequencies for ', d[[1]], ' contigs over ',d[[2]],' libraries.\n')
+		  }
+)
+
+## show StrandReadMatrix
+#' @name show,StrandReadMatrix-method
+#' @export
+#' @docType methods
+#' @title show-methods
+#' @param object a StrandReadMatrix
+setMethod("show",
+		  signature=signature(object="StrandReadMatrix"),
+		  definition=function(object)
+		  {
+		  	d <- dim(object)
+		  	
+		  	cat('A matrix of read counts for ', d[[1]], ' contigs over ',d[[2]],' libraries.\n')
+		  }
+)
+
+
 ## show LinkageGroupList
 #' @name show,LinkageGroupList-method
 #' @export
@@ -70,8 +104,13 @@ setMethod("show",
 		  definition=function(object)
 		  {
 		  	cat('A linkage group list containing ', length(object), ' linkage groups.\n\n')
-		  	show(data.frame(NumberOfContigs=head(sapply(object, length)), row.names=NULL))
-		  	show(data.frame("...           "=tail(sapply(object, length)), row.names=seq(length(object)-5, length(object) )))
+		  	if(length(object) > 25)
+		  	{
+		  		show(data.frame(NumberOfContigs=head(sapply(object, length)), row.names=NULL))
+		  		show(data.frame("...           "=tail(sapply(object, length)), row.names=seq(length(object)-5, length(object) )))
+		  	}else{
+		  		show(data.frame(NumberOfContigs=sapply(object, length), row.names=NULL))
+		  	}
 		  }
 )
 
@@ -100,10 +139,38 @@ setMethod("show",
 		  signature=signature(object="ContigOrdering"),
 		  definition=function(object)
 		  {
-		  	cat('A data.frame of', length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object$LG), "\\.")[[x]][1]))), 'LGs split into', length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object$LG), "\\.")[[x]][2]))), 'sub-groups from', nrow(object), 'ordered fragments.\n')
-		  	show(head(table(object[,1])))
-		  	cat('...')
-		  	show(tail(table(object[,1])))
 
+		  	cat('A data.frame of', length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object$LG), "\\.")[[x]][1]))), 'LGs split into', length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object$LG), "\\.")[[x]][2]))), 'sub-groups from', nrow(object), 'ordered fragments.\n')
+		  	if(length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object$LG), "\\.")[[x]][2]))) > 25)
+		  	{
+			  	show(head(table(object[,1])))
+			  	cat('...')
+			  	show(tail(table(object[,1])))
+		  	}else{
+		  		show(table(object[,1]))
+		  	}
+		  }
+)
+
+
+## show ChrTable
+#' @name show,ChrTable-method
+#' @export
+#' @docType methods
+#' @title show-methods
+#' @param object a ChrTable
+setMethod("show",
+		  signature=signature(object="ChrTable"),
+		  definition=function(object)
+		  {
+		  	if(nrow(object) == 2)
+		  	{
+			  	cat('A data.frame of', length(unique(object[,1])), ' fragments from a ', sum(chrTable[,2])/1000000, 'Mb genome.\n')
+		  	}else{
+		  		cat('A data.frame of', length(unique(object[,1])), ' fragments from a ', (sum(chrTable[,3])-sum(chrTable[,2]))/1000000, 'Mb genome.\n')
+		  	}
+		  	show(head(object))
+			cat('...')
+			show(tail(object))
 		  }
 )

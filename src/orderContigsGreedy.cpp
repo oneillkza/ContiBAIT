@@ -105,4 +105,3 @@ RcppExport  SEXP orderContigsGreedy(
                        Rcpp::Named("score") = score_order(best_order));
     
 }
-

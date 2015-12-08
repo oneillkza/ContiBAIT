@@ -27,6 +27,7 @@
 #function to create a chromosome table (chromosome, length) from a user-input bam file.
 makeChrTable <- function(bamFile, verbose=TRUE, asBed=FALSE, asRownames=TRUE)
 {
+	options(scipen=20)
 	if(verbose){message(paste("-> Creating chromosome table from", bamFile, sep=""))}
 	lengthOfContigs <- scanBamHeader(bamFile)[[1]][["text"]]
 	#bamTable <-  as.data.frame(as.character(unlist(lengthOfContigs[which(grepl("\\<SN:", lengthOfContigs))])))
@@ -43,6 +44,9 @@ makeChrTable <- function(bamFile, verbose=TRUE, asBed=FALSE, asRownames=TRUE)
 		chrTable$length <-  as.numeric(gsub("LN:", "", chrTable$length))
 	}
 	chrTable$chr <- gsub("SN:", "", as.character(chrTable$chr))
-	if(asRownames){rownames(chrTable) <- chrTable[,1] }
+	if(asRownames){rownames(chrTable) <- chrTable[,1] }  
+
+	chrTable <- new("ChrTable", chrTable)
+
 	return(chrTable)
 }

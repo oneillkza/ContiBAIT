@@ -1,10 +1,14 @@
 #' Function to combine contigs that are right next to each other.
 #' @param linkageStrands correctly oriented strandTable, but only containing the rows for this linkage group
+#' @param rawStrandTable data.frame with table of W:C read proportions
+#' @param lg integer specifying the element of linkageGroups to be used (i.e. specific linkage group to try to order)
+#' @param homozygousThreshold integer specifying the cut off to include homozygous contig calls (default is 0.1)
 #' @return a two-member list, first=new strand table, second=list mapping new merged contigs to old
 #' @include AllClasses.R
 #' @importFrom cluster daisy
+#' @export
 
-combineZeroDistContigs <- function(linkageStrands, rawStrandTable, lg)
+combineZeroDistContigs <- function(linkageStrands, rawStrandTable, lg, homozygousThreshold=0.1)
 {
 	#Filter out borderline calls:
 	
@@ -14,7 +18,7 @@ combineZeroDistContigs <- function(linkageStrands, rawStrandTable, lg)
 	linkageMat <- apply(linkageMat, 2, as.numeric)
 	
 	rawStrandTable <- rawStrandTable[rownames(linkageStrands), ]
-	linkageMat[which(abs(rawStrandTable) > 0.2 & abs(rawStrandTable) < 0.9 ) ] <- NA
+	linkageMat[which(abs(rawStrandTable) > homozygousThreshold & abs(rawStrandTable) < (1-homozygousThreshold) ) ] <- NA
 	
 	linkageStrands <- data.frame(linkageMat)
 	
@@ -40,11 +44,9 @@ combineZeroDistContigs <- function(linkageStrands, rawStrandTable, lg)
 			#And don't pull in contigs that are present in toMerge if they've already been asigned
 			toMerge <- toMerge[!names(toMerge) %in% beenMerged]
 			beenMerged <- append(beenMerged, names(toMerge))
-#			mergedContigs[[paste(names(toMerge), collapse='+')]] <- names(toMerge)
 			mergedContigs[[paste('LG', lg, '.', groupCount, sep='')]] <- names(toMerge)
 			mergedStrands <- rbind(mergedStrands, linkageStrands[contig,])
 			groupCount <- groupCount +1
-
 		}
 	}
 	

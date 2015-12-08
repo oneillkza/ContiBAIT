@@ -3,18 +3,20 @@
 # @import Rcpp TSP
 
 # 
-# @param linkageGroup vector of names of contigs in this linkage group to try to order
+# @param linkageGroups list of vector of contig names for all linkage groups 
 # @param allStrands table of strand calls for all contigs
 # @param readTable table of W:C read proportions (used for QC)
+# @param lg iterger specifying the element of linkageGroups to be used (i.e. specific linkage group to try to order)
 # @return list of two members: 1) contig names in order, 2) contigs that were combined due to being zero-distance from each other
 
 
-orderContigsTSP <- function(linkageGroup, readTable,allStrands)
+orderContigsTSP <- function(linkageGroups, allStrands, readTable, lg)
 {
-  
+
+  linkageGroup <- linkageGroups[[lg]]
   #Combine zero-distance contigs:
   strands <- allStrands[linkageGroup,]
-  contigs.combined <- combineZeroDistContigs(strands, readTable)
+  contigs.combined <- combineZeroDistContigs(strands, readTable, lg)
   
   strands <- contigs.combined[[1]]
   dists <- as.matrix(daisy(strands))

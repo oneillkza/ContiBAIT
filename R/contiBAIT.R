@@ -100,29 +100,29 @@ runContiBAIT <- function(path=".", cluster=1, dataNames='contiBAIT', clusNum=1, 
 
 
 
-contigOrder <- orderAllLinkageGroups(linkage.merged, animal.tab, reorientedTable, contigWeight=libWeight, dataNames=dataNames)
+contigOrder <- orderAllLinkageGroups(linkage.merged, animal.tab, reorientedTable, saveOrderedPDF=dataNames, orderCall="greedy")
 
 
-orderAllLinkageGroups <- function(linkage.merged, animal.tab, reorientedTable, contigWeight=NA, dataNames=FALSE, verbose=TRUE)
+orderAllLinkageGroups <- function(linkage.merged, animal.tab, reorientedTable, saveOrderedPDF=FALSE, verbose=TRUE)
 {
   orderedGroups <- data.frame(LG=vector(), name=vector())
-  if(dataNames != FALSE) {pdf(paste(dataNames, 'contig_order.pdf'))}
+  if(saveOrderedPDF != FALSE) {pdf(paste(saveOrderedPDF, 'contig_order.pdf', sep='_'))}
 
   for( lg in seq(1, length(linkage.merged)))
   {
     if(verbose){message(paste('  -> Ordering fragments in LG', lg, sep=""))}
     if(length(linkage.merged[[lg]]) > 1)
     {
-      outOfOrder <- orderContigsGreedy(linkage.merged, animal.tab[[1]], reorientedTable, lg, libWeight=libWeight)
-#      outOfOrder <-  orderWithinGroup(linkage.merged, animal.tab[[1]], reorientedTable, lg, contigWeight=contigWeight)
+      if(orderCall == 'greedy')
+      {
+        outOfOrder <- orderContigsGreedy(linkage.merged, animal.tab[[1]], reorientedTable, lg, randomAttempts=1)
+      }else{
+        outOfOrder <- orderContigsTSP(linkage.merged, reorientedTable, animal.tab[[1]], lg)
+      }
       orderFrame <- outOfOrder[[3]]
       orderedGroups <- rbind(orderedGroups, orderFrame)
       chromosome <- strsplit(linkage.merged[[lg]][1],':')[[1]][1]
-      #     theseLinkageStrands <- reorientedTable[which(rownames(reorientedTable) %in% outOfOrder[[1]]),]
-      #     theseLinkageStrands <- theseLinkageStrands[order(match(rownames(theseLinkageStrands), outOfOrder[[1]])),]
-
-      #     similarLinkageStrands <- as.matrix(1-daisy(theseLinkageStrands))
-      if(dataNames != FALSE)
+      if(saveOrderedPDF != FALSE)
       {
         similarLinkageStrands <- as.matrix(1-daisy(outOfOrder[[2]]))
         diag(similarLinkageStrands) <- 1
@@ -135,7 +135,7 @@ orderAllLinkageGroups <- function(linkage.merged, animal.tab, reorientedTable, c
       }
     }
   }
-  if(dataNames != FALSE){dev.off()}
+  if(saveOrderedPDF != FALSE){dev.off()}
   orderedGroups <- new("ContigOrdering", orderedGroups)
 
   return(orderedGroups)
