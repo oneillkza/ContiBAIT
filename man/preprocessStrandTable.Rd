@@ -32,4 +32,12 @@ A list of three matrices -- 1: WW/WC/WW; 2: WW/CC; 3: sex contigs
 preprocessStrandTable -- remove low quality libraries and contigs before attempting to build
 a genome
 }
+\examples{
+data(strandFrequencies)
+
+strandStates <- preprocessStrandTable(strandFrequencies)
+
+show(strandStates[[1]]) # WW-WC-CC matrix
+show(strandStates[[2]]) # WW-CC only matrix
+}
 

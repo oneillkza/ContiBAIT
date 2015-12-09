@@ -36,10 +36,18 @@ a list containing two matrices: a StrandFreqMatrix of W:C read frequencies, and 
 strandSeqFreqTable -- function to process bam files for contiBAIT
 }
 \examples{
-bam.files <- sapply(dir('extdata'), function(single.file){system.file('extdata', single.file, package='contiBAIT')})
+#Get a list of BAM files containing libraries for cells from the same organism, aligned to the same genome
+#In this case these are the example BAM files provided with the package (hence the call to system.file);
+
+example.dir <- file.path(system.file(package='contiBAIT'), 'extdata')
+bam.files <- dir(example.dir, full.names=TRUE)
+
+#bam.files <- sapply(dir(file.path(system.file(package='contiBAIT'), 'extdata')), function(single.file){system.file('extdata', single.file, package='contiBAIT')})
+
 strand.freq <- strandSeqFreqTable(bam.files, pairedEnd = FALSE)
 
 show(strand.freq[[1]])
 show(strand.freq[[2]])
+
 }
 
