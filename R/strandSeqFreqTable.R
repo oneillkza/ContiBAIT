@@ -98,8 +98,15 @@ strandSeqFreqTable <- function(bamFileList,
 	}
 
 	strandTable <- matrix(nrow=lengthOfContigs, ncol=bamFileLength)
-	colnames(strandTable) <- sapply(bamFileList, function(x) strsplit(basename(x), paste('\\', fieldSep, sep=""))[[1]][field] )
+	if(field != FALSE)
+	{
+		colnames(strandTable) <- sapply(bamFileList, function(x) strsplit(basename(x), paste('\\', fieldSep, sep=""))[[1]][field] )
+	}else{
+		colnames(strandTable) <- fileName
+	}
+
 	colnames(strandTable) [grep("[0-9]", colnames(strandTable) )] <- paste('lib', colnames(strandTable) [grep("[0-9]", colnames(strandTable) )], sep='_')
+
 	rownames(strandTable) <- filter[,4]
 	countTable <- strandTable
 

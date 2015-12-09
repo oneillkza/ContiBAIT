@@ -7,7 +7,8 @@ a genome}
 \usage{
 preprocessStrandTable(strandTable, strandTableThreshold = 0.8,
   filterThreshold = 0.8, orderMethod = "libsAndConc",
-  lowQualThreshold = 0.9, verbose = TRUE, minLib = 10)
+  lowQualThreshold = 0.9, verbose = TRUE, minLib = 10,
+  ignoreInternalQual = FALSE)
 }
 \arguments{
 \item{strandTable}{data.frame containing the strand table to use as input}
@@ -19,6 +20,8 @@ preprocessStrandTable(strandTable, strandTableThreshold = 0.8,
 \item{orderMethod='libsAndConc'}{the method to oder contigs. currently libsAndConc only option. Set to FALSE to not order contigs based on library quality}
 
 \item{lowQualThreshold=0.9}{background threshold at which to toss an entire library}
+
+\item{ignoreInternalQual=FALSE}{logical that prevents function for making an overall assessment of library quality. Very chimeric assemblies can appear low quality across all libraries.}
 
 \item{verbose=TRUE}{messages written to terminal}
 }
