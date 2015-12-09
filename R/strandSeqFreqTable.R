@@ -102,7 +102,7 @@ strandSeqFreqTable <- function(bamFileList,
 	{
 		colnames(strandTable) <- sapply(bamFileList, function(x) strsplit(basename(x), paste('\\', fieldSep, sep=""))[[1]][field] )
 	}else{
-		colnames(strandTable) <- fileName
+		colnames(strandTable) <- bamFileList 
 	}
 
 	colnames(strandTable) [grep("^[0-9]", colnames(strandTable) )] <- paste('lib', colnames(strandTable) [grep("[0-9]", colnames(strandTable) )], sep='_')
@@ -134,5 +134,5 @@ strandSeqFreqTable <- function(bamFileList,
 	}
 	if(verbose){message(" ")}
 
-  return(list(strandTable=new('StrandFreqMatrix', strandTable), countTable=new('StrandReadMatrix', countTable)))
+  return(list(strandTable=new('StrandFreqMatrix', strandTable), countTable=new('StrandReadMatrix', countTable), binomialTable=new('StrandReadMatrix', binomialTable)))
 }

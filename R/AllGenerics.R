@@ -104,13 +104,10 @@ setMethod("show",
 		  definition=function(object)
 		  {
 		  	cat('A linkage group list containing ', length(object), ' linkage groups.\n\n')
-		  	if(length(object) > 25)
-		  	{
-		  		show(data.frame(NumberOfContigs=head(sapply(object, length)), row.names=NULL))
-		  		show(data.frame("...           "=tail(sapply(object, length)), row.names=seq(length(object)-5, length(object) )))
-		  	}else{
-		  		show(data.frame(NumberOfContigs=sapply(object, length), row.names=NULL))
-		  	}
+		  	show(data.frame(NumberOfContigs=head(sapply(object, length)), row.names=NULL))
+		  	if(length(object) > 5)
+            show(data.frame("...           "=tail(sapply(object, length)), row.names=seq(length(object)-5, length(object) )))
+
 		  }
 )
 

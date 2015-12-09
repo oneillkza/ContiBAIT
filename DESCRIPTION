@@ -1,6 +1,6 @@
 Package: contiBAIT
 Type: Package
-Title: Improves early build genome assemblies using strand-seq data.
+Title: Improves early build genome assemblies using strand-seq data
 Version: 0.99.0
 Date: 2013-10-21
 Author: Kieran O'Neill, Mark Hills
@@ -9,7 +9,7 @@ Description: Using strand inheritance data from multiple single cells from the
     organism whose genome is to be assembled, contiBAIT can cluster unbridged
     contigs together into putative chromosomes, and order the contigs within
     those chromosomes.
-License: BSD_2_clause
+License: BSD_2_clause + file LICENSE
 Depends:
     BH (>= 1.51.0-3),
     Rsamtools (>= 1.21)
@@ -52,7 +52,6 @@ Collate:
     'orderAllLinkageGroups.R'
     'orderContigsGreedy.R'
     'orderContigsTSP.R'
-    'otherWriteBed.R'
     'plotContigOrder.R'
     'plotLGDistances.R'
     'plotLinkageGroup.R'
@@ -61,4 +60,5 @@ Collate:
     'reorientLinkageGroups.R'
     'reorientStrandTable.R'
     'strandSeqFreqTable.R'
+    'writeBed.R'
 RoxygenNote: 5.0.0
