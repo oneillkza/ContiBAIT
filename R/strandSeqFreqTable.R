@@ -134,5 +134,5 @@ strandSeqFreqTable <- function(bamFileList,
 	}
 	if(verbose){message(" ")}
 
-  return(list(strandTable=new('StrandFreqMatrix', strandTable), countTable=new('StrandReadMatrix', countTable), binomialTable=new('StrandReadMatrix', binomialTable)))
+  return(list(strandTable=new('StrandFreqMatrix', strandTable), countTable=new('StrandReadMatrix', countTable)))
 }
