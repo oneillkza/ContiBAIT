@@ -8,7 +8,7 @@
 #' @importFrom cluster daisy
 #' @export
 
-combineZeroDistContigs <- function(linkageStrands, rawStrandTable, lg, homozygousThreshold=0.1)
+combineZeroDistContigs <- function(linkageStrands, rawStrandTable, lg, homozygousThreshold=0.2)
 {
 	#Filter out borderline calls:
 	

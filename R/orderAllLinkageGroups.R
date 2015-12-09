@@ -4,6 +4,7 @@
 #' @param strandStateMatrix table of strand calls for all contigs (product of preprocessStrandTable)
 #' @param strandFreqMatrix list with table of W:C read proportions (used for QC) and read counts (product of strandSeqFreqTable)
 #' @param saveOrderedPDF Will return a pdf of heatmaps for each linkage group; String entered becomes the fileName (default is saveOrderedPDF=FALSE)
+#' @param orderCall currently either 'greedy' for greedy algorithm or 'TSP' for travelling salesperson alogrithm (default is 'greedy')
 #' @param verbose Pringts messages to the terminal. Default is TRUE
 #' 
 #' @return a data.frame of ordered contigs with linkage group names
@@ -14,7 +15,7 @@
 ####################################################################################################
 
 
-orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFreqMatrix, saveOrderedPDF=FALSE, verbose=TRUE)
+orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFreqMatrix, saveOrderedPDF=FALSE, orderCall='greedy', verbose=TRUE)
 {
   orderedGroups <- data.frame(LG=vector(), name=vector())
   if(saveOrderedPDF != FALSE) {pdf(paste(saveOrderedPDF, 'contig_order.pdf', sep='_'))}
@@ -26,7 +27,7 @@ orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFre
     {
       if(orderCall == 'greedy')
       {
-        outOfOrder <- orderContigsGreedy(linkageGroupList, strandStateMatrix, strandFreqMatrix, lg, randomAttempts=1)
+        outOfOrder <- orderContigsGreedy(linkageGroupList, strandStateMatrix, strandFreqMatrix, lg, randomAttempts=50)
       }else{
         outOfOrder <- orderContigsTSP(linkageGroupList, strandStateMatrix, strandFreqMatrix[[1]], lg)
       }

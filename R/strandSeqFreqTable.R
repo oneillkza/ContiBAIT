@@ -28,10 +28,11 @@
 #' @import Rsamtools
 #' @import GenomicFiles
 #' @importFrom S4Vectors DataFrame
-#' @example inst/examples/strandSeqFreqTable.R
 #' @export
 #' @include AllClasses.R
 ####################################################################################################
+
+# example inst/examples/strandSeqFreqTable.R
 
 strandSeqFreqTable <- function(bamFileList, 
 							   fieldSep='.', 

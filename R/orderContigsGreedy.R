@@ -14,12 +14,17 @@
 ####################################################################################################
 
 
-orderContigsGreedy <- function(linkageGroup, allStrands, readTable, lg, randomAttempts=75)
+orderContigsGreedy <- function(linkageGroups, allStrands, readTable, lg, randomAttempts=75, verbose=TRUE)
 {  
   linkageGroup <- linkageGroups[[lg]]
   linkageGroupReadTable <- allStrands[linkageGroup,]
 
-  libWeight <- apply(readTable[[2]][which(rownames(readTable[[2]]) %in% rownames(allStrands)  ),] , 1, median)
+zeroGroups <- combineZeroDistContigs(linkageGroupReadTable, readTable[[1]], lg)
+libWeight <- apply(readTable[[2]][which(rownames(readTable[[2]]) %in% rownames(allStrands)  ),] , 1, median)
+
+zeroGroups[[2]]$weights <- libWeight[zeroGroups[[2]][,2]]
+linkageGroupReadTable <- zeroGroups[[1]]
+libWeight <- sapply(unique(zeroGroups[[2]][,1]), function(x) sum(zeroGroups[[2]]$weights[which(zeroGroups[[2]][,1] == x)]))
 
   for (i in 1:ncol(linkageGroupReadTable)){
     linkageGroupReadTable[,i] <- as.numeric(as.character( linkageGroupReadTable[,i]))
@@ -27,31 +32,42 @@ orderContigsGreedy <- function(linkageGroup, allStrands, readTable, lg, randomAt
 
   linkageGroupReadTable[is.na(linkageGroupReadTable)] <- 0
 
-  best_order <- list(order = 1:length(linkageGroup),score = 0)
-   temp_order <- list(order = 1:length(linkageGroup),score = 0)
+  best_order <- list(order = 1:nrow(linkageGroupReadTable),score = 0)
+  temp_order <- list(order = 1:nrow(linkageGroupReadTable),score = 0)
   best_table <- linkageGroupReadTable
-  if (!is.null(libWeight)){
-    contigWeights <- libWeight[linkageGroup]
-    contigWeights <- sort(contigWeights,decreasing = TRUE)
-    best_table <- as.matrix(linkageGroupReadTable[names(contigWeights),])
-    best_order <- .Call('orderContigsGreedy', best_table)
-  }
-  for (i in 1:randomAttempts){
-    #temp_order <- list(order = 1:length(linkageGroup),score = 0)
-    temp_table <- as.matrix(linkageGroupReadTable[sample(length(linkageGroup)),])
-    temp_order <- .Call('orderContigsGreedy', temp_table)
 
-    print(temp_order$score)
-    if ( temp_order$score > best_order$score){
-      print(temp_order$score)
-      best_order <- temp_order
-      best_table <- temp_table
+  if(nrow(linkageGroupReadTable) > 1)
+  {
+    if (!is.null(libWeight)){
+
+  #    contigWeights <- libWeight[linkageGroup]
+  #    contigWeights <- sort(contigWeights,decreasing = TRUE)
+      contigWeights <- sort(libWeight, decreasing=TRUE)
+      best_table <- as.matrix(linkageGroupReadTable[names(contigWeights),])
+      best_order <- .Call('orderContigsGreedy', best_table)
+    }
+    for (i in 1:randomAttempts){
+      #temp_order <- list(order = 1:length(linkageGroup),score = 0)
+      temp_table <- as.matrix(linkageGroupReadTable[sample(nrow(linkageGroupReadTable)),])
+      temp_order <- .Call('orderContigsGreedy', temp_table)
+
+      if ( temp_order$score > best_order$score){
+        if(verbose){message('     -> Found better ordering!')}  
+        best_order <- temp_order
+        best_table <- temp_table
+      }
     }
   }
   order <- row.names(best_table)[best_order$order]
 
-  mergedOrder <- combineZeroDistContigs(allStrands[order,], readTable[[1]], lg)
+   mergedMatrix <- zeroGroups[[1]][order,]
 
-  result <- list(order=order, mergedOrder=mergedOrder)
+  mergedGroups <- data.frame(LG=vector(), contig=vector())
+  for(gp in 1:length(order)){
+    mergedGroups <- rbind(mergedGroups, zeroGroups[[2]][which(zeroGroups[[2]] == order[gp]),1:2] )
+  }
+  mergedGroups <- new("ContigOrdering", mergedGroups)
+
+  result <- list(order=order, mergedMatrix=mergedMatrix, mergedOrder=mergedGroups)
   result
 }
