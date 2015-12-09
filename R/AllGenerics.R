@@ -105,7 +105,8 @@ setMethod("show",
 		  {
 		  	cat('A linkage group list containing ', length(object), ' linkage groups.\n\n')
 		  	show(data.frame(NumberOfContigs=head(sapply(object, length)), row.names=NULL))
-		  	show(data.frame("...           "=tail(sapply(object, length)), row.names=seq(length(object)-5, length(object) )))
+		  	if(length(object) > 5)
+           show(data.frame("...           "=tail(sapply(object, length)), row.names=seq(length(object)-5, length(object) )))
 		  }
 )
 

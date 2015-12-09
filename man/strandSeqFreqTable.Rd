@@ -42,8 +42,6 @@ strandSeqFreqTable -- function to process bam files for contiBAIT
 example.dir <- file.path(system.file(package='contiBAIT'), 'extdata')
 bam.files <- dir(example.dir, full.names=TRUE)
 
-#bam.files <- sapply(dir(file.path(system.file(package='contiBAIT'), 'extdata')), function(single.file){system.file('extdata', single.file, package='contiBAIT')})
-
 strand.freq <- strandSeqFreqTable(bam.files, pairedEnd = FALSE)
 
 show(strand.freq[[1]])
