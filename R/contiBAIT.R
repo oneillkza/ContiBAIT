@@ -86,13 +86,13 @@ runContiBAIT <- function(path=".",
   # convert the strand table to account for the reorientations
   reorientedTable <- reorientStrandTable(strandStateMatrixList[[1]], linkage.groups, reorientedGroups)
 
-  if(saveName){save(reorientedTable, file=paste(saveName, '_', cluster, 'x_reclust_reoriented.Rd', sep=""))}
+  if(saveName != FALSE){save(reorientedTable, file=paste(saveName, '_', cluster, 'x_reclust_reoriented.Rd', sep=""))}
 
   if(verbose){message('-> Merging related linkage groups [5/6]')}
   linkage.merged <- mergeLinkageGroups(linkage.groups, reorientedTable)
   linkage.merged <- linkage.merged[order(sapply(linkage.merged, length), decreasing=TRUE)]
 
-  if(saveName){save(linkage.merged, file=paste(saveName, '_', cluster, 'x_reclust_merged.Rd', sep="")  )}
+  if(saveName != FALSE){save(linkage.merged, file=paste(saveName, '_', cluster, 'x_reclust_merged.Rd', sep="")  )}
 
   if(verbose){message('-> Checking for high quality sex chromosome fragments [6/6]')}
 
