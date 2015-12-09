@@ -99,20 +99,13 @@ strandSeqFreqTable <- function(bamFileList,
 
 	strandTable <- matrix(nrow=lengthOfContigs, ncol=bamFileLength)
 	colnames(strandTable) <- sapply(bamFileList, function(x) strsplit(basename(x), paste('\\', fieldSep, sep=""))[[1]][field] )
+	colnames(strandTable) [grep("[0-9]", colnames(strandTable) )] <- paste('lib', colnames(strandTable) [grep("[0-9]", colnames(strandTable) )], sep='_')
 	rownames(strandTable) <- filter[,4]
 	countTable <- strandTable
 
 	for(fileName in bamFileList)
 	{
-		# Find the index
-		if(field != FALSE)
-		{
-			index <- strsplit(basename(fileName), paste('\\', fieldSep, sep=""))[[1]][field]
-			if(is.numeric(index)){ index <- paste('lib_', index, sep='')}
-		}else{
-			index <- fileName
-		}
-
+		index <- colnames(strandTable)[indexCounter]
 		# Make GRanges object from filter
 		grfilter <- makeGRangesFromDataFrame(filter)
 		# Read bamfile into tileChunk pieces
