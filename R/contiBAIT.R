@@ -1,148 +1,152 @@
-#library(contiBAIT)
-#path="."
-#cluster=6
-#dataNames='Dec04'
-#clusNum=2
-#verbose=TRUE
-#saveFiles=TRUE
-#filter=read.table('ferret_merged_sce_events.bed')
-runContiBAIT <- function(path=".", cluster=1, dataNames='contiBAIT', clusNum=1, verbose=TRUE, saveFiles=TRUE, readLimit=10)
+# Copyright (c) 2015, Mark Hills
+# All rights reserved.
+
+# Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+#    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+####################################################################################################
+#' runContiBAIT -- master function to process strand-seq libraries into ordered linkage groups 
+#' 
+#' @param path  String denoting location of Strand-seq bam files (default is ".")
+#' @param cluster  Integer denoting the number of reclusterings to be performed for creating linkage groups (default is 1)
+#' @param clusNum  Number of parallel processors to use when clustering contigs. Default is 1. 
+#' @param saveNames  String denoting the file name for saved data. If FALSE, no intermediate files are saved (default is FALSE)
+#' @param filter  additional file to split chromosomes based on locations. If this parameter is blank,
+#' a filter table will be automatically generated from the header of the first file in bamFileList
+#' @param baseQual Integer dictating the minimal mapping quality required for a read to be accepted. Default is 10. 
+#' @param readLimit  Minimum number of reads on a contig to make a strand call. Default is 10
+#' @param pairedEnd  Whether the bam files being read are in paired end format. Default is TRUE. Note,
+#' since paired reads will be the same direction, only first mate read of pair is used in output
+#' @param makePlots Logical determining whether plots should be created. Default is TRUE
+#' @param verbose prints messages to the terminal (default is TRUE)
+#' 
+#' @return ordered contigs in bed format. Depending on options, intermediate files and plots will also be generated
+#' @import snow
+#' @importFrom S4Vectors DataFrame
+#' @export
+#' @include AllClasses.R
+####################################################################################################
+
+
+runContiBAIT <- function(path=".", 
+                        cluster=1, 
+                        clusNum=1, 
+                        saveName=FALSE, 
+                        filter=FALSE, 
+                        readQual=10,
+                        readLimit=10, 
+                        pairedEnd=TRUE,
+                        makePlots=TRUE,
+                        verbose=TRUE)
 {
   #Create directory to store all the files
   bamFileList <- list.files(path=path, pattern=".bam$", full.names=TRUE)
 
   if(verbose){message('RUNNING CONTIBAIT ON ', length(bamFileList), ' BAM FILES!')}
 
+  if(verbose){message('-> Creating read table from bam files [1/6]')}
+  strandFrequencyList <- strandSeqFreqTable(bamFileList, filter=filter, qual=readQual, pairedEnd=pairedEnd)
 
- if(verbose){message('-> Creating read table from bam files [1/6]')}
- # animal.tab <- readStrandCountsFromBAM(path, field=1, dups=TRUE, readLimit=20, freq=TRUE, filter=filter)
- animal.tab <- strandSeqFreqTable(bamFileList, filter=filter, qual=10)
-
-  # subset data with: animal.tab[[1]][which(animal.tab[[2]] < 100)] <- NA
-  if(saveFiles){save(animal.tab, file=paste(dataNames, '_table.Rd', sep="")) }
+  # subset data with: strandFrequencyList[[1]][which(strandFrequencyList[[2]] < 100)] <- NA
+  if(saveName != FALSE){save(strandFrequencyList, file=paste(saveName, '_table.Rd', sep="")) }
   
   #subset data to only include data above readlimit
-  animal.tab[[1]][which(animal.tab[[2]] < readLimit)] <- NA 
+  strandFrequencyList[[1]][which(strandFrequencyList[[2]] < readLimit)] <- NA 
   
 
   if(verbose){message('-> Processing table and filtering data [2/6]')}
-  animal.strands <- preprocessStrandTable(animal.tab[[1]], lowQualThreshold=0.8, minLib=6)
-  if(saveFiles){save(animal.strands, file=paste(dataNames, '_strands.Rd', sep=""))}
-
-###ADD FUNCTION TO ANALYZE CONTIGS THAT ARE ALWAYS WC!
-
-###RERUN readStrandCounts but pulling out the reads (added filter option)
-#lapply(animal.strands[[6]], )
-
-###This is code to do the fused contigs stuff which you shouldn't need for this data and takes a long time, so I've commented it out:
-#totalSce <- splitFusedContigs('.', animal.strands[[6]], animal.tab[[1]])
-#animal.tab2 <- list(rbind(animal.tab[[1]], totalSce[[1]]), rbind(animal.tab[[2]], totalSce[[2]]))
-#animal.strands2 <- preprocessStrandTable(animal.tab2[[1]], lowQualThreshold=0.8)
-
-#2. Analyze reads using CNV caller across all libraries.
-#3. for events occuring within ~200kb across > 3? libraries, split ALL libraries into 2 fragments, then rerun readStrandCounts and preprocess to get new calls   
+  strandStateMatrixList <- preprocessStrandTable(strandFrequencyList[[1]], lowQualThreshold=0.8, minLib=6)
+  if(saveName != FALSE){save(strandStateMatrixList, file=paste(saveName, '_strands.Rd', sep=""))}
 
   #create weighting criteria; median of read depth 
-  filtWeight <- animal.tab[[2]][which(rownames(animal.tab[[2]]) %in% rownames(animal.strands[[1]])  ),]
+  filtWeight <- strandFrequencyList[[2]][which(rownames(strandFrequencyList[[2]]) %in% rownames(strandStateMatrixList[[1]])  ),]
   libWeight <- apply(filtWeight, 1, median)
  
+
   if(verbose){message('-> Clustering data ', cluster, 'x using ', clusNum, ' cores [3/6]')}      
-  library(snow)
   slaveNum <- makeCluster(clusNum)
-  linkage.groups <- clusterContigs(animal.strands[[2]], randomWeight=libWeight, snowCluster=slaveNum, recluster=cluster, randomise=TRUE, minimumLibraryOverlap=10, similarityCutoff=0.9)
+  linkage.groups <- clusterContigs(strandStateMatrixList[[2]], randomWeight=libWeight, snowCluster=slaveNum, recluster=cluster, randomise=TRUE, minimumLibraryOverlap=10, similarityCutoff=0.9)
   stopCluster(slaveNum)
 
   #order linkage groups by biggest first
   linkage.groups <- linkage.groups[order(sapply(linkage.groups, length), decreasing=T)]
 
-  if(saveFiles){ save(linkage.groups, file=paste(dataNames, '_LG_', cluster, 'x_reclust.Rd', sep="") ) }	
+  if(saveName != FALSE){ save(linkage.groups, file=paste(saveName, '_LG_', cluster, 'x_reclust.Rd', sep="") ) }	
 
-  #find groups that are smaller than they should be by finding the SD of linkage group size
-  #sdLinkageSize <- ceiling(sd(do.call(rbind, lapply(linkage.groups, function(x) length(x)))))
-  #failedLinks <- unlist(linkage.groups[sdLinkageSize:length(linkage.groups)])
-
-
-  #bob <- lapply(1:length(linkage.groups), function(x) gsub("_.", "", linkage.groups[[x]]))                
-  # make orientation calls for each group; WW and CC only
+   # make orientation calls for each group; WW and CC only
   if(verbose){message('-> Reorienting discordant fragments [4/6]')}
-  reorientedGroups <- reorientLinkageGroups(linkage.groups, animal.strands[[2]])
+  reorientedGroups <- reorientLinkageGroups(linkage.groups, strandStateMatrixList[[2]])
                  
   # perform reorientation of linkage groups that belong together but are misoriented with each other
   # convert the strand table to account for the reorientations
-  reorientedTable <- reorientStrandTable(animal.strands[[1]], linkage.groups, reorientedGroups)
-  colnames(reorientedTable) <-  sub("^X", "", colnames(reorientedTable))
+  reorientedTable <- reorientStrandTable(strandStateMatrixList[[1]], linkage.groups, reorientedGroups)
 
-  if(saveFiles){save(reorientedTable, file=paste(dataNames, '_reclust_reoriented.Rd', sep=""))}
+  if(saveName){save(reorientedTable, file=paste(saveName, '_', cluster, 'x_reclust_reoriented.Rd', sep=""))}
 
   if(verbose){message('-> Merging related linkage groups [5/6]')}
   linkage.merged <- mergeLinkageGroups(linkage.groups, reorientedTable)
   linkage.merged <- linkage.merged[order(sapply(linkage.merged, length), decreasing=TRUE)]
-  save(linkage.merged, file=paste(dataNames, '_', cluster, 'reclust_merged.Rd', sep="")  )
+
+  if(saveName){save(linkage.merged, file=paste(saveName, '_', cluster, 'x_reclust_merged.Rd', sep="")  )}
 
   if(verbose){message('-> Checking for high quality sex chromosome fragments [6/6]')}
-  if(nrow(animal.strands[[3]]) > 1)
+
+  if(nrow(strandStateMatrixList[[3]]) > 2)
   {
-    if(verbose){message(paste('  -> ', nrow(animal.strands[[3]]), ' found. Processing.', sep=""))}
-    filtWeightSex <- animal.tab[[2]][which(rownames(animal.tab[[2]]) %in% rownames(animal.strands[[3]])  ),]
+    if(verbose){message(paste('  -> ', nrow(strandStateMatrixList[[3]]), ' found. Processing.', sep=""))}
+    filtWeightSex <- strandFrequencyList[[2]][which(rownames(strandFrequencyList[[2]]) %in% rownames(strandStateMatrixList[[3]])  ),]
     libWeightSex <- apply(filtWeightSex, 1, median)
     # cluster the sex groups if any (should only be present in males, assuming either C or W)
     slaveNum <- makeCluster(clusNum)
-
-    linkage.groups.sex <- clusterContigs(animal.strands[[3]], randomWeight=libWeightSex, snowCluster=slaveNum, recluster=cluster, randomise=TRUE, minimumLibraryOverlap=10, similarityCutoff=0.8)
+    linkage.groups.sex <- clusterContigs(strandStateMatrixList[[3]], randomWeight=libWeightSex, snowCluster=slaveNum, recluster=cluster, randomise=TRUE, minimumLibraryOverlap=10, similarityCutoff=0.8)
     stopCluster(slaveNum)
-    reorientedGroups.sex <- reorientLinkageGroups(linkage.groups.sex, animal.strands[[3]])
-    reorientedTable.sex <- reorientStrandTable(animal.strands[[3]], linkage.groups.sex, reorientedGroups.sex)
+    reorientedGroups.sex <- reorientLinkageGroups(linkage.groups.sex, strandStateMatrixList[[3]])
+    reorientedTable.sex <- reorientStrandTable(strandStateMatrixList[[3]], linkage.groups.sex, reorientedGroups.sex)
     linkage.merged.sex <- mergeLinkageGroups(linkage.groups.sex, reorientedTable.sex)
-    save(linkage.merged.sex, file=paste(dataNames, '_', cluster, 'reclust_merged_sex.Rd', sep="")  )
+    if(saveName != FALSE){save(linkage.merged.sex, file=paste(saveName, '_', cluster, 'reclust_merged_sex.Rd', sep="")  )}
   } else {
     if(verbose){message('  -> None found')}
   }
 
-
-
-contigOrder <- orderAllLinkageGroups(linkage.merged, animal.tab, reorientedTable, saveOrderedPDF=dataNames, orderCall="greedy")
-
-
-orderAllLinkageGroups <- function(linkage.merged, animal.tab, reorientedTable, saveOrderedPDF=FALSE, verbose=TRUE)
-{
-  orderedGroups <- data.frame(LG=vector(), name=vector())
-  if(saveOrderedPDF != FALSE) {pdf(paste(saveOrderedPDF, 'contig_order.pdf', sep='_'))}
-
-  for( lg in seq(1, length(linkage.merged)))
+  if(makePlots != TRUE)
   {
-    if(verbose){message(paste('  -> Ordering fragments in LG', lg, sep=""))}
-    if(length(linkage.merged[[lg]]) > 1)
-    {
-      if(orderCall == 'greedy')
-      {
-        outOfOrder <- orderContigsGreedy(linkage.merged, animal.tab[[1]], reorientedTable, lg, randomAttempts=1)
-      }else{
-        outOfOrder <- orderContigsTSP(linkage.merged, reorientedTable, animal.tab[[1]], lg)
-      }
-      orderFrame <- outOfOrder[[3]]
-      orderedGroups <- rbind(orderedGroups, orderFrame)
-      chromosome <- strsplit(linkage.merged[[lg]][1],':')[[1]][1]
-      if(saveOrderedPDF != FALSE)
-      {
-        similarLinkageStrands <- as.matrix(1-daisy(outOfOrder[[2]]))
-        diag(similarLinkageStrands) <- 1
-        if(nrow(similarLinkageStrands) > 1)
-        {
-          breaks <- seq(0, 100, length.out=101)/100 
-          cols <- colorRampPalette(c("cyan", "blue", "grey30", "black", "grey30", "red", "orange"))
-          suppressWarnings(heatmap.2(similarLinkageStrands, Rowv=NA, Colv=NA, dendrogram="none", col=cols(100), breaks=breaks, trace='none', main=paste('greedy-ordered ', chromosome, sep="")))
-        }
-      }
+    contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable, strandFrequencyList, orderCall="greedy")
+    if(saveName != FALSE){save(contigOrder, file=paste(saveName, '_', cluster, 'reclust_ordered_LGs.Rd', sep="")  )}
+  }else{
+    if(saveName == FALSE){saveName = 'contiBAIT'}
+
+    contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable, strandFrequencyList, saveOrderedPDF=saveName, orderCall="greedy")
+    plotWCdistribution(strandMatrix, filterThreshold=0.8,  saveFile=paste(saveName, '_WC_distributions', sep=''))
+
+    png(paste(saveName, '_heatmap.png', sep=""))
+    plotLGDistances(linkage.merged, strandStateMatrixList[[1]], saveFile=paste(saveName, '_LGdistances_', cluster, 'x_clusters', sep=''))
+    graphics.off()
+
+    if(length(filter) < 3){
+      chrTable <- makeChrTable(bamFileList[1])
+    }else{
+      chrTable <- data.frame(chr=as.character(filter[,4]), length=filter[,3]-filter[,2], stringsAsFactors=F)
     }
+    makeBoxPlot(chrTable, linkage.merged, saveFile=paste(saveName, '_included_contig_boxplot', sep=''))
+
+    barplotLinkageGroupCalls(linkage.merged, chrTable, saveFile=paste(dataNames, '_barplot_LG', sep=''))
+    barplotLinkageGroupCalls(linkage.merged, chrTable, by='chr', saveFile=paste(dataNames, '_barplot_chr', sep=''))
+
   }
-  if(saveOrderedPDF != FALSE){dev.off()}
-  orderedGroups <- new("ContigOrdering", orderedGroups)
-
-  return(orderedGroups)
-}
-
 
 }
+
+ #find groups that are smaller than they should be by finding the SD of linkage group size
+  #sdLinkageSize <- ceiling(sd(do.call(rbind, lapply(linkage.groups, function(x) length(x)))))
+  #failedLinks <- unlist(linkage.groups[sdLinkageSize:length(linkage.groups)])
+
+  #bob <- lapply(1:length(linkage.groups), function(x) gsub("_.", "", linkage.groups[[x]]))                
+
 
 #unlist(sapply(seq(1, length(result[[2]])), function(x) rep(names(result[[2]][x]), length(result[[2]][[x]]) ) ))
 #orderedGroups <- data.frame(LG=vector(), name=vector())
@@ -159,7 +163,7 @@ orderAllLinkageGroups <- function(linkage.merged, animal.tab, reorientedTable, s
 
 #assemblyBED <- chrTable
 #assemblyBED$chr <- matrix(unlist(strsplit(chrTable$chr, ':')), ncol=2, byrow=T)[,1]
-#plotLGDistances(linkage.merged, animal.strands[[1]], saveFile=paste(dataNames, '_LGdistances_', cluster, 'x_clusters', sep=''))
+#plotLGDistances(linkage.merged, strandStateMatrixList[[1]], saveFile=paste(dataNames, '_LGdistances_', cluster, 'x_clusters', sep=''))
 
 #makeBoxPlot(chrTable, linkage.merged, saveFile=paste(dataNames, '_included', sep=''))
 
@@ -174,7 +178,7 @@ orderAllLinkageGroups <- function(linkage.merged, animal.tab, reorientedTable, s
 #barplotLinkageGroupCalls(linkage.merged, assemblyBED, saveFile=paste(dataNames, '_barplot_LG', sep=''))
 #barplotLinkageGroupCalls(linkage.merged, assemblyBED, by='chr', saveFile=paste(dataNames, '_barplot_chr', sep=''))
 
-#save(animal.tab, animal.strands, linkage.groups, linkage.merged, reorientedTable, filtWeight, libWeight, filtWeightSex, libWeightSex, file=paste(dataNames, '_all_data_.Rd', sep=""))
+#save(strandFrequencyList, strandStateMatrixList, linkage.groups, linkage.merged, reorientedTable, filtWeight, libWeight, filtWeightSex, libWeightSex, file=paste(dataNames, '_all_data_.Rd', sep=""))
 
 #chrTable$chr <- as.character(matrix(unlist(strsplit(chrTable$chr, ':')), ncol=2, byrow=T)[,1])
 

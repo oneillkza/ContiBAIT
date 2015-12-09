@@ -26,8 +26,11 @@ Imports:
     GenomicFiles
 Suggests:
     snow,
-    BiocStyle
+    BiocStyle,
+    knitr,
+    rmarkdown
 biocViews: CellBasedAssays, QualityControl, Alignment, WholeGenome, Genetics
+VignetteBuilder: knitr
 Collate:
     'AllClasses.R'
     'AllGenerics.R'

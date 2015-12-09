@@ -14,6 +14,8 @@
 \item{object}{LinkageGroupList}
 
 \item{allStrands}{StrandStateMatrix for all linkageGroups (usually reoriented by reorientStrandTable)}
+
+\item{saveFile}{string defining file name of plot. default is FALSE (no plot saved)}
 }
 \description{
 plotLGDistances -- plots a heatmap of the distances between linkage groups

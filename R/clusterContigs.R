@@ -126,9 +126,7 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 				linkageGroups[[as.character(label)]] <- lgContigs
 		}
 	}
-	
-  linkageGroups <- new('LinkageGroupList', linkageGroups)
-	return(linkageGroups)
+	return(new('LinkageGroupList', linkageGroups))
 }
 
 ####################################################################################################

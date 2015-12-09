@@ -12,7 +12,7 @@
 ####################################################################################################
 #' strandSeqFreqTable -- function to process bam files for contiBAIT 
 #' 
-#' @param bamFileIst  vector containing the location of the bams file to be read
+#' @param bamFileList  vector containing the location of the bams file to be read
 #' @param filed  The field of the bam file name to use as an index (default is 1)
 #' @param fieldSep  The field seperator of the bam file to use to define the field. Default is '.'
 #' @param qual  Mapping quality threshold. Default is 0
@@ -28,11 +28,11 @@
 #' @import Rsamtools
 #' @import GenomicFiles
 #' @importFrom S4Vectors DataFrame
+#' @example inst/examples/strandSeqFreqTable.R
 #' @export
 #' @include AllClasses.R
 ####################################################################################################
 
-# example inst/examples/strandSeqFreqTable.R
 
 strandSeqFreqTable <- function(bamFileList, 
 							   fieldSep='.', 
@@ -105,7 +105,7 @@ strandSeqFreqTable <- function(bamFileList,
 		colnames(strandTable) <- fileName
 	}
 
-	colnames(strandTable) [grep("[0-9]", colnames(strandTable) )] <- paste('lib', colnames(strandTable) [grep("[0-9]", colnames(strandTable) )], sep='_')
+	colnames(strandTable) [grep("^[0-9]", colnames(strandTable) )] <- paste('lib', colnames(strandTable) [grep("[0-9]", colnames(strandTable) )], sep='_')
 
 	rownames(strandTable) <- filter[,4]
 	countTable <- strandTable
