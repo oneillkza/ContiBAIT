@@ -72,10 +72,7 @@ runContiBAIT <- function(path=".",
   slaveNum <- makeCluster(clusNum)
   linkage.groups <- clusterContigs(strandStateMatrixList[[2]], randomWeight=libWeight, snowCluster=slaveNum, recluster=cluster, randomise=TRUE, minimumLibraryOverlap=10, similarityCutoff=0.9)
   stopCluster(slaveNum)
-
-  #order linkage groups by biggest first
-  linkage.groups <- linkage.groups[order(sapply(linkage.groups, length), decreasing=T)]
-
+  
   if(saveName != FALSE){ save(linkage.groups, file=paste(saveName, '_LG_', cluster, 'x_reclust.Rd', sep="") ) }	
 
    # make orientation calls for each group; WW and CC only
@@ -90,7 +87,6 @@ runContiBAIT <- function(path=".",
 
   if(verbose){message('-> Merging related linkage groups [5/6]')}
   linkage.merged <- mergeLinkageGroups(linkage.groups, reorientedTable)
-  linkage.merged <- linkage.merged[order(sapply(linkage.merged, length), decreasing=TRUE)]
 
   if(saveName != FALSE){save(linkage.merged, file=paste(saveName, '_', cluster, 'x_reclust_merged.Rd', sep="")  )}
 
