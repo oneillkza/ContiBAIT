@@ -2,7 +2,6 @@
 
 export(barplotLinkageGroupCalls)
 export(clusterContigs)
-export(combineZeroDistContigs)
 export(divideMyChr)
 export(heatPlotLinkageGroupCalls)
 export(makeChrTable)

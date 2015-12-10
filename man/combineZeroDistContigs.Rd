@@ -4,8 +4,7 @@
 \alias{combineZeroDistContigs}
 \title{Function to combine contigs that are right next to each other.}
 \usage{
-combineZeroDistContigs(linkageStrands, rawStrandTable, lg,
-  homozygousThreshold = 0.2)
+combineZeroDistContigs(linkageStrands, rawStrandTable, lg)
 }
 \arguments{
 \item{linkageStrands}{correctly oriented strandTable, but only containing the rows for this linkage group}
@@ -13,8 +12,6 @@ combineZeroDistContigs(linkageStrands, rawStrandTable, lg,
 \item{rawStrandTable}{data.frame with table of W:C read proportions}
 
 \item{lg}{integer specifying the element of linkageGroups to be used (i.e. specific linkage group to try to order)}
-
-\item{homozygousThreshold}{integer specifying the cut off to include homozygous contig calls (default is 0.1)}
 }
 \value{
 a two-member list, first=new strand table, second=list mapping new merged contigs to old

@@ -2,13 +2,11 @@
 #' @param linkageStrands correctly oriented strandTable, but only containing the rows for this linkage group
 #' @param rawStrandTable data.frame with table of W:C read proportions
 #' @param lg integer specifying the element of linkageGroups to be used (i.e. specific linkage group to try to order)
-#' @param homozygousThreshold integer specifying the cut off to include homozygous contig calls (default is 0.1)
 #' @return a two-member list, first=new strand table, second=list mapping new merged contigs to old
 #' @include AllClasses.R
 #' @importFrom cluster daisy
-#' @export
 
-combineZeroDistContigs <- function(linkageStrands, rawStrandTable, lg, homozygousThreshold=0.2)
+combineZeroDistContigs <- function(linkageStrands, rawStrandTable, lg)
 {
 	#Filter out borderline calls:
 	
@@ -18,7 +16,7 @@ combineZeroDistContigs <- function(linkageStrands, rawStrandTable, lg, homozygou
 	linkageMat <- apply(linkageMat, 2, as.numeric)
 	
 	rawStrandTable <- rawStrandTable[rownames(linkageStrands), ]
-	linkageMat[which(abs(rawStrandTable) > homozygousThreshold & abs(rawStrandTable) < (1-homozygousThreshold) ) ] <- NA
+	linkageMat[which(abs(rawStrandTable) > 0.2 & abs(rawStrandTable) < 0.1 ) ] <- NA
 	
 	linkageStrands <- data.frame(linkageMat)
 	
