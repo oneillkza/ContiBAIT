@@ -6,7 +6,7 @@
 \usage{
 runContiBAIT(path = ".", cluster = 1, clusNum = 1, saveName = FALSE,
   filter = FALSE, readQual = 10, readLimit = 10, pairedEnd = TRUE,
-  makePlots = TRUE, verbose = TRUE)
+  makePlots = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{path}{String denoting location of Strand-seq bam files (default is ".")}

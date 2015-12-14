@@ -29,4 +29,16 @@ a data.frame of ordered contigs with linkage group names
 \description{
 Function to call contig ordering algorithms iteratively across each linkage group element
 }
+\examples{
+#Get a data.frame of ordered contigs from cells from the same organism, aligned to the same genome
+ 
+data(exampleLGList)
+data(exampleWCMatrix)
+data(exampleStrandFreq)
+data(exampleReadCounts)
+contigOrder <- orderAllLinkageGroups(exampleLGList, exampleWCMatrix, exampleStrandFreq, exampleReadCounts)
+
+show(contigOrder)
+
+}
 

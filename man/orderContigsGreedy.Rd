@@ -28,4 +28,16 @@ list of two members: 1) contig names in order, 2) contigs that were combined due
 Function to order contigs within a single linkage group using a greedy algorithms
 Attempt to order contigs within
 }
+\examples{
+#Get a data.frame of ordered contigs from cells from the same organism, aligned to the same genome
+ 
+data(exampleLGList)
+data(exampleWCMatrix)
+data(exampleStrandFreq)
+data(exampleReadCounts)
+
+orderedGroup <- orderContigsGreedy(exampleLGList, exampleWCMatrix, exampleStrandFreq, exampleReadCounts, 1)
+show(orderedGroup[[3]])
+
+}
 

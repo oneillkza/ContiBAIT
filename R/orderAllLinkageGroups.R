@@ -10,6 +10,7 @@
 #' 
 #' @return a data.frame of ordered contigs with linkage group names
 #' 
+#' @example inst/examples/orderAllLinkageGroups.R
 #' @export
 #' @importFrom cluster daisy
 #' @importFrom gplots heatmap.2
@@ -23,7 +24,7 @@ orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFre
 
   for( lg in seq(1, length(linkageGroupList)))
   {
-    if(verbose){message(paste('  -> Ordering fragments in LG', lg, sep=""))}
+    if(verbose){message(paste('-> Ordering fragments in LG', lg, sep=""))}
     if(length(linkageGroupList[[lg]]) > 1)
     {
       if(orderCall == 'greedy')

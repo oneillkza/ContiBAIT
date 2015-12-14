@@ -28,6 +28,7 @@
 #' @return ordered contigs in bed format. Depending on options, intermediate files and plots will also be generated
 #' @import snow
 #' @importFrom S4Vectors DataFrame
+#' @example inst/examples/contiBAIT.R
 #' @export
 #' @include AllClasses.R
 ####################################################################################################
@@ -41,7 +42,7 @@ runContiBAIT <- function(path=".",
                         readQual=10,
                         readLimit=10, 
                         pairedEnd=TRUE,
-                        makePlots=TRUE,
+                        makePlots=FALSE,
                         verbose=TRUE)
 {
   #Create directory to store all the files
@@ -111,7 +112,7 @@ runContiBAIT <- function(path=".",
 
   if(makePlots != TRUE)
   {
-    contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable, strandFrequencyList, orderCall="greedy")
+    contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable, strandFrequencyList[[1]], strandFrequencyList[[2]], orderCall="greedy")
     if(saveName != FALSE){save(contigOrder, file=paste(saveName, '_', cluster, 'reclust_ordered_LGs.Rd', sep="")  )}
   }else{
     if(saveName == FALSE){saveName = 'contiBAIT'}
@@ -134,6 +135,8 @@ runContiBAIT <- function(path=".",
     barplotLinkageGroupCalls(linkage.merged, chrTable, by='chr', saveFile=paste(saveName, '_barplot_chr', sep=''))
 
   }
+
+  return(contigOrder)
 
 }
 
