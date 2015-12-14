@@ -48,7 +48,7 @@ combineZeroDistContigs <- function(linkageStrands, rawStrandTable, lg)
 		}
 	}
 	
-	orderedContigMatrix <- data.frame(LG=unlist(sapply(1:length(mergedContigs), function(x) rep(names(mergedContigs[x]), length(mergedContigs[[x]]) ))), contig=unlist(mergedContigs), row.names=NULL, stringsAsFactors=FALSE )
+	orderedContigMatrix <- data.frame(LG=unlist(lapply(1:length(mergedContigs), function(x) rep(names(mergedContigs[x]), length(mergedContigs[[x]]) ))), contig=unlist(mergedContigs), row.names=NULL, stringsAsFactors=FALSE )
 	orderedContigMatrix <- new("ContigOrdering", orderedContigMatrix)
 
 	mergedStrands <- data.frame(lapply(mergedStrands, function(x){factor(x, levels=c(1,2,3))}))  

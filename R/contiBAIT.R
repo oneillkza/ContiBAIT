@@ -117,10 +117,10 @@ runContiBAIT <- function(path=".",
     if(saveName == FALSE){saveName = 'contiBAIT'}
 
     contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable, strandFrequencyList, saveOrderedPDF=saveName, orderCall="greedy")
-    plotWCdistribution(strandMatrix, filterThreshold=0.8,  saveFile=paste(saveName, '_WC_distributions', sep=''))
+    plotWCdistribution(strandFrequencyList[[1]], filterThreshold=0.8,  saveFile=paste(saveName, '_WC_distributions', sep=''))
 
     png(paste(saveName, '_heatmap.png', sep=""))
-    plotLGDistances(linkage.merged, strandStateMatrixList[[1]], saveFile=paste(saveName, '_LGdistances_', cluster, 'x_clusters', sep=''))
+    plotLGDistances(linkage.merged, strandStateMatrixList[[1]])
     graphics.off()
 
     if(length(filter) < 3){
@@ -130,8 +130,8 @@ runContiBAIT <- function(path=".",
     }
     makeBoxPlot(chrTable, linkage.merged, saveFile=paste(saveName, '_included_contig_boxplot', sep=''))
 
-    barplotLinkageGroupCalls(linkage.merged, chrTable, saveFile=paste(dataNames, '_barplot_LG', sep=''))
-    barplotLinkageGroupCalls(linkage.merged, chrTable, by='chr', saveFile=paste(dataNames, '_barplot_chr', sep=''))
+    barplotLinkageGroupCalls(linkage.merged, chrTable, saveFile=paste(saveName, '_barplot_LG', sep=''))
+    barplotLinkageGroupCalls(linkage.merged, chrTable, by='chr', saveFile=paste(saveName, '_barplot_chr', sep=''))
 
   }
 

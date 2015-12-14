@@ -15,6 +15,7 @@
 #' 
 #' @export
 #' @importFrom colorspace rainbow_hcl
+#' @importFram gtools mixedsort
 ####################################################################################################
 
 barplotLinkageGroupCalls <- function(linkageGroups, assemblyBED, by='lg', returnTable=FALSE, saveFile=FALSE,  ...)
