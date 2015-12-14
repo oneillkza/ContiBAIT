@@ -10,6 +10,7 @@
 #' @param countTable table of read counts (product of strandSeqFreqTable[[2]])
 #' @param lg iterger specifying the element of linkageGroups to be used (i.e. specific linkage group to try to order)
 #' @param randomAttempts iterger specifying number of randomized clusterings to identify the best ordering. Default is 75
+#' @example inst/examples/orderContigsGreedy.R
 #' @export
 #' @return list of two members: 1) contig names in order, 2) contigs that were combined due to being zero-distance from each other
 ####################################################################################################
