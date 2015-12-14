@@ -5,14 +5,17 @@
 \title{Function to call contig ordering algorithms iteratively across each linkage group element}
 \usage{
 orderAllLinkageGroups(linkageGroupList, strandStateMatrix, strandFreqMatrix,
-  saveOrderedPDF = FALSE, orderCall = "greedy", verbose = TRUE)
+  strandReadCount, saveOrderedPDF = FALSE, orderCall = "greedy",
+  verbose = TRUE)
 }
 \arguments{
 \item{linkageGroupList}{list of vectors, each specifying which contigs belong in which linkage group (product of clusterContigs)}
 
 \item{strandStateMatrix}{table of strand calls for all contigs (product of preprocessStrandTable)}
 
-\item{strandFreqMatrix}{list with table of W:C read proportions (used for QC) and read counts (product of strandSeqFreqTable)}
+\item{strandFreqMatrix}{table of W:C read proportions (used for QC) (product of strandSeqFreqTable[[1]])}
+
+\item{strandReadCount}{table of read counts (product of strandSeqFreqTable[[2]])}
 
 \item{saveOrderedPDF}{Will return a pdf of heatmaps for each linkage group; String entered becomes the fileName (default is saveOrderedPDF=FALSE)}
 

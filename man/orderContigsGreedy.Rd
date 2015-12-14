@@ -5,7 +5,7 @@
 \title{Function to order contigs within a single linkage group using a greedy algorithms
 Attempt to order contigs within}
 \usage{
-orderContigsGreedy(linkageGroups, allStrands, readTable, lg,
+orderContigsGreedy(linkageGroups, allStrands, readTable, countTable, lg,
   randomAttempts = 75, verbose = TRUE)
 }
 \arguments{
@@ -13,7 +13,9 @@ orderContigsGreedy(linkageGroups, allStrands, readTable, lg,
 
 \item{allStrands}{table of strand calls for all contigs}
 
-\item{readTable}{list with table of W:C read proportions (used for QC) and read counts (product of strandSeqFreqTable)}
+\item{readTable}{table of W:C read proportions (used for QC) (product of strandSeqFreqTable[[1]])}
+
+\item{countTable}{table of read counts (product of strandSeqFreqTable[[2]])}
 
 \item{lg}{iterger specifying the element of linkageGroups to be used (i.e. specific linkage group to try to order)}
 

@@ -6,7 +6,8 @@
 # 
 #' @param linkageGroups list of vector of contig names for all linkage groups (product of clusterContigs)
 #' @param allStrands table of strand calls for all contigs
-#' @param readTable list with table of W:C read proportions (used for QC) and read counts (product of strandSeqFreqTable)
+#' @param readTable table of W:C read proportions (used for QC) (product of strandSeqFreqTable[[1]])
+#' @param countTable table of read counts (product of strandSeqFreqTable[[2]])
 #' @param lg iterger specifying the element of linkageGroups to be used (i.e. specific linkage group to try to order)
 #' @param randomAttempts iterger specifying number of randomized clusterings to identify the best ordering. Default is 75
 #' @export
@@ -14,17 +15,17 @@
 ####################################################################################################
 
 
-orderContigsGreedy <- function(linkageGroups, allStrands, readTable, lg, randomAttempts=75, verbose=TRUE)
+orderContigsGreedy <- function(linkageGroups, allStrands, readTable, countTable, lg, randomAttempts=75, verbose=TRUE)
 {  
   linkageGroup <- linkageGroups[[lg]]
   linkageGroupReadTable <- allStrands[linkageGroup,]
 
-zeroGroups <- combineZeroDistContigs(linkageGroupReadTable, readTable[[1]], lg)
-libWeight <- apply(readTable[[2]][which(rownames(readTable[[2]]) %in% rownames(allStrands)  ),] , 1, median)
+  zeroGroups <- combineZeroDistContigs(linkageGroupReadTable, readTable, lg)
+  libWeight <- apply(countTable[which(rownames(countTable) %in% rownames(allStrands)  ),] , 1, median)
 
-zeroGroups[[2]]$weights <- libWeight[zeroGroups[[2]][,2]]
-linkageGroupReadTable <- zeroGroups[[1]]
-libWeight <- sapply(unique(zeroGroups[[2]][,1]), function(x) sum(zeroGroups[[2]]$weights[which(zeroGroups[[2]][,1] == x)]))
+  zeroGroups[[2]]$weights <- libWeight[zeroGroups[[2]][,2]]
+  linkageGroupReadTable <- zeroGroups[[1]]
+  libWeight <- sapply(unique(zeroGroups[[2]][,1]), function(x) sum(zeroGroups[[2]]$weights[which(zeroGroups[[2]][,1] == x)]))
 
   for (i in 1:ncol(linkageGroupReadTable)){
     linkageGroupReadTable[,i] <- as.numeric(as.character( linkageGroupReadTable[,i]))

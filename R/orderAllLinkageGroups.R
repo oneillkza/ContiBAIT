@@ -2,7 +2,8 @@
 #' Function to call contig ordering algorithms iteratively across each linkage group element
 #' @param linkageGroupList list of vectors, each specifying which contigs belong in which linkage group (product of clusterContigs)
 #' @param strandStateMatrix table of strand calls for all contigs (product of preprocessStrandTable)
-#' @param strandFreqMatrix list with table of W:C read proportions (used for QC) and read counts (product of strandSeqFreqTable)
+#' @param strandFreqMatrix table of W:C read proportions (used for QC) (product of strandSeqFreqTable[[1]])
+#' @param strandReadCount table of read counts (product of strandSeqFreqTable[[2]])  
 #' @param saveOrderedPDF Will return a pdf of heatmaps for each linkage group; String entered becomes the fileName (default is saveOrderedPDF=FALSE)
 #' @param orderCall currently either 'greedy' for greedy algorithm or 'TSP' for travelling salesperson alogrithm (default is 'greedy')
 #' @param verbose Pringts messages to the terminal. Default is TRUE
@@ -15,7 +16,7 @@
 ####################################################################################################
 
 
-orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFreqMatrix, saveOrderedPDF=FALSE, orderCall='greedy', verbose=TRUE)
+orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFreqMatrix, strandReadCount, saveOrderedPDF=FALSE, orderCall='greedy', verbose=TRUE)
 {
   orderedGroups <- data.frame(LG=vector(), name=vector())
   if(saveOrderedPDF != FALSE) {pdf(paste(saveOrderedPDF, 'contig_order.pdf', sep='_'))}
@@ -27,9 +28,9 @@ orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFre
     {
       if(orderCall == 'greedy')
       {
-        outOfOrder <- orderContigsGreedy(linkageGroupList, strandStateMatrix, strandFreqMatrix, lg, randomAttempts=50)
+        outOfOrder <- orderContigsGreedy(linkageGroupList, strandStateMatrix, strandFreqMatrix, strandReadCount, lg, randomAttempts=50)
       }else{
-        outOfOrder <- orderContigsTSP(linkageGroupList, strandStateMatrix, strandFreqMatrix[[1]], lg)
+        outOfOrder <- orderContigsTSP(linkageGroupList, strandStateMatrix, strandFreqMatrix, lg)
       }
       orderFrame <- outOfOrder[[3]]
       orderedGroups <- rbind(orderedGroups, orderFrame)
