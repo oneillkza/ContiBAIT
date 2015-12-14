@@ -116,7 +116,7 @@ runContiBAIT <- function(path=".",
   }else{
     if(saveName == FALSE){saveName = 'contiBAIT'}
 
-    contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable, strandFrequencyList, saveOrderedPDF=saveName, orderCall="greedy")
+    contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable, strandFrequencyList[[1]], strandFrequencyList[[2]], saveOrderedPDF=saveName, orderCall="greedy")
     plotWCdistribution(strandFrequencyList[[1]], filterThreshold=0.8,  saveFile=paste(saveName, '_WC_distributions', sep=''))
 
     png(paste(saveName, '_heatmap.png', sep=""))
