@@ -44,16 +44,21 @@ orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFre
       {
         outOfOrder <- orderContigsGreedy(linkageGroupReadTable, randomAttempts=randomAttempts)
   
-        mergedGroups <- data.frame(LG=vector(), name=vector())
-        for(gp in 1:length(outOfOrder[[1]])){
-          mergedGroups <- rbind(mergedGroups, zeroGroups[[2]][which(zeroGroups[[2]] == outOfOrder[[1]][gp]),1:2] )
-        }
-        orderedGroups <- rbind(orderedGroups, mergedGroups)
-
-
+      }else if (orderCall == 'TSP')
+      {
+        outOfOrder <- orderContigsTSP(linkageGroupReadTable)
       }else{
-        outOfOrder <- orderContigsTSP(linkageGroupReadTable, strandStateMatrix, strandFreqMatrix, lg)
+        warning('###### WARNING! orderCall parameter not recognized! No ordering Performed. ######')
+        break
       }
+
+
+      mergedGroups <- data.frame(LG=vector(), name=vector())
+      for(gp in 1:length(outOfOrder[[1]])){
+        mergedGroups <- rbind(mergedGroups, zeroGroups[[2]][which(zeroGroups[[2]] == outOfOrder[[1]][gp]),1:2] )
+      }
+      orderedGroups <- rbind(orderedGroups, mergedGroups)
+
       orderFrame <- mergedGroups
       orderedGroups <- rbind(orderedGroups, orderFrame)
       chromosome <- strsplit(linkageGroupList[[lg]][1],':')[[1]][1]
