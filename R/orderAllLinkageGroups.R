@@ -1,12 +1,15 @@
 ####################################################################################################
 #' Function to call contig ordering algorithms iteratively across each linkage group element
+#' @useDynLib contiBAIT
 #' @param linkageGroupList list of vectors, each specifying which contigs belong in which linkage group (product of clusterContigs)
 #' @param strandStateMatrix table of strand calls for all contigs (product of preprocessStrandTable)
 #' @param strandFreqMatrix table of W:C read proportions (used for QC) (product of strandSeqFreqTable[[1]])
 #' @param strandReadCount table of read counts (product of strandSeqFreqTable[[2]])  
+#' @param whichLG vector of integers specifying the element(s) of linkageGroupList to be ordered (i.e. which specific linkage groups to try to order). Default is all LGs.
 #' @param saveOrderedPDF Will return a pdf of heatmaps for each linkage group; String entered becomes the fileName (default is saveOrderedPDF=FALSE)
 #' @param orderCall currently either 'greedy' for greedy algorithm or 'TSP' for travelling salesperson alogrithm (default is 'greedy')
 #' @param verbose Pringts messages to the terminal. Default is TRUE
+#' @param randomAttempts iterger specifying number of randomized clusterings to identify the best ordering. Default is 75
 #' 
 #' @return a data.frame of ordered contigs with linkage group names
 #' 
@@ -17,23 +20,41 @@
 ####################################################################################################
 
 
-orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFreqMatrix, strandReadCount, saveOrderedPDF=FALSE, orderCall='greedy', verbose=TRUE)
+orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFreqMatrix, strandReadCount, whichLG=NULL, saveOrderedPDF=FALSE, orderCall='greedy', randomAttempts=75, verbose=TRUE)
 {
+  if(is.null(whichLG)){whichLG=c(1:length(linkageGroupList))}
   orderedGroups <- data.frame(LG=vector(), name=vector())
   if(saveOrderedPDF != FALSE) {pdf(paste(saveOrderedPDF, 'contig_order.pdf', sep='_'))}
 
-  for( lg in seq(1, length(linkageGroupList)))
+  for(lg in whichLG)
   {
     if(verbose){message(paste('-> Ordering fragments in LG', lg, sep=""))}
     if(length(linkageGroupList[[lg]]) > 1)
     {
+
+      linkageGroup <- linkageGroupList[[lg]]
+      linkageGroupReadTable <- strandStateMatrix[linkageGroup,]
+      zeroGroups <- combineZeroDistContigs(linkageGroupReadTable, strandReadCount, lg)
+      #Make a contig Weight vector
+      zeroGroups[[2]]$weights <- apply(strandReadCount[which(rownames(strandReadCount) %in% zeroGroups[[2]]$contig ),] , 1, median)
+      #The make a LG weight by taking the sum of all contigs within that LG, and order the linkageGroupTable based on the deepest LG
+      linkageGroupReadTable <- zeroGroups[[1]][names(sort(sapply(unique(zeroGroups[[2]][,1]), function(x) sum(zeroGroups[[2]]$weights[which(zeroGroups[[2]][,1] == x)])), decreasing=TRUE)),]
+      
       if(orderCall == 'greedy')
       {
-        outOfOrder <- orderContigsGreedy(linkageGroupList, strandStateMatrix, strandFreqMatrix, strandReadCount, lg, randomAttempts=50)
+        outOfOrder <- orderContigsGreedy(linkageGroupReadTable, randomAttempts=randomAttempts)
+  
+        mergedGroups <- data.frame(LG=vector(), name=vector())
+        for(gp in 1:length(outOfOrder[[1]])){
+          mergedGroups <- rbind(mergedGroups, zeroGroups[[2]][which(zeroGroups[[2]] == outOfOrder[[1]][gp]),1:2] )
+        }
+        orderedGroups <- rbind(orderedGroups, mergedGroups)
+
+
       }else{
-        outOfOrder <- orderContigsTSP(linkageGroupList, strandStateMatrix, strandFreqMatrix, lg)
+        outOfOrder <- orderContigsTSP(linkageGroupReadTable, strandStateMatrix, strandFreqMatrix, lg)
       }
-      orderFrame <- outOfOrder[[3]]
+      orderFrame <- mergedGroups
       orderedGroups <- rbind(orderedGroups, orderFrame)
       chromosome <- strsplit(linkageGroupList[[lg]][1],':')[[1]][1]
       if(saveOrderedPDF != FALSE)
@@ -48,7 +69,7 @@ orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFre
         }
       }
     }
-  }
+  }  
   if(saveOrderedPDF != FALSE){dev.off()}
   orderedGroups <- new("ContigOrdering", orderedGroups)
 

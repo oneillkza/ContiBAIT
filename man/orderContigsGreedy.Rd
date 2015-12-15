@@ -5,39 +5,17 @@
 \title{Function to order contigs within a single linkage group using a greedy algorithms
 Attempt to order contigs within}
 \usage{
-orderContigsGreedy(linkageGroups, allStrands, readTable, countTable, lg,
-  randomAttempts = 75, verbose = TRUE)
+orderContigsGreedy(linkageGroupReadTable, randomAttempts = 75,
+  verbose = TRUE)
 }
 \arguments{
-\item{linkageGroups}{list of vector of contig names for all linkage groups (product of clusterContigs)}
-
-\item{allStrands}{table of strand calls for all contigs}
-
-\item{readTable}{table of W:C read proportions (used for QC) (product of strandSeqFreqTable[[1]])}
-
-\item{countTable}{table of read counts (product of strandSeqFreqTable[[2]])}
-
-\item{lg}{iterger specifying the element of linkageGroups to be used (i.e. specific linkage group to try to order)}
-
-\item{randomAttempts}{iterger specifying number of randomized clusterings to identify the best ordering. Default is 75}
+\item{linkageGroupReadTable}{dataframe of strand calls (product of combineZeroDists or preprocessStrandTable)}
 }
 \value{
-list of two members: 1) contig names in order, 2) contigs that were combined due to being zero-distance from each other
+list of two members: 1) contig names in order, 2) the original data.frame entered into function correctly ordered
 }
 \description{
 Function to order contigs within a single linkage group using a greedy algorithms
 Attempt to order contigs within
-}
-\examples{
-#Get a data.frame of ordered contigs from cells from the same organism, aligned to the same genome
- 
-data(exampleLGList)
-data(exampleWCMatrix)
-data(exampleStrandFreq)
-data(exampleReadCounts)
-
-orderedGroup <- orderContigsGreedy(exampleLGList, exampleWCMatrix, exampleStrandFreq, exampleReadCounts, 1)
-show(orderedGroup[[3]])
-
 }
 
