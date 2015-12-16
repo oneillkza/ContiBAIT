@@ -11,6 +11,8 @@
 
 orderContigsGreedy <- function(linkageGroupReadTable, randomAttempts=75, verbose=TRUE)
 {  
+  factorizedLinkageGroupReadTable <- linkageGroupReadTable
+
   for (i in 1:ncol(linkageGroupReadTable)){
     linkageGroupReadTable[,i] <- as.numeric(as.character( linkageGroupReadTable[,i]))
   }
@@ -35,9 +37,7 @@ orderContigsGreedy <- function(linkageGroupReadTable, randomAttempts=75, verbose
   }
 
   #order the table entered into function and convert to factor, then add factor levels.
-  linkageGroupReadTable[] <- lapply(linkageGroupReadTable[row.names(best_table)[best_order$order],], factor)
-  linkageGroupReadTable <- data.frame(lapply(linkageGroupReadTable, function(x){levels(x) <- c(1,2,3); x}) )
-  rownames(linkageGroupReadTable) <- row.names(best_table)[best_order$order]
+  linkageGroupReadTable <- factorizedLinkageGroupReadTable[row.names(best_table)[best_order$order],]
 
   return(list(orderVector=row.names(best_table)[best_order$order], orderedMatrix=linkageGroupReadTable))
 }

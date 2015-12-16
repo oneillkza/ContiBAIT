@@ -45,10 +45,11 @@ runContiBAIT <- function(path=".",
                         makePlots=FALSE,
                         verbose=TRUE)
 {
+
   #Create directory to store all the files
   bamFileList <- list.files(path=path, pattern=".bam$", full.names=TRUE)
 
-  if(verbose){message('RUNNING CONTIBAIT ON ', length(bamFileList), ' BAM FILES!')}
+  if(verbose){message('RUNNING CONTIBAIT ON ', length(bamFileList), ' BAM FILES!\n\n PARAMETERS FOR BAM ANALYSIS: \n----------------------------------\n     -> paired end data=', pairedEnd, '\n     -> mapping quality=', readQual, '\n     -> bed filter=', if(length(filter)==1){'FALSE'}else{'TRUE'}, '\n     -> minimal reads required=', readLimit, '\n\n PARAMETERS FOR CLUSTERING: \n----------------------------------\n     -> number of reclusters=', cluster, '\n     -> number of cores to use=', clusNum, '\n\n ADDITIONAL PARAMETERS:', '\n----------------------------------\n     -> saving intermediate files =', if(saveName==FALSE){'FALSE'}else{'TRUE'}, '\n     -> creating analysis plots=', makePlots, '\n----------------------------------')}
 
   if(verbose){message('-> Creating read table from bam files [1/6]')}
   strandFrequencyList <- strandSeqFreqTable(bamFileList, filter=filter, qual=readQual, pairedEnd=pairedEnd)
@@ -67,7 +68,6 @@ runContiBAIT <- function(path=".",
   #create weighting criteria; median of read depth 
   filtWeight <- strandFrequencyList[[2]][which(rownames(strandFrequencyList[[2]]) %in% rownames(strandStateMatrixList[[1]])  ),]
   libWeight <- apply(filtWeight, 1, median)
- 
 
   if(verbose){message('-> Clustering data ', cluster, 'x using ', clusNum, ' cores [3/6]')}      
   slaveNum <- makeCluster(clusNum)
@@ -112,12 +112,12 @@ runContiBAIT <- function(path=".",
 
   if(makePlots != TRUE)
   {
-    contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable, strandFrequencyList[[1]], strandFrequencyList[[2]], orderCall="greedy")
+    contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable, strandFrequencyList[[1]], strandFrequencyList[[2]])
     if(saveName != FALSE){save(contigOrder, file=paste(saveName, '_', cluster, 'reclust_ordered_LGs.Rd', sep="")  )}
   }else{
     if(saveName == FALSE){saveName = 'contiBAIT'}
 
-    contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable, strandFrequencyList[[1]], strandFrequencyList[[2]], saveOrderedPDF=saveName, orderCall="greedy")
+    contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable, strandFrequencyList[[1]], strandFrequencyList[[2]], saveOrderedPDF=saveName)
     plotWCdistribution(strandFrequencyList[[1]], filterThreshold=0.8,  saveFile=paste(saveName, '_WC_distributions', sep=''))
 
     png(paste(saveName, '_heatmap.png', sep=""))
