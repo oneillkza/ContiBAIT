@@ -119,6 +119,11 @@ strandSeqFreqTable <- function(bamFileList,
 		bf = BamFile(fileName, yieldSize=tileChunk)
 		# Count plus strand reads from first read
 		resultPos <- reduceByYield(bf, strandInfo, overlapStrand, DONE=loopedChunk, grfilter=grfilter)
+
+		if(is.list(resultPos)){
+			warning(paste('\n####################\n WARNING! BAM FILE', index, 'APPEARS TO BE SINGLE-END. TRY RERUNNING WITH pairedEnd=FALSE \n####################'))
+			break
+		}
 		# Count minus strand reads from first read
 		resultNeg <- reduceByYield(bf, strandInfo, overlapStrand, DONE=loopedChunk, grfilter=grfilter, strand=FALSE)
 		# Total read number

@@ -26,14 +26,19 @@ Under the Two-Clause BSD License, you are free to use and redistribute this soft
 
 \section{Introduction}
 Strand-seq is a method for determining template strand inheritance in single cells.
-When strand-seq is collected for many cells from the same organism, spatially close genomic regions show similar patterns of template strand inheritance.
+When strand-seq data are collected for many cells from the same organism, spatially close genomic regions show similar patterns of template strand inheritance.
 ContiBAIT allows users to leverage this property to carry out three tasks to improve draft genomes.
-Firstly, in genomes made up entirely of contigs or scaffolds not yet assigned to chromosomes, these contigs can be clustered into chromosomes.
-Secondly, in genomes wherein scaffolds have been assigned to chromosomes, but not yet placed on those chromosomes, those scaffolds can be placed in order relative to each other.
+Firstly, in assemblies made up entirely of contigs or scaffolds not yet assigned to chromosomes, these contigs can be clustered into chromosomes.
+Secondly, in assemblies wherein scaffolds have been assigned to chromosomes, but not yet placed on those chromosomes, those scaffolds can be placed in order relative to each other. Thirdly, for assemblies at the chromosome stage, where scaffolds are ordered and separated by many unbridged sequence gaps, the orientation of these sequence gaps can be found.  
+
+All three of these tasks can be run in parallel, taking contig-stage assemblies and ordering all fragments first to chromosomes, then within chromosomes while simultaneously determining the relative orientation of each fragment.
 
 %\section{Correcting misorientations within scaffolds} %coming soon
+\section{Input}
+ContiBAIT requires input in BAM format. Multiple BAM files are required for analysis, so ContiBAIT specifically calls for users to identify a BAM directory in which to analyse. BAM files should be sorted prior to analysis.
+To read in BAM files into ContiBAIT, create a strandFreqTable instance by calling strandSeqFreq 
 
-\section{Reading in strand-seq BAM files}
+<<strandSeqFreqTable.R>>
 
 \section{Assigning contigs or scaffolds to chromosomes}
 
