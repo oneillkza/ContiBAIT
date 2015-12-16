@@ -2,23 +2,17 @@
 % Please edit documentation in R/orderContigsTSP.R
 \name{orderContigsTSP}
 \alias{orderContigsTSP}
-\title{Attempt to order contigs within}
+\title{Attempt to order contigs within linkage groups using travelling salesperson algorithm}
 \usage{
 orderContigsTSP(linkageGroupReadTable)
 }
 \arguments{
-\item{linkageGroups}{list of vector of contig names for all linkage groups}
-
-\item{allStrands}{table of strand calls for all contigs}
-
-\item{readTable}{table of W:C read proportions (used for QC)}
-
-\item{lg}{iterger specifying the element of linkageGroups to be used (i.e. specific linkage group to try to order)}
+\item{linkageGroupsReadTable}{dataframe of strand calls (product of combineZeroDists or preprocessStrandTable)}
 }
 \value{
-list of two members: 1) contig names in order, 2) contigs that were combined due to being zero-distance from each other
+list of two members: 1) contig names in order, 2) the original data.frame entered into function correctly ordered
 }
 \description{
-Attempt to order contigs within
+Attempt to order contigs within linkage groups using travelling salesperson algorithm
 }
 

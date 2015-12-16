@@ -14,10 +14,12 @@
 #' @param bamFile string of location of a bam file to extract header data from
 #' @param asBed=FALSE if TRUE, a bed format table will be generated (chr, start, end)
 #' @param verbose=TRUE if FALSE, no messages appear on terminal
+#' @param asRownames Boolean. If false, rownames will not be returned, otherwise rownames will be equal to chromosome names
 #'  
 #' @details makeChrTable creates a table with chromosome name and chromosome length by extracting 
 #' header data from the supplied bam file.
 #'
+#' 
 #' @import Rsamtools
 #' @export
 #

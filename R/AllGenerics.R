@@ -160,11 +160,11 @@ setMethod("show",
 		  signature=signature(object="ChrTable"),
 		  definition=function(object)
 		  {
-		  	if(nrow(object) == 2)
+		  	if(ncol(object) == 2)
 		  	{
-			  	cat('A data.frame of', length(unique(object[,1])), ' fragments from a ', sum(chrTable[,2])/1000000, 'Mb genome.\n')
+			  	cat('A data.frame of', length(object[,1]), 'fragments from a ', sum(object[,2])/1000000, 'Mb genome.\n')
 		  	}else{
-		  		cat('A data.frame of', length(unique(object[,1])), ' fragments from a ', (sum(chrTable[,3])-sum(chrTable[,2]))/1000000, 'Mb genome.\n')
+		  		cat('A data.frame of', length(object[,1]), 'fragments from a ', (sum(object[,3])-sum(object[,2]))/1000000, 'Mb genome.\n')
 		  	}
 		  	show(head(object))
 			cat('...')

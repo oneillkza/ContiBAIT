@@ -29,6 +29,7 @@ divideMyChr <- function(chrTable, splitBy=200000)
 	smallFragTab <- data.frame(chr=chrTable[which(!(chrTable$length >= splitBy)),1], start= chrTable[which(!(chrTable$length >= splitBy)),2], end=chrTable[which(!(chrTable$length >= splitBy)),3] )
 	splitChromosomes <- rbind(splitChromosomes, smallFragTab)
 	rownames(splitChromosomes) <- paste(splitChromosomes$chr, ":", splitChromosomes$start, "-", splitChromosomes$end, sep="")
+	splitChromosomes <- new("ChrTable", splitChromosomes)
 	return(splitChromosomes)
 }
 
