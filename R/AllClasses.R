@@ -96,35 +96,6 @@ setClass("LinkageGroupList",
 		 contains='list')
 
 
-# ========================================================================
-# Data sets
-#
-# ========================================================================
-
-#' Example of strand frequencies extracted from BAMS by strandSeqFreqTable
-#'
-#' @name strandFrequencies
-#' @docType data
-# @author Kieran O'Neill \email{blahblah@@roxygen.org}
-#' @keywords data
-NULL
-
-
-#' An example StrandStateMatrix containing WW, CC and WC calls for contigs
-#'
-#' @name exampleWCMatrix
-#' @docType data
-# @author Kieran O'Neill \email{blahblah@@roxygen.org}
-#' @keywords data
-NULL
-
-#' An example StrandStateMatrix containing only WW and CC calls for contigs
-#'
-#' @name exampleWWCCMatrix
-#' @docType data
-# @author Kieran O'Neill \email{blahblah@@roxygen.org}
-#' @keywords data
-NULL
 
 # =========================================================================
 #' A class for storing contig ordering of a linkage group
@@ -140,7 +111,7 @@ NULL
 #' @rdname ContigOrdering
 
 setClass("ContigOrdering",
-         contains='data.frame')
+		 contains='data.frame')
 
 # =========================================================================
 #' A class for storing chromosome/fragment lengths
@@ -155,4 +126,52 @@ setClass("ContigOrdering",
 #' @rdname ChrTable
 
 setClass("ChrTable",
-         contains='data.frame')
+		 contains='data.frame')
+
+
+# ========================================================================
+# Data sets
+#
+# ========================================================================
+
+#' Example of strand frequencies extracted from BAMS by strandSeqFreqTable
+#'
+#' @name exampleStrandFrequencies
+#' @docType data
+#' @keywords data
+NULL
+
+#' Example of read counts extracted from BAMS by strandSeqFreqTable
+#'
+#' @name exampleReadCounts
+#' @docType data
+#' @keywords data
+NULL
+
+#' An example StrandStateMatrix containing WW, CC and WC calls for contigs
+#'
+#' @name exampleWCMatrix
+#' @docType data
+#' @keywords data
+NULL
+
+#' An example StrandStateMatrix containing only WW and CC calls for contigs
+#'
+#' @name exampleWWCCMatrix
+#' @docType data
+#' @keywords data
+NULL
+
+
+#' Example of a LinkageGroupList output from clusterContigs
+#'
+#' @name exampleLGList
+#' @docType data
+#' @keywords data
+NULL
+
+#' Example of a ChromosomeTable, containing contigs and their lengths
+#' @name exampleChrTable
+#' @docType data
+#' @keywords data
+NULL

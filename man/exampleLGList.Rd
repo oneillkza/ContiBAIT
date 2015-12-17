@@ -6,8 +6,6 @@
 \title{Example of a LinkageGroupList output from clusterContigs}
 \description{
 Example of a LinkageGroupList output from clusterContigs
-
-Example of a LinkageGroupList output from clusterContigs
 }
 \keyword{data}
 
