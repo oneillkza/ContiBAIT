@@ -23,7 +23,6 @@
 orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFreqMatrix, strandReadCount, whichLG=NULL, saveOrderedPDF=FALSE, orderCall='greedy', randomAttempts=75, verbose=TRUE)
 {
   if(is.null(whichLG)){whichLG=c(1:length(linkageGroupList))}
-  orderedGroups <- data.frame(LG=vector(), name=vector())
   if(saveOrderedPDF != FALSE) {pdf(paste(saveOrderedPDF, 'contig_order.pdf', sep='_'))}
 
   for(lg in whichLG)
@@ -53,14 +52,9 @@ orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFre
       }
 
 
-      mergedGroups <- data.frame(LG=vector(), name=vector())
-      for(gp in 1:length(outOfOrder[[1]])){
-        mergedGroups <- rbind(mergedGroups, zeroGroups[[2]][which(zeroGroups[[2]] == outOfOrder[[1]][gp]),1:2] )
-      }
-      orderedGroups <- rbind(orderedGroups, mergedGroups)
-
-      orderFrame <- mergedGroups
-      orderedGroups <- rbind(orderedGroups, orderFrame)
+      mergedGroups <- lapply(1:length(outOfOrder[[1]]), function(group){zeroGroups[[2]][which(zeroGroups[[2]] == outOfOrder[[1]][group]),1:2]})
+      orderedGroups <- do.call(rbind, mergedGroups)
+      
       chromosome <- strsplit(linkageGroupList[[lg]][1],':')[[1]][1]
       if(saveOrderedPDF != FALSE)
       {
@@ -77,10 +71,7 @@ orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFre
   }  
   if(saveOrderedPDF != FALSE){dev.off()}
   orderedGroups <- new("ContigOrdering", orderedGroups)
-  #Order output by LG then contig (in order passed in):
-  contigsByLG <- sapply(orderedGroups$LG, function(x){strsplit(x, '[.]')[[1]]})
-  orderedGroups <- orderedGroups[order(contigsByLG[1,], as.numeric(contigsByLG[2,] )),]
-  
+    
   return(orderedGroups)
 }
 
