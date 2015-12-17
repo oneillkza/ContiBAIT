@@ -136,7 +136,7 @@ setClass("ChrTable",
 
 #' Example of strand frequencies extracted from BAMS by strandSeqFreqTable
 #'
-#' @name exampleStrandFrequencies
+#' @name exampleStrandFreq
 #' @docType data
 #' @keywords data
 NULL
