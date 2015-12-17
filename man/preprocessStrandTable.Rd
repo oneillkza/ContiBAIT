@@ -33,9 +33,9 @@ preprocessStrandTable -- remove low quality libraries and contigs before attempt
 a genome
 }
 \examples{
-data(strandFrequencies)
+data(exampleStrandFreq)
 
-strandStates <- preprocessStrandTable(strandFrequencies)
+strandStates <- preprocessStrandTable(exampleStrandFreq)
 
 show(strandStates[[1]]) # WW-WC-CC matrix
 show(strandStates[[2]]) # WW-CC only matrix
