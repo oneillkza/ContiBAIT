@@ -12,7 +12,7 @@
 ####################################################################################################
 #' strandSeqFreqTable -- function to process bam files for contiBAIT 
 #' 
-#' @param bamFileIst  vector containing the location of the bams file to be read
+#' @param bamFileList  vector containing the location of the bams file to be read
 #' @param filed  The field of the bam file name to use as an index (default is 1)
 #' @param fieldSep  The field seperator of the bam file to use to define the field. Default is '.'
 #' @param qual  Mapping quality threshold. Default is 0
@@ -32,6 +32,7 @@
 #' @export
 #' @include AllClasses.R
 ####################################################################################################
+
 
 strandSeqFreqTable <- function(bamFileList, 
 							   fieldSep='.', 
@@ -97,21 +98,32 @@ strandSeqFreqTable <- function(bamFileList,
 	}
 
 	strandTable <- matrix(nrow=lengthOfContigs, ncol=bamFileLength)
-	colnames(strandTable) <- sapply(bamFileList, function(x) strsplit(basename(x), paste('\\', fieldSep, sep=""))[[1]][field] )
+	if(field != FALSE)
+	{
+		colnames(strandTable) <- sapply(bamFileList, function(x) strsplit(basename(x), paste('\\', fieldSep, sep=""))[[1]][field] )
+	}else{
+		colnames(strandTable) <- bamFileList 
+	}
+
+	colnames(strandTable) [grep("^[0-9]", colnames(strandTable) )] <- paste('lib', colnames(strandTable) [grep("[0-9]", colnames(strandTable) )], sep='_')
+
 	rownames(strandTable) <- filter[,4]
 	countTable <- strandTable
 
 	for(fileName in bamFileList)
 	{
-		# Find the index
-		index <- strsplit(basename(fileName), paste('\\', fieldSep, sep=""))[[1]][field]
-
+		index <- colnames(strandTable)[indexCounter]
 		# Make GRanges object from filter
 		grfilter <- makeGRangesFromDataFrame(filter)
 		# Read bamfile into tileChunk pieces
 		bf = BamFile(fileName, yieldSize=tileChunk)
 		# Count plus strand reads from first read
 		resultPos <- reduceByYield(bf, strandInfo, overlapStrand, DONE=loopedChunk, grfilter=grfilter)
+
+		if(is.list(resultPos)){
+			warning(paste('\n####################\n WARNING! BAM FILE', index, 'APPEARS TO BE SINGLE-END. TRY RERUNNING WITH pairedEnd=FALSE \n####################'))
+			break
+		}
 		# Count minus strand reads from first read
 		resultNeg <- reduceByYield(bf, strandInfo, overlapStrand, DONE=loopedChunk, grfilter=grfilter, strand=FALSE)
 		# Total read number

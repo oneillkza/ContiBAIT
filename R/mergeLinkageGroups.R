@@ -41,7 +41,9 @@ mergeLinkageGroups.func <- function(object, allStrands, similarityCutoff=0.7)
     }
   }	
   
-  return(newGroups)
+  newGroups <- newGroups[order(sapply(newGroups, length), decreasing=TRUE)]
+
+  return(new('LinkageGroupList',newGroups))
   
   
   

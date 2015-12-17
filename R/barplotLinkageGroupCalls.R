@@ -15,6 +15,7 @@
 #' 
 #' @export
 #' @importFrom colorspace rainbow_hcl
+#' @importFrom gtools mixedsort
 ####################################################################################################
 
 barplotLinkageGroupCalls <- function(linkageGroups, assemblyBED, by='lg', returnTable=FALSE, saveFile=FALSE,  ...)
@@ -26,18 +27,13 @@ barplotLinkageGroupCalls <- function(linkageGroups, assemblyBED, by='lg', return
 	# If using chromosome notation, order by chromosome
 	if( length(grep('chr', complete.list)) == length(complete.list) )
 	{ 
-		complete.list <- complete.list[order(as.numeric(substring(complete.list,4)))]
+		#if name in format chr:start-end, then find location of colon in string
+		locationOfColon <- sapply(lapply(strsplit(complete.list, ''), function(x) which(x == ':')), "[[", 1)-1
+		complete.list <- complete.list[order(as.numeric(substring(complete.list,4, locationOfColon)))]
 	}
 
 	chr.table <- computeBarPlotMatrix(linkageGroups, assemblyBED)
-
-#	if( length(grep('chr', rownames(chr.table))) == length(rownames(chr.table)) )
-#	{ 
-#		orderWithoutChr <- function(x) {x[order(as.numeric(substring(rownames(x),4))),]}
-#		chr.table <- orderWithoutChr(chr.table)
-#	}else{
-		chr.table <- chr.table[mixedsort(rownames(chr.table)),]
-#	}
+	chr.table <- chr.table[mixedsort(rownames(chr.table)),]
 
 	roundUpNice <- function(x, nice=c(1,2,3,4,5,6,7,8,9,10)) 
 	{

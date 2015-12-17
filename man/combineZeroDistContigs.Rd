@@ -8,6 +8,10 @@ combineZeroDistContigs(linkageStrands, rawStrandTable, lg)
 }
 \arguments{
 \item{linkageStrands}{correctly oriented strandTable, but only containing the rows for this linkage group}
+
+\item{rawStrandTable}{data.frame with table of W:C read proportions}
+
+\item{lg}{integer specifying the element of linkageGroups to be used (i.e. specific linkage group to try to order)}
 }
 \value{
 a two-member list, first=new strand table, second=list mapping new merged contigs to old

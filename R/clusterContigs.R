@@ -76,7 +76,7 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 			}
 		}
 		linkageGroups <- lapply(linkageGroups, function(lg){names(randomOrder)[lg]})
-		
+
 		return(new('LinkageGroupList',linkageGroups))
 	}	
 	
@@ -126,9 +126,11 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 				linkageGroups[[as.character(label)]] <- lgContigs
 		}
 	}
-	
-  linkageGroups <- new('LinkageGroupList', linkageGroups)
-	return(linkageGroups)
+
+	#order linkage groups by biggest first
+  	linkageGroups <- linkageGroups[order(sapply(linkageGroups, length), decreasing=T)]
+
+	return(new('LinkageGroupList', linkageGroups))
 }
 
 ####################################################################################################

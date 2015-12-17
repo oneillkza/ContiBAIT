@@ -9,6 +9,8 @@ strandSeqFreqTable(bamFileList, fieldSep = ".", field = 1, qual = 0,
   pairedEnd = TRUE)
 }
 \arguments{
+\item{bamFileList}{vector containing the location of the bams file to be read}
+
 \item{fieldSep}{The field seperator of the bam file to use to define the field. Default is '.'}
 
 \item{qual}{Mapping quality threshold. Default is 0}
@@ -24,8 +26,6 @@ a filter table will be automatically generated from the header of the first file
 
 \item{pairedEnd}{Whether the bam files being read are in paired end format. Default is TRUE. Note,
 since paired reads will be the same direction, only first mate read of pair is used in output}
-
-\item{bamFileIst}{vector containing the location of the bams file to be read}
 
 \item{filed}{The field of the bam file name to use as an index (default is 1)}
 }

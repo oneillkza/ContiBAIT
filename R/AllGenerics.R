@@ -106,7 +106,8 @@ setMethod("show",
 		  	cat('A linkage group list containing ', length(object), ' linkage groups.\n\n')
 		  	show(data.frame(NumberOfContigs=head(sapply(object, length)), row.names=NULL))
 		  	if(length(object) > 5)
-           show(data.frame("...           "=tail(sapply(object, length)), row.names=seq(length(object)-5, length(object) )))
+            show(data.frame("...           "=tail(sapply(object, length)), row.names=seq(length(object)-5, length(object) )))
+
 		  }
 )
 
@@ -135,10 +136,38 @@ setMethod("show",
 		  signature=signature(object="ContigOrdering"),
 		  definition=function(object)
 		  {
-		  	cat('A data.frame of', length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object$LG), "\\.")[[x]][1]))), 'LGs split into', length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object$LG), "\\.")[[x]][2]))), 'sub-groups from', nrow(object), 'ordered fragments.\n')
-		  	show(head(table(object[,1])))
-		  	cat('...')
-		  	show(tail(table(object[,1])))
 
+		  	cat('A data.frame of', length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object$LG), "\\.")[[x]][1]))), 'LGs split into', length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object$LG), "\\.")[[x]][2]))), 'sub-groups from', nrow(object), 'ordered fragments.\n')
+		  	if(length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object$LG), "\\.")[[x]][2]))) > 25)
+		  	{
+			  	show(head(table(object[,1])))
+			  	cat('...')
+			  	show(tail(table(object[,1])))
+		  	}else{
+		  		show(table(object[,1]))
+		  	}
+		  }
+)
+
+
+## show ChrTable
+#' @name show,ChrTable-method
+#' @export
+#' @docType methods
+#' @title show-methods
+#' @param object a ChrTable
+setMethod("show",
+		  signature=signature(object="ChrTable"),
+		  definition=function(object)
+		  {
+		  	if(ncol(object) == 2)
+		  	{
+			  	cat('A data.frame of', length(object[,1]), 'fragments from a ', sum(object[,2])/1000000, 'Mb genome.\n')
+		  	}else{
+		  		cat('A data.frame of', length(object[,1]), 'fragments from a ', (sum(object[,3])-sum(object[,2]))/1000000, 'Mb genome.\n')
+		  	}
+		  	show(head(object))
+			cat('...')
+			show(tail(object))
 		  }
 )

@@ -14,10 +14,12 @@
 #' @param bamFile string of location of a bam file to extract header data from
 #' @param asBed=FALSE if TRUE, a bed format table will be generated (chr, start, end)
 #' @param verbose=TRUE if FALSE, no messages appear on terminal
+#' @param asRownames Boolean. If false, rownames will not be returned, otherwise rownames will be equal to chromosome names
 #'  
 #' @details makeChrTable creates a table with chromosome name and chromosome length by extracting 
 #' header data from the supplied bam file.
 #'
+#' 
 #' @import Rsamtools
 #' @export
 #
@@ -27,6 +29,7 @@
 #function to create a chromosome table (chromosome, length) from a user-input bam file.
 makeChrTable <- function(bamFile, verbose=TRUE, asBed=FALSE, asRownames=TRUE)
 {
+	options(scipen=20)
 	if(verbose){message(paste("-> Creating chromosome table from", bamFile, sep=""))}
 	lengthOfContigs <- scanBamHeader(bamFile)[[1]][["text"]]
 	#bamTable <-  as.data.frame(as.character(unlist(lengthOfContigs[which(grepl("\\<SN:", lengthOfContigs))])))
@@ -43,6 +46,9 @@ makeChrTable <- function(bamFile, verbose=TRUE, asBed=FALSE, asRownames=TRUE)
 		chrTable$length <-  as.numeric(gsub("LN:", "", chrTable$length))
 	}
 	chrTable$chr <- gsub("SN:", "", as.character(chrTable$chr))
-	if(asRownames){rownames(chrTable) <- chrTable[,1] }
+	if(asRownames){rownames(chrTable) <- chrTable[,1] }  
+
+	chrTable <- new("ChrTable", chrTable)
+
 	return(chrTable)
 }
