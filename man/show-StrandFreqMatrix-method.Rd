@@ -10,4 +10,7 @@
 \arguments{
 \item{object}{a StrandFreqMatrix}
 }
+\description{
+Shows a StrandFreqMatrix
+}
 

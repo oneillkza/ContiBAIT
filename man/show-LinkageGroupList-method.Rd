@@ -10,4 +10,7 @@
 \arguments{
 \item{object}{a LinkageGrouplist}
 }
+\description{
+Shows a LinkageGroupList
+}
 

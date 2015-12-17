@@ -10,4 +10,7 @@
 \arguments{
 \item{object}{a StrandStateMatrix}
 }
+\description{
+Shows a StrandStateMatrix
+}
 

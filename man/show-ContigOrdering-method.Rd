@@ -10,4 +10,7 @@
 \arguments{
 \item{object}{a ContigOrdering}
 }
+\description{
+Shows a ContigOrdering
+}
 

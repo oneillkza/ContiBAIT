@@ -10,4 +10,7 @@
 \arguments{
 \item{object}{a ChrTable}
 }
+\description{
+Shows a ChrTable
+}
 

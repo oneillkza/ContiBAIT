@@ -10,4 +10,7 @@
 \arguments{
 \item{object}{a StrandReadMatrix}
 }
+\description{
+Shows a StrandReadMatrix
+}
 
