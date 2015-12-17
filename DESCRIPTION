@@ -23,9 +23,11 @@ Imports:
     S4Vectors,
     Rcpp,
     TSP,
-    GenomicFiles
+    GenomicFiles,
+    gtools,
+    rtracklayer,
+    snow
 Suggests:
-    snow,
     BiocStyle,
     knitr,
     rmarkdown
@@ -60,4 +62,4 @@ Collate:
     'reorientStrandTable.R'
     'strandSeqFreqTable.R'
     'writeBed.R'
-RoxygenNote: 5.0.0
+RoxygenNote: 5.0.1
