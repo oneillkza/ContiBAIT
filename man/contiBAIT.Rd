@@ -43,7 +43,7 @@ contiBAIT -- master function to process strand-seq libraries into ordered linkag
 
 example.dir <- file.path(system.file(package='contiBAIT'), 'extdata')
 
-orderedContigs <- contiBAIT(path=example.dir, pairedEnd=F) 
+orderedContigs <- contiBAIT(path=example.dir, pairedEnd=FALSE) 
 
 show(orderedContigs)
 }
