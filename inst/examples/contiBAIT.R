@@ -3,6 +3,6 @@
 
 example.dir <- file.path(system.file(package='contiBAIT'), 'extdata')
 
-orderedContigs <- runContiBAIT(path=example.dir, pairedEnd=F) 
+orderedContigs <- contiBAIT(path=example.dir, pairedEnd=F) 
 
 show(orderedContigs)

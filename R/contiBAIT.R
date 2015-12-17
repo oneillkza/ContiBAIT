@@ -10,7 +10,7 @@
 
 
 ####################################################################################################
-#' runContiBAIT -- master function to process strand-seq libraries into ordered linkage groups 
+#' contiBAIT -- master function to process strand-seq libraries into ordered linkage groups 
 #' 
 #' @param path  String denoting location of Strand-seq bam files (default is ".")
 #' @param cluster  Integer denoting the number of reclusterings to be performed for creating linkage groups (default is 1)
@@ -34,7 +34,7 @@
 ####################################################################################################
 
 
-runContiBAIT <- function(path=".", 
+contiBAIT <- function(path=".", 
                         cluster=1, 
                         clusNum=1, 
                         saveName=FALSE, 
@@ -127,7 +127,7 @@ runContiBAIT <- function(path=".",
     if(length(filter) < 3){
       chrTable <- makeChrTable(bamFileList[1])
     }else{
-      chrTable <- data.frame(chr=as.character(filter[,4]), length=filter[,3]-filter[,2], stringsAsFactors=F)
+      chrTable <- data.frame(chr=as.character(filter[,4]), length=filter[,3]-filter[,2], stringsAsFactors=FALSE)
     }
     makeBoxPlot(chrTable, linkage.merged, saveFile=paste(saveName, '_included_contig_boxplot', sep=''))
 
