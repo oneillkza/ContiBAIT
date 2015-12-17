@@ -49,6 +49,7 @@ setGeneric("plotLGDistances",
 #' @docType methods
 #' @title show-methods
 #' @param object a StrandStateMatrix
+#' @description Shows a StrandStateMatrix
 setMethod("show",
 		  signature=signature(object="StrandStateMatrix"),
 		  definition=function(object)
@@ -66,6 +67,7 @@ setMethod("show",
 #' @docType methods
 #' @title show-methods
 #' @param object a StrandFreqMatrix
+#' @description Shows a StrandFreqMatrix
 setMethod("show",
 		  signature=signature(object="StrandFreqMatrix"),
 		  definition=function(object)
@@ -82,6 +84,7 @@ setMethod("show",
 #' @docType methods
 #' @title show-methods
 #' @param object a StrandReadMatrix
+#' @description Shows a StrandReadMatrix
 setMethod("show",
 		  signature=signature(object="StrandReadMatrix"),
 		  definition=function(object)
@@ -99,6 +102,7 @@ setMethod("show",
 #' @docType methods
 #' @title show-methods
 #' @param object a LinkageGrouplist
+#' @description Shows a LinkageGroupList
 setMethod("show",
 		  signature=signature(object="LinkageGroupList"),
 		  definition=function(object)
@@ -117,6 +121,7 @@ setMethod("show",
 #' @docType methods
 #' @title show-methods
 #' @param object a RawReadStrands
+#' @description Shows a RawReadStrands
 setMethod("show",
 		  signature=signature(object="RawReadStrands"),
 		  definition=function(object)
@@ -132,6 +137,7 @@ setMethod("show",
 #' @docType methods
 #' @title show-methods
 #' @param object a ContigOrdering
+#' @description Shows a ContigOrdering
 setMethod("show",
 		  signature=signature(object="ContigOrdering"),
 		  definition=function(object)
@@ -156,6 +162,7 @@ setMethod("show",
 #' @docType methods
 #' @title show-methods
 #' @param object a ChrTable
+#' @description Shows a ChrTable
 setMethod("show",
 		  signature=signature(object="ChrTable"),
 		  definition=function(object)
