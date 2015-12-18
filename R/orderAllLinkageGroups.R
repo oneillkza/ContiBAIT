@@ -78,8 +78,8 @@ orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFre
   if(saveOrderedPDF != FALSE){dev.off()}
   orderedGroups <- new("ContigOrdering", orderedGroups)
   #Order output by LG then contig (in order passed in):
-  contigsByLG <- sapply(orderedGroups$LG, function(x){strsplit(x, '[.]')[[1]]})
-  orderedGroups <- orderedGroups[order(contigsByLG[1,], as.numeric(contigsByLG[2,] )),]
+#  contigsByLG <- sapply(orderedGroups$LG, function(x){strsplit(x, '[.]')[[1]]})
+#  orderedGroups <- orderedGroups[order(contigsByLG[1,], as.numeric(contigsByLG[2,] )),]
   
   return(orderedGroups)
 }

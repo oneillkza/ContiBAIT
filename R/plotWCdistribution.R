@@ -31,8 +31,8 @@ plotWCdistribution <- function(strandMatrix, filterThreshold=0.8, saveFile=FALSE
 	bob <- apply(matrixHistogram[,which(abs(as.numeric(colnames(matrixHistogram))) >= filterThreshold)], 2, median)
 	lines(c(1,length(bob[which(as.numeric(names(bob)) >= filterThreshold)])), c(sum(bob[which(as.numeric(names(bob)) <= filterThreshold)]),sum(bob[which(as.numeric(names(bob)) <= filterThreshold)])), col='green4', lwd=2)
 	lines(c(41-length(bob[which(as.numeric(names(bob)) >= filterThreshold)]), 40), c(sum(bob[which(as.numeric(names(bob)) >= filterThreshold)]),sum(bob[which(as.numeric(names(bob)) >= filterThreshold)])), col='green4', lwd=2)
-	text(5, sum(bob[which(as.numeric(names(bob)) <= filterThreshold)]), pos=3, 'Av. WW contigs', cex=0.7, col='green4')
-	text(36, sum(bob[which(as.numeric(names(bob)) >= filterThreshold)]), pos=3, 'Av. CC contigs', cex=0.7, col='green4')
+	text(5, sum(bob[which(as.numeric(names(bob)) <= filterThreshold)]), pos=3, 'Av. CC contigs', cex=0.7, col='green4')
+	text(36, sum(bob[which(as.numeric(names(bob)) >= filterThreshold)]), pos=3, 'Av. WW contigs', cex=0.7, col='green4')
 	if(saveFile != FALSE){dev.off()}
 
 }

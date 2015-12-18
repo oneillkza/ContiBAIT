@@ -36,34 +36,90 @@ All three of these tasks can be run in parallel, taking contig-stage assemblies 
 %\section{Correcting misorientations within scaffolds} %coming soon
 \section{Input}
 ContiBAIT requires input in BAM format. Multiple BAM files are required for analysis, so ContiBAIT specifically calls for users to identify a BAM directory in which to analyse. BAM files should be sorted prior to analysis.
-To read in BAM files into ContiBAIT, create a strandFreqTable instance by calling strandSeqFreq 
+To read in BAM files into ContiBAIT, create a strandFreqTable instance by calling strandSeqFreqTable() 
 
-<<strandSeqFreqTable.R>>
-
-\section{Assigning contigs or scaffolds to chromosomes}
-
-<<examplea, fig=TRUE>>=
-#Loading
+<<strandSeqFreqTableExamplea, fig=FALSE>>=
+# Read in BAM files. Path denotes location of the BAM files.
+# Returns a vector of file locations
 library(contiBAIT)
+bamFileList <- list.files(
+path=file.path(system.file(package='contiBAIT'), 'extdata'),
+pattern=".bam$",
+full.names=TRUE)
 
-plot(hist(rnorm(1000)))
+# Create a strandFreqTable instance by calling strandSeqFreqTable  
+strandFrequencyList <- strandSeqFreqTable(bamFileList, qual=10, pairedEnd=FALSE)
+@
+
+This returns a list of two data.frames.  The first data.frame consists of a strand state frequency, calculated by taking the number of Watson (- strand) reads, subtracting the number of Crick (+ strand) reads, and dividing by the total number of reads.  These values range from -1 (entirely Watson reads) through to 1 (entirely Crick reads).  The second data.frame consists of the absolute number of reads covering the contig. This is used in thresholding the data, and in weighting the accuracy of calls in subsequent orderings.
+
+<<strandSeqFreqTableExampleb, fig=FALSE>>=
+# Returned list consisting of two data.frames
+strandFrequencyList
+
+# Exclude strand state frequencies calculated from contigs with less than 10 reads
+
+exampleStrandFreq <- strandFrequencyList[[1]]
+exampleReadCounts <- strandFrequencyList[[2]]
+exampleStrandFreq[which(exampleReadCounts < 10)] <- NA 
+@
+
+Additional information can be found on the help page for strandSeqFreqTable including all parameters.
+
+The quality of the libraries, specifically whether the files being analysed appear to show the expected distributions of directional reads, can be assessed with plotWCdistributions.  In a diploid organism, there is an expectation that chromosomes will be derived from either two Watson homologues, one Watson and one Crick homologue, or two Crick homologues in a Mendelian 1:2:1 ratio.  In Strand-seq data, this will mean about 1/4 of the contigs will only have Watson reads mapping to them, and have a strand state frequency of -1, 1/4 of the contigs will only have Crick reads mapping to them, and have a strand state frequency of +1, and 1/2 of the contigs will have an approximately even mix of Watson and Crick reads (based on a binomial distribution of sampling).  plotWCDistribution generates boxplots for different strand state frequencies and models the expected distribution (blue line). The average called WW or CC contigs are shown in green, and should match closely with the expected distribution line.
+
+<<strandSeqFreqTableExamplec, fig=TRUE>>=
+
+# Assess the quality of the libraries being analysed
+plotWCdistribution(exampleStrandFreq, filterThreshold=0.8)
+@
+
+\section{Creating a strand state matrix}
+
+The returned list of strandSeqFreqTable can be converted to a strand state matrix that makes a contig-wide call on the overall strand state based on the frequencies of Watson and Crick reads. 
+
+<<preprocessStrandTableExamplea, fig=FALSE>>=
+#Convert strand frequencies to strand calls.
+
+exampleStrandStateMatrix <- preprocessStrandTable(exampleStrandFreq)
+exampleStrandStateMatrix[[1]]
+@
+
+\section{Clustering contigs \textit{into} chromosomes}
+
+TALK ABOUT clusterContigs
+
+<<clusterContigsExamplea, fig=FALSE>>=
+exampleWWCCMatrix <- exampleStrandStateMatrix[[1]]
+exampleWCMatrix <- exampleStrandStateMatrix[[2]]
+
+clusteredContigs <- clusterContigs(exampleWWCCMatrix)
+
+LGOrientations <- reorientLinkageGroups(clusteredContigs, exampleWWCCMatrix)
+reorientedMatrix <- reorientStrandTable(exampleWCMatrix, linkageGroups = clusteredContigs, orientation = LGOrientations)
+exampleLGList <- mergeLinkageGroups(clusteredContigs,reorientedMatrix)
+
+exampleLGList
+exampleLGList[[1]]
 @
 
 
-\section{Ordering contigs or scaffolds within chromosomes}
-First we load our artificial murine chromosome data. Some words about the meaning of linkage.group, animal.tab, and reorientedTable or whatever it's called.
-<<exampleb, fig=FALSE>>=
-#   data(contigOrderingExample)
-#   reorientedTable <-  vignetteTestData[[1]]
-#   animal.tab <- vignetteTestData[[2]][[1]]
-#   linkage.group <- vignetteTestData[[3]][[1]]
-#   set.seed(666)
+SHOW HOW THIS PLOTS
+
+<<clusterContigsExampleb, fig=TRUE>>=
+plotLGDistances(exampleLGList, exampleWWCCMatrix)
+
 @
-Next we sort the artificial mouse contigs using contiBAIT.
-<<examplec, fig=FALSE>>=
-  ordering <- 'ordering'
+
+\section{Ordering contigs \textit{within} chromosomes}
+
+greedy vs TSP
+
+<<clusterContigsExampleb, fig=TRUE>>=
+plotLGDistances(exampleLGList, exampleWWCCMatrix)
+
 @
-The resulting ordering can then be plotted.
+
 
 \section{Writing out to a BED file}
 This file can be passed to bedtools along with the original (draft) reference genome to create a new FASTA file containing the assembled genome.
