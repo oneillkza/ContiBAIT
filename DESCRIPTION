@@ -3,8 +3,8 @@ Type: Package
 Title: Improves early build genome assemblies using strand-seq data
 Version: 0.99.0
 Date: 2013-10-21
-Author: Kieran O'Neill, Mark Hills
-Maintainer: Who to complain to <yourfault@somewhere.net>
+Author: Kieran O'Neill, Mark Hills, Mike Gottlieb
+Maintainer: koneill@bccrc.ca
 Description: Using strand inheritance data from multiple single cells from the
     organism whose genome is to be assembled, contiBAIT can cluster unbridged
     contigs together into putative chromosomes, and order the contigs within
@@ -32,7 +32,7 @@ Suggests:
     BiocStyle,
     knitr,
     rmarkdown
-biocViews: CellBasedAssays, QualityControl, Alignment, WholeGenome, Genetics
+biocViews: CellBasedAssays, QualityControl, WholeGenome, Genetics, GenomeAssembly
 VignetteBuilder: knitr
 Collate:
     'AllClasses.R'
