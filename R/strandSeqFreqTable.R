@@ -87,7 +87,7 @@ strandSeqFreqTable <- function(bamFileList,
 	if(verbose){message(paste("-> Counting number of fragments", sep=""))}
 	if(length(filter) == 1)
 	{
-		filter <- makeChrTable(bamFileList[1], asBed=T)
+		filter <- makeChrTable(bamFileList[1], asBed=TRUE)
 		filter$name <- filter$chr
 		lengthOfContigs <- nrow(filter)
 		if(verbose){message(paste("-> ", lengthOfContigs," fragments found", sep=""))}

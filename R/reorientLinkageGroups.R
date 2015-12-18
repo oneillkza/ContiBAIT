@@ -32,7 +32,7 @@ reorientLinkageGroups <- function(linkageGroups, allStrands, dissimilarityCutoff
 		
 		#Figure out which LGs need reorientation, and score them, then pick one:
 		groupNeedsInversion <- apply(sim, 1, function(x){any(x < (dissimilarityCutoff))})
-		groupScores <- apply(sim, 1, sum, na.rm=T) / nrow(sim)
+		groupScores <- apply(sim, 1, sum, na.rm=TRUE) / nrow(sim)
 		toInvert <- names(which.min(groupScores[which(groupNeedsInversion)]))[1]
 		
 		#Invert LG and record:

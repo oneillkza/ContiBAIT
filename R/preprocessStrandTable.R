@@ -133,7 +133,7 @@ if(ignoreInternalQual == FALSE)
 		
 		contigAgreement <- sapply(rownames(strandTable), computeOneAgreement)
 		contigQA <- contigAgreement * contigNAs #compute a compound QA measure
-		strandTable <- strandTable[names(sort(contigQA, decreasing=T)),] # and sort
+		strandTable <- strandTable[names(sort(contigQA, decreasing=TRUE)),] # and sort
 	}
 		
 	# Convert NaNs to NAs

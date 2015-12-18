@@ -66,7 +66,7 @@ barplotLinkageGroupCalls <- function(linkageGroups, assemblyBED, by='lg', return
 		if(saveFile != FALSE){pdf(paste(saveFile, '_barplot_chr.pdf', sep=""))}
 		barplot(t(chr.table), col=linkage.cols, names.arg=rownames(chr.table), xlab='Chromosome', ylab='Length in Mb', ylim=c(0,maxX), ...) 
 		if(saveFile != FALSE){
-			pie(rep(1,ncol(chr.table)), labels=colnames(chr.table), col=linkage.cols, clockwise=T)
+			pie(rep(1,ncol(chr.table)), labels=colnames(chr.table), col=linkage.cols, clockwise=TRUE)
 			dev.off()
 		}
 
