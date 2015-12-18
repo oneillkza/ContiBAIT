@@ -20,6 +20,7 @@ Imports:
     colorspace,
     gplots,
     IRanges,
+    GRanges,
     S4Vectors,
     Rcpp,
     TSP,
@@ -44,7 +45,6 @@ Collate:
     'computeQCMatrix.R'
     'computeSim.R'
     'contiBAIT.R'
-    'countDirectionReads.R'
     'divideMyChr.R'
     'heatPlotLinkageGroupCalls.R'
     'makeBoxPlot.R'
