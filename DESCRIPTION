@@ -20,7 +20,7 @@ Imports:
     colorspace,
     gplots,
     IRanges,
-    GRanges,
+    GenomicRanges,
     S4Vectors,
     Rcpp,
     TSP,

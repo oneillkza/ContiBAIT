@@ -4,7 +4,7 @@
 #' @param contigOrder a contig ordering
 #' @param libWeight average quality across all libraries for a contig
 #' @importFrom rtracklayer export.bed
-#' @import GRanges
+#' @import GenomicRanges
 #' @return void; BED file written to working directory names by fileName, chromosome and state.
 #' 
 #' @export
