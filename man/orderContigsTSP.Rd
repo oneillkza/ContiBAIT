@@ -7,7 +7,7 @@
 orderContigsTSP(linkageGroupReadTable)
 }
 \arguments{
-\item{linkageGroupsReadTable}{dataframe of strand calls (product of combineZeroDists or preprocessStrandTable)}
+\item{linkageGroupReadTable}{dataframe of strand calls (product of combineZeroDists or preprocessStrandTable)}
 }
 \value{
 list of two members: 1) contig names in order, 2) the original data.frame entered into function correctly ordered

@@ -10,6 +10,10 @@ orderContigsGreedy(linkageGroupReadTable, randomAttempts = 75,
 }
 \arguments{
 \item{linkageGroupReadTable}{dataframe of strand calls (product of combineZeroDists or preprocessStrandTable)}
+
+\item{randomAttempts}{number of times to repeat the greedy algortihm with a random restart}
+
+\item{verbose}{whether to print verbose messages}
 }
 \value{
 list of two members: 1) contig names in order, 2) the original data.frame entered into function correctly ordered

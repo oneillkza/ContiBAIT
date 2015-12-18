@@ -14,7 +14,6 @@ plotLGDistances.func <- function(object, allStrands)
 #' plotLGDistances -- plots a heatmap of the distances between linkage groups 
 #' @param object LinkageGroupList 
 #' @param allStrands StrandStateMatrix for all linkageGroups (usually reoriented by reorientStrandTable)
-#' @param saveFile string defining file name of plot. default is FALSE (no plot saved)
 #' @aliases plotLGDistances plotLGDistances,LinkageGroupList,LinkageGroupList-method
 #' @export
 #' @importFrom gplots heatmap.2

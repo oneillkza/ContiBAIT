@@ -5,7 +5,7 @@
 #' @param assemblyBED table from a BED containing assembly information about the contigs, including length and chromosome
 #' Note that the rownames of assemblyBED should be the contig names, as they are used in linkageGroups. 
 #' To use a bam file header, the product of makeChrTable(bamFile) with or without the asBed option is suitable for input
-#' @param by='lg' whether to plot by linkage group (if 'lg') or chromosomes ('chr')
+#' @param by whether to plot by linkage group (if 'lg') or chromosomes ('chr')
 #' @param returnTable TRUE to return chromosome length matrix.
 #' @param saveFile string providing a file name to save the plot as a pdf (with legend). Default is no saved file.
 #' @param ... any additional parameters to pass down to barplot()

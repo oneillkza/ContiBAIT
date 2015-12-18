@@ -11,7 +11,7 @@ writeBed(fileName, contigOrder, libWeight)
 
 \item{contigOrder}{a contig ordering}
 
-\item{ligWeight}{average quality across all libraries for a contig}
+\item{libWeight}{average quality across all libraries for a contig}
 }
 \value{
 void; BED file written to working directory names by fileName, chromosome and state.

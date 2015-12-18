@@ -7,10 +7,10 @@
 divideMyChr(chrTable, splitBy = 2e+05)
 }
 \arguments{
-\item{splitBy}{numeric value dictating the size of each bin in nucleotides. Default is 200000.}
-
-\item{data.frame}{consisting of either chromosome name and length, or chromosome name, start and end. Can
+\item{chrTable}{data.frame consisting of either chromosome name and length, or chromosome name, start and end. Can
 generate from makeChrTable}
+
+\item{splitBy}{numeric value dictating the size of each bin in nucleotides. Default is 200000.}
 }
 \description{
 Creates a data.frame of chromosomes split into user-derived bin sizes

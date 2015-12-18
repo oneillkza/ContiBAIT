@@ -14,14 +14,14 @@ barplotLinkageGroupCalls(linkageGroups, assemblyBED, by = "lg",
 Note that the rownames of assemblyBED should be the contig names, as they are used in linkageGroups. 
 To use a bam file header, the product of makeChrTable(bamFile) with or without the asBed option is suitable for input}
 
+\item{by}{whether to plot by linkage group (if 'lg') or chromosomes ('chr')}
+
 \item{returnTable}{TRUE to return chromosome length matrix.}
 
 \item{saveFile}{string providing a file name to save the plot as a pdf (with legend). Default is no saved file.}
 
 \item{...}{any additional parameters to pass down to barplot()
 Note to include legend, use legend=rownames(chr.table) for by='lg', and legend=colnames(chr.table) for by='chr'}
-
-\item{by='lg'}{whether to plot by linkage group (if 'lg') or chromosomes ('chr')}
 }
 \value{
 a matrix of lengths of each chromosome (rows) in each linkage group (columns)

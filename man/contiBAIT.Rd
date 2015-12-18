@@ -15,8 +15,12 @@ contiBAIT(path = ".", cluster = 1, clusNum = 1, saveName = FALSE,
 
 \item{clusNum}{Number of parallel processors to use when clustering contigs. Default is 1.}
 
+\item{saveName}{String denoting the file name for saved data. If FALSE, no intermediate files are saved (default is FALSE)}
+
 \item{filter}{additional file to split chromosomes based on locations. If this parameter is blank,
 a filter table will be automatically generated from the header of the first file in bamFileList}
+
+\item{readQual}{Integer dictating the minimal mapping quality required for a read to be accepted. Default is 10.}
 
 \item{readLimit}{Minimum number of reads on a contig to make a strand call. Default is 10}
 
@@ -26,10 +30,6 @@ since paired reads will be the same direction, only first mate read of pair is u
 \item{makePlots}{Logical determining whether plots should be created. Default is TRUE}
 
 \item{verbose}{prints messages to the terminal (default is TRUE)}
-
-\item{saveNames}{String denoting the file name for saved data. If FALSE, no intermediate files are saved (default is FALSE)}
-
-\item{baseQual}{Integer dictating the minimal mapping quality required for a read to be accepted. Default is 10.}
 }
 \value{
 ordered contigs in bed format. Depending on options, intermediate files and plots will also be generated

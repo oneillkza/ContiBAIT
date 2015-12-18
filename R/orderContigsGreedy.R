@@ -5,6 +5,8 @@
 #' @import Rcpp TSP
 # 
 #' @param linkageGroupReadTable dataframe of strand calls (product of combineZeroDists or preprocessStrandTable)
+#' @param randomAttempts number of times to repeat the greedy algortihm with a random restart
+#' @param verbose whether to print verbose messages
 #' @return list of two members: 1) contig names in order, 2) the original data.frame entered into function correctly ordered  
 ####################################################################################################
 
