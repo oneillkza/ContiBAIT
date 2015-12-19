@@ -27,7 +27,8 @@ Imports:
     GenomicFiles,
     gtools,
     rtracklayer,
-    snow
+    snow,
+    DNAcopy
 Suggests:
     BiocStyle,
     knitr,
