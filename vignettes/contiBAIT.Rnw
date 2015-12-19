@@ -134,7 +134,7 @@ exampleWCMatrix,
 exampleStrandFreq,
 exampleReadCounts,
 whichLG=1,
-saveOrderedPDF=TRUE)
+saveOrdered=TRUE)
 
 contigOrder
 @
