@@ -6,7 +6,7 @@
 #' @param strandFreqMatrix table of W:C read proportions (used for QC) (product of strandSeqFreqTable[[1]])
 #' @param strandReadCount table of read counts (product of strandSeqFreqTable[[2]])  
 #' @param whichLG vector of integers specifying the element(s) of linkageGroupList to be ordered (i.e. which specific linkage groups to try to order). Default is all LGs.
-#' @param saveOrderedPDF Will return a pdf of heatmaps for each linkage group; String entered becomes the fileName (default is saveOrderedPDF=FALSE)
+#' @param saveOrdered Will return a pdf of heatmaps for each linkage group; String entered becomes the fileName (default is saveOrderedPDF=FALSE)
 #' @param orderCall currently either 'greedy' for greedy algorithm or 'TSP' for travelling salesperson alogrithm (default is 'greedy')
 #' @param verbose Pringts messages to the terminal. Default is TRUE
 #' @param randomAttempts iterger specifying number of randomized clusterings to identify the best ordering. Default is 75

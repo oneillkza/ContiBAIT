@@ -18,9 +18,8 @@
 #' @param verbose prints messages to the terminal (default is TRUE)
 #' 
 #' @return a list containing two matrices: a StrandFreqMatrix of W:C read frequencies, and a StrandReadMatrix of read counts
-#' @import Rsamtools
-#' @import IRanges
-#' @import GenomicFiles
+#' @import GenomicRanges
+#' @import DNAcopy 
 #' @importFrom S4Vectors DataFrame
 #' @example inst/examples/strandSeqFreqTable.R
 #' @export
