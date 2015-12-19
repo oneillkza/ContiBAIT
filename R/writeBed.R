@@ -2,8 +2,9 @@
 #' function to write contig order to BED file
 #' @param fileName bed file name to write
 #' @param contigOrder a contig ordering
-#' @param ligWeight average quality across all libraries for a contig
+#' @param libWeight average quality across all libraries for a contig
 #' @importFrom rtracklayer export.bed
+#' @import GenomicRanges
 #' @return void; BED file written to working directory names by fileName, chromosome and state.
 #' 
 #' @export

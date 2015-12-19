@@ -128,7 +128,7 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 	}
 
 	#order linkage groups by biggest first
-  	linkageGroups <- linkageGroups[order(sapply(linkageGroups, length), decreasing=T)]
+  	linkageGroups <- linkageGroups[order(sapply(linkageGroups, length), decreasing=TRUE)]
 
 	return(new('LinkageGroupList', linkageGroups))
 }

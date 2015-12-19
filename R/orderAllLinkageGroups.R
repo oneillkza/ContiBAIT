@@ -20,12 +20,12 @@
 ####################################################################################################
 
 
-orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFreqMatrix, strandReadCount, whichLG=NULL, saveOrderedPDF=FALSE, orderCall='greedy', randomAttempts=75, verbose=TRUE)
+orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFreqMatrix, strandReadCount, whichLG=NULL, saveOrdered=FALSE, orderCall='greedy', randomAttempts=75, verbose=TRUE)
 {
   if(is.null(whichLG)){whichLG=c(1:length(linkageGroupList))}
-  orderedGroups <- data.frame(LG=vector(), name=vector())
-  if(saveOrderedPDF != FALSE) {pdf(paste(saveOrderedPDF, 'contig_order.pdf', sep='_'))}
-
+#  if(saveOrderedPDF != FALSE) {pdf(paste(saveOrderedPDF, 'contig_order.pdf', sep='_'))}
+ orderedGroups <- data.frame(LG=vector(), name=vector())
+ 
   for(lg in whichLG)
   {
     if(verbose){message(paste('-> Ordering fragments in LG', lg, sep=""))}
@@ -34,7 +34,7 @@ orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFre
 
       linkageGroup <- linkageGroupList[[lg]]
       linkageGroupReadTable <- strandStateMatrix[linkageGroup,]
-      zeroGroups <- combineZeroDistContigs(linkageGroupReadTable, strandReadCount, lg)
+      zeroGroups <- combineZeroDistContigs(linkageGroupReadTable, strandFreqMatrix, lg)
       #Make a contig Weight vector
       zeroGroups[[2]]$weights <- apply(strandReadCount[which(rownames(strandReadCount) %in% zeroGroups[[2]]$contig ),] , 1, median)
       #The make a LG weight by taking the sum of all contigs within that LG, and order the linkageGroupTable based on the deepest LG
@@ -52,17 +52,17 @@ orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFre
         break
       }
 
-
       mergedGroups <- data.frame(LG=vector(), name=vector())
       for(gp in 1:length(outOfOrder[[1]])){
         mergedGroups <- rbind(mergedGroups, zeroGroups[[2]][which(zeroGroups[[2]] == outOfOrder[[1]][gp]),1:2] )
       }
       orderedGroups <- rbind(orderedGroups, mergedGroups)
 
-      orderFrame <- mergedGroups
-      orderedGroups <- rbind(orderedGroups, orderFrame)
+#      orderedGroups <- lapply(1:length(outOfOrder[[1]]), function(group){zeroGroups[[2]][which(zeroGroups[[2]] == outOfOrder[[1]][group]),1:2]})
+#      orderedGroups <- do.call(rbind, orderedGroups)
+      
       chromosome <- strsplit(linkageGroupList[[lg]][1],':')[[1]][1]
-      if(saveOrderedPDF != FALSE)
+      if(saveOrdered != FALSE)
       {
         similarLinkageStrands <- as.matrix(1-daisy(outOfOrder[[2]]))
         diag(similarLinkageStrands) <- 1
@@ -75,12 +75,8 @@ orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFre
       }
     }
   }  
-  if(saveOrderedPDF != FALSE){dev.off()}
+#  if(saveOrderedPDF != FALSE){dev.off()}
   orderedGroups <- new("ContigOrdering", orderedGroups)
-  #Order output by LG then contig (in order passed in):
-#  contigsByLG <- sapply(orderedGroups$LG, function(x){strsplit(x, '[.]')[[1]]})
-#  orderedGroups <- orderedGroups[order(contigsByLG[1,], as.numeric(contigsByLG[2,] )),]
-  
   return(orderedGroups)
 }
 

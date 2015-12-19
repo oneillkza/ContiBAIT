@@ -9,11 +9,11 @@ makeChrTable(bamFile, verbose = TRUE, asBed = FALSE, asRownames = TRUE)
 \arguments{
 \item{bamFile}{string of location of a bam file to extract header data from}
 
+\item{verbose}{if FALSE, no messages appear on terminal}
+
+\item{asBed}{if TRUE, a bed format table will be generated (chr, start, end)}
+
 \item{asRownames}{Boolean. If false, rownames will not be returned, otherwise rownames will be equal to chromosome names}
-
-\item{asBed=FALSE}{if TRUE, a bed format table will be generated (chr, start, end)}
-
-\item{verbose=TRUE}{if FALSE, no messages appear on terminal}
 }
 \description{
 makeChrTable -- Pulls out chromosome and length data from the header of a bam file

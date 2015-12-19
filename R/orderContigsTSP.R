@@ -4,7 +4,7 @@
 #' @import Rcpp TSP
 #' @import TSP
 # 
-#' @param linkageGroupsReadTable dataframe of strand calls (product of combineZeroDists or preprocessStrandTable)
+#' @param linkageGroupReadTable dataframe of strand calls (product of combineZeroDists or preprocessStrandTable)
 #' @return list of two members: 1) contig names in order, 2) the original data.frame entered into function correctly ordered 
 ########################################################################################
 

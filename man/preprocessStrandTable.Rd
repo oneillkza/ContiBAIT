@@ -13,17 +13,19 @@ preprocessStrandTable(strandTable, strandTableThreshold = 0.8,
 \arguments{
 \item{strandTable}{data.frame containing the strand table to use as input}
 
-\item{strandTableThreshold=0.8}{threshold at which to call a contig WW or CC rather than WC}
+\item{strandTableThreshold}{threshold at which to call a contig WW or CC rather than WC}
 
-\item{filterThreshold=0.8}{maximum number of libraries a contig can be NA or WC in}
+\item{filterThreshold}{maximum number of libraries a contig can be NA or WC in}
 
-\item{orderMethod='libsAndConc'}{the method to oder contigs. currently libsAndConc only option. Set to FALSE to not order contigs based on library quality}
+\item{orderMethod}{the method to oder contigs. currently libsAndConc only option. Set to FALSE to not order contigs based on library quality}
 
-\item{lowQualThreshold=0.9}{background threshold at which to toss an entire library}
+\item{lowQualThreshold}{background threshold at which to toss an entire library}
 
-\item{ignoreInternalQual=FALSE}{logical that prevents function for making an overall assessment of library quality. Very chimeric assemblies can appear low quality across all libraries.}
+\item{verbose}{messages written to terminal}
 
-\item{verbose=TRUE}{messages written to terminal}
+\item{minLib}{minimum number of libraries a contig must be present in to be included in the output}
+
+\item{ignoreInternalQual}{logical that prevents function for making an overall assessment of library quality. Very chimeric assemblies can appear low quality across all libraries.}
 }
 \value{
 A list of three matrices -- 1: WW/WC/WW; 2: WW/CC; 3: sex contigs
@@ -35,7 +37,7 @@ a genome
 \examples{
 data(exampleStrandFreq)
 
-strandStates <- preprocessStrandTable(exampleStrandFreq)
+strandStates <- preprocessStrandTable(exampleStrandFreq, lowQualThreshold=0.8)
 
 show(strandStates[[1]]) # WW-WC-CC matrix
 show(strandStates[[2]]) # WW-CC only matrix

@@ -5,6 +5,8 @@
 #' @import Rcpp TSP
 # 
 #' @param linkageGroupReadTable dataframe of strand calls (product of combineZeroDists or preprocessStrandTable)
+#' @param randomAttempts number of times to repeat the greedy algortihm with a random restart
+#' @param verbose whether to print verbose messages
 #' @return list of two members: 1) contig names in order, 2) the original data.frame entered into function correctly ordered  
 ####################################################################################################
 
@@ -34,10 +36,12 @@ orderContigsGreedy <- function(linkageGroupReadTable, randomAttempts=75, verbose
         best_table <- temp_table
       }
     }
-  }
 
-  #order the table entered into function and convert to factor, then add factor levels.
   linkageGroupReadTable <- factorizedLinkageGroupReadTable[row.names(best_table)[best_order$order],]
-
   return(list(orderVector=row.names(best_table)[best_order$order], orderedMatrix=linkageGroupReadTable))
+
+  }else{
+    linkageGroupReadTable <- factorizedLinkageGroupReadTable[row.names(best_table)[best_order$order],]
+    return(list(orderVector=seq(1, nrow(linkageGroupReadTable)), orderedMatrix=linkageGroupReadTable))
+  }
 }

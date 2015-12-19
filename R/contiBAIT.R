@@ -15,10 +15,10 @@
 #' @param path  String denoting location of Strand-seq bam files (default is ".")
 #' @param cluster  Integer denoting the number of reclusterings to be performed for creating linkage groups (default is 1)
 #' @param clusNum  Number of parallel processors to use when clustering contigs. Default is 1. 
-#' @param saveNames  String denoting the file name for saved data. If FALSE, no intermediate files are saved (default is FALSE)
+#' @param saveName  String denoting the file name for saved data. If FALSE, no intermediate files are saved (default is FALSE)
 #' @param filter  additional file to split chromosomes based on locations. If this parameter is blank,
 #' a filter table will be automatically generated from the header of the first file in bamFileList
-#' @param baseQual Integer dictating the minimal mapping quality required for a read to be accepted. Default is 10. 
+#' @param readQual Integer dictating the minimal mapping quality required for a read to be accepted. Default is 10. 
 #' @param readLimit  Minimum number of reads on a contig to make a strand call. Default is 10
 #' @param pairedEnd  Whether the bam files being read are in paired end format. Default is TRUE. Note,
 #' since paired reads will be the same direction, only first mate read of pair is used in output
@@ -62,7 +62,7 @@ contiBAIT <- function(path=".",
   
 
   if(verbose){message('-> Processing table and filtering data [2/6]')}
-  strandStateMatrixList <- preprocessStrandTable(strandFrequencyList[[1]], lowQualThreshold=0.8, minLib=6)
+  strandStateMatrixList <- preprocessStrandTable(strandFrequencyList[[1]], lowQualThreshold=0.8)
   if(saveName != FALSE){save(strandStateMatrixList, file=paste(saveName, '_strands.Rd', sep=""))}
 
   #create weighting criteria; median of read depth 
@@ -117,7 +117,10 @@ contiBAIT <- function(path=".",
   }else{
     if(saveName == FALSE){saveName = 'contiBAIT'}
 
-    contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable, strandFrequencyList[[1]], strandFrequencyList[[2]], saveOrderedPDF=saveName)
+    pdf(paste(saveName, 'contig_order.pdf', sep='_'))
+    contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable, strandFrequencyList[[1]], strandFrequencyList[[2]], saveOrdered=TRUE)
+    dev.off()
+  
     plotWCdistribution(strandFrequencyList[[1]], filterThreshold=0.8,  saveFile=paste(saveName, '_WC_distributions', sep=''))
 
     png(paste(saveName, '_heatmap.png', sep=""))

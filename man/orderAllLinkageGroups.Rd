@@ -5,7 +5,7 @@
 \title{Function to call contig ordering algorithms iteratively across each linkage group element}
 \usage{
 orderAllLinkageGroups(linkageGroupList, strandStateMatrix, strandFreqMatrix,
-  strandReadCount, whichLG = NULL, saveOrderedPDF = FALSE,
+  strandReadCount, whichLG = NULL, saveOrdered = FALSE,
   orderCall = "greedy", randomAttempts = 75, verbose = TRUE)
 }
 \arguments{
@@ -19,13 +19,13 @@ orderAllLinkageGroups(linkageGroupList, strandStateMatrix, strandFreqMatrix,
 
 \item{whichLG}{vector of integers specifying the element(s) of linkageGroupList to be ordered (i.e. which specific linkage groups to try to order). Default is all LGs.}
 
-\item{saveOrderedPDF}{Will return a pdf of heatmaps for each linkage group; String entered becomes the fileName (default is saveOrderedPDF=FALSE)}
-
 \item{orderCall}{currently either 'greedy' for greedy algorithm or 'TSP' for travelling salesperson alogrithm (default is 'greedy')}
 
 \item{randomAttempts}{iterger specifying number of randomized clusterings to identify the best ordering. Default is 75}
 
 \item{verbose}{Pringts messages to the terminal. Default is TRUE}
+
+\item{saveOrderedPDF}{Will return a pdf of heatmaps for each linkage group; String entered becomes the fileName (default is saveOrderedPDF=FALSE)}
 }
 \value{
 a data.frame of ordered contigs with linkage group names

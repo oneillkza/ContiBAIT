@@ -50,15 +50,14 @@ since at every iteration a distance is computed to the existing clusters. Howeve
 more stringent cutoff may be necessary to reduce the number of contigs that are erroneously grouped.
 }
 \examples{
- data(exampleWWCCMatrix)
- data(exampleWCMatrix)
-
+data(exampleWWCCMatrix)
+ 
 clusteredContigs <- clusterContigs(exampleWWCCMatrix, verbose=FALSE)
 show(clusteredContigs)
 show(clusteredContigs[[1]])
 
 LGOrientations <- reorientLinkageGroups(clusteredContigs, exampleWWCCMatrix)
-reorientedMatrix <- reorientStrandTable(exampleWCMatrix, linkageGroups = clusteredContigs, orientation = LGOrientations)
+reorientedMatrix <- reorientStrandTable(exampleWWCCMatrix, linkageGroups = clusteredContigs, orientation = LGOrientations)
 mergedLinkageGroups <- mergeLinkageGroups(clusteredContigs,reorientedMatrix)
 }
 

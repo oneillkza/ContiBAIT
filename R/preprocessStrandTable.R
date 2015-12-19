@@ -13,12 +13,13 @@
 #' preprocessStrandTable -- remove low quality libraries and contigs before attempting to build
 #' a genome
 #' @param strandTable data.frame containing the strand table to use as input
-#' @param strandTableThreshold=0.8 threshold at which to call a contig WW or CC rather than WC
-#' @param filterThreshold=0.8 maximum number of libraries a contig can be NA or WC in
-#' @param orderMethod='libsAndConc' the method to oder contigs. currently libsAndConc only option. Set to FALSE to not order contigs based on library quality
-#' @param lowQualThreshold=0.9 background threshold at which to toss an entire library
-#' @param ignoreInternalQual=FALSE logical that prevents function for making an overall assessment of library quality. Very chimeric assemblies can appear low quality across all libraries. 
-#' @param verbose=TRUE messages written to terminal
+#' @param strandTableThreshold threshold at which to call a contig WW or CC rather than WC
+#' @param filterThreshold maximum number of libraries a contig can be NA or WC in
+#' @param orderMethod the method to oder contigs. currently libsAndConc only option. Set to FALSE to not order contigs based on library quality
+#' @param lowQualThreshold background threshold at which to toss an entire library
+#' @param minLib minimum number of libraries a contig must be present in to be included in the output
+#' @param ignoreInternalQual logical that prevents function for making an overall assessment of library quality. Very chimeric assemblies can appear low quality across all libraries. 
+#' @param verbose messages written to terminal
 #' 
 #' @example inst/examples/preprocessStrandTable.R
 #' 
@@ -132,7 +133,7 @@ if(ignoreInternalQual == FALSE)
 		
 		contigAgreement <- sapply(rownames(strandTable), computeOneAgreement)
 		contigQA <- contigAgreement * contigNAs #compute a compound QA measure
-		strandTable <- strandTable[names(sort(contigQA, decreasing=T)),] # and sort
+		strandTable <- strandTable[names(sort(contigQA, decreasing=TRUE)),] # and sort
 	}
 		
 	# Convert NaNs to NAs

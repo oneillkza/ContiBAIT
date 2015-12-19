@@ -13,6 +13,8 @@ strandSeqFreqTable(bamFileList, fieldSep = ".", field = 1, qual = 0,
 
 \item{fieldSep}{The field seperator of the bam file to use to define the field. Default is '.'}
 
+\item{field}{The field of the bam file name to use as an index (default is 1)}
+
 \item{qual}{Mapping quality threshold. Default is 0}
 
 \item{rmdup}{remove duplicates in output file. Default is TRUE}
@@ -26,8 +28,6 @@ a filter table will be automatically generated from the header of the first file
 
 \item{pairedEnd}{Whether the bam files being read are in paired end format. Default is TRUE. Note,
 since paired reads will be the same direction, only first mate read of pair is used in output}
-
-\item{filed}{The field of the bam file name to use as an index (default is 1)}
 }
 \value{
 a list containing two matrices: a StrandFreqMatrix of W:C read frequencies, and a StrandReadMatrix of read counts
