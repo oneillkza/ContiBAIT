@@ -14,6 +14,7 @@
 #' 
 #' @param sceFile data.frame of strand state change locations in BED format 
 #' @param gapFile data.frame of assembly gaps in BED format (can be downloaded from UCSC table browser)
+#' @param chrTable data..frame of chromosome table (product of makeChrTable)
 #' @param overlapNum  Minimal number of strand state changes that overlap with a gap before assembly is cut at that location
 #' @param verbose prints messages to the terminal (default is TRUE)
 #' 
@@ -27,10 +28,8 @@
 ####################################################################################################
 
 
-mapGapFromOverlap <- function(sceFile,  gapFile, verbose=TRUE, overlapNum=4)
+mapGapFromOverlap <- function(sceFile,  gapFile, chrTable, verbose=TRUE, overlapNum=4)
 {
-	library(GenomicRanges)
-	library(DNAcopy)
 
 	gapFileGRange <- GRanges(gapFile[,1], IRanges(gapFile[,2], gapFile[,3]))
 
