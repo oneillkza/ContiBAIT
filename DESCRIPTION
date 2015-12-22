@@ -29,11 +29,8 @@ Imports:
     rtracklayer,
     snow
 Suggests:
-    BiocStyle,
-    knitr,
-    rmarkdown
+    BiocStyle
 biocViews: CellBasedAssays, QualityControl, WholeGenome, Genetics, GenomeAssembly
-VignetteBuilder: knitr
 Collate:
     'AllClasses.R'
     'AllGenerics.R'
