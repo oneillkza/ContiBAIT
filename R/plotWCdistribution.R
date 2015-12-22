@@ -1,16 +1,10 @@
-####################################################################################################
-#' Creates median distribution boxplots across all libraries and contigs
-#' @param strandMatrix object of class StrandFreqMatrix (product of strandSeqFreqTable)
-#' @param filterThreshold numeric value used in assessing the threshold for homozygous strand calls. Default is 0.8.
-#' @param saveFile character denoting whether plot should be saved. Plots to R graphics when FALSE. Default is FALSE 
-#' @export
-####################################################################################################
 
-plotWCdistribution <- function(strandMatrix, filterThreshold=0.8, saveFile=FALSE)
+
+plotWCdistribution.func <- function(object, filterThreshold=0.8, saveFile=FALSE)
 {
-	strandMatrix <- strandMatrix[, colSums(!(is.na(strandMatrix))) > 0]
+	object <- object[, colSums(!(is.na(object))) > 0]
 	breaks <-  round( seq(-1,1, by=2/40),digits=2)
-	matrixHistogram <- sapply(seq(1, ncol(strandMatrix)), function(x) hist(strandMatrix[,x], breaks=breaks, plot=FALSE)$count)
+	matrixHistogram <- sapply(seq(1, ncol(object)), function(x) hist(object[,x], breaks=breaks, plot=FALSE)$count)
 	matrixHistogram <- t(matrixHistogram)
 	avContNum <- mean(apply(matrixHistogram, 1, sum))
 	matrixTable <- table(c(rbinom(100000, 40, 0.5), 1:40)) /(100000/(avContNum/2)) 
@@ -37,3 +31,16 @@ plotWCdistribution <- function(strandMatrix, filterThreshold=0.8, saveFile=FALSE
 
 }
 
+####################################################################################################
+#' Creates median distribution boxplots across all libraries and contigs
+#' @param object object of class StrandFreqMatrix (product of strandSeqFreqTable)
+#' @param filterThreshold numeric value used in assessing the threshold for homozygous strand calls. Default is 0.8.
+#' @param saveFile character denoting whether plot should be saved. Plots to R graphics when FALSE. Default is FALSE
+#' @aliases plotWCDistribution plotWCDistribution,StrandFreqMatrix,StrandFreqMatrix-method 
+#' @export
+####################################################################################################
+
+setMethod('plotWCDistribution',
+          signature = signature(object = 'StrandFreqMatrix'),
+          definition = plotWCdistribution.func
+)

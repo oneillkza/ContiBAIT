@@ -118,7 +118,7 @@ contiBAIT <- function(path=".",
     if(saveName == FALSE){saveName = 'contiBAIT'}
 
     contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable, strandFrequencyList[[1]], strandFrequencyList[[2]], saveOrderedPDF=saveName)
-    plotWCdistribution(strandFrequencyList[[1]], filterThreshold=0.8,  saveFile=paste(saveName, '_WC_distributions', sep=''))
+    plotWCDistribution(strandFrequencyList[[1]], filterThreshold=0.8,  saveFile=paste(saveName, '_WC_distributions', sep=''))
 
     png(paste(saveName, '_heatmap.png', sep=""))
     plotLGDistances(linkage.merged, strandStateMatrixList[[1]])

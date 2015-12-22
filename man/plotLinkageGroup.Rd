@@ -21,4 +21,9 @@ not NULL}
 \description{
 Plot a heatmap of contigs within a single linkage group.
 }
+\examples{
+data("exampleLGList")
+data("exampleWCMatrix")
+plotLinkageGroup(exampleLGList[[1]], exampleWCMatrix)
+}
 
