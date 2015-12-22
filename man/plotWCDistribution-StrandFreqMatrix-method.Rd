@@ -20,4 +20,9 @@
 \description{
 Creates median distribution boxplots across all libraries and contigs
 }
+\examples{
+data("exampleStrandFreq")
+
+plotWCDistribution(exampleStrandFreq, filterThreshold=0.8)
+}
 
