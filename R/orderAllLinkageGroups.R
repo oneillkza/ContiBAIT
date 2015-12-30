@@ -70,7 +70,7 @@ orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFre
         {
           breaks <- seq(0, 100, length.out=101)/100 
           cols <- colorRampPalette(c("cyan", "blue", "grey30", "black", "grey30", "red", "orange"))
-          suppressWarnings(heatmap.2(similarLinkageStrands, Rowv=NA, Colv=NA, dendrogram="none", col=cols(100), breaks=breaks, trace='none', main=paste('greedy-ordered ', chromosome, sep="")))
+          suppressWarnings(heatmap.2(similarLinkageStrands, Rowv=NA, Colv=NA, dendrogram="none", revC=TRUE, col=cols(100), breaks=breaks, trace='none', main=paste('greedy-ordered ', chromosome, sep="")))
         }
       }
     }

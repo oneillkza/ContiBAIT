@@ -2,7 +2,7 @@
 ####################################################################################################
 #' Bar plot all linkage groups, with the true chromosomes of contigs coloured.
 #' @param linkageGroups list of vectors, each specifying which contigs belong in which linkage group
-#' @param assemblyBED table from a BED containing assembly information about the contigs, including length and chromosome
+#' @param assemblyBED table in BED format containing assembly information about the contigs, including length and chromosome
 #' Note that the rownames of assemblyBED should be the contig names, as they are used in linkageGroups. 
 #' To use a bam file header, the product of makeChrTable(bamFile) with or without the asBed option is suitable for input
 #' @param by whether to plot by linkage group (if 'lg') or chromosomes ('chr')
@@ -25,7 +25,7 @@ barplotLinkageGroupCalls <- function(linkageGroups, assemblyBED, by='lg', return
 	complete.list <- unique(unlist(linkage.chr))
 
 	# If using chromosome notation, order by chromosome
-	if( length(grep('chr', complete.list)) == length(complete.list) )
+	if( length(grep('chr', complete.list)) == length(complete.list) & length(grep(':', complete.list)) == length(complete.list))
 	{ 
 		#if name in format chr:start-end, then find location of colon in string
 		locationOfColon <- sapply(lapply(strsplit(complete.list, ''), function(x) which(x == ':')), "[[", 1)-1

@@ -48,7 +48,5 @@ makeChrTable <- function(bamFile, verbose=TRUE, asBed=FALSE, asRownames=TRUE)
 	chrTable$chr <- gsub("SN:", "", as.character(chrTable$chr))
 	if(asRownames){rownames(chrTable) <- chrTable[,1] }  
 
-	chrTable <- new("ChrTable", chrTable)
-
-	return(chrTable)
+	return(new("ChrTable", chrTable))
 }

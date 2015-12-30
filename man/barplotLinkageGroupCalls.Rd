@@ -10,7 +10,7 @@ barplotLinkageGroupCalls(linkageGroups, assemblyBED, by = "lg",
 \arguments{
 \item{linkageGroups}{list of vectors, each specifying which contigs belong in which linkage group}
 
-\item{assemblyBED}{table from a BED containing assembly information about the contigs, including length and chromosome
+\item{assemblyBED}{table in BED format containing assembly information about the contigs, including length and chromosome
 Note that the rownames of assemblyBED should be the contig names, as they are used in linkageGroups. 
 To use a bam file header, the product of makeChrTable(bamFile) with or without the asBed option is suitable for input}
 

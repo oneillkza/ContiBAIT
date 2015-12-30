@@ -4,34 +4,24 @@
 \alias{mapGapFromOverlap}
 \title{mapGapFromOverlap -- function to co-localize strand state changes with assembly gaps}
 \usage{
-mapGapFromOverlap(sceFile, gapFile, verbose = TRUE, overlapNum = 4)
+mapGapFromOverlap(sceFile, gapFile, chrTable, verbose = TRUE,
+  overlapNum = 4)
 }
 \arguments{
-\item{sceFile}{data.frame of strand state change locations in BED format}
+\item{sceFile}{GRanges object of strand state change locations in BED format}
 
-\item{gapFile}{data.frame of assembly gaps in BED format (can be downloaded from UCSC table browser)}
+\item{gapFile}{GRanges object of assembly gaps in BED format (can be downloaded from UCSC table browser)}
+
+\item{chrTable}{data..frame of chromosome table (product of makeChrTable)}
 
 \item{verbose}{prints messages to the terminal (default is TRUE)}
 
 \item{overlapNum}{Minimal number of strand state changes that overlap with a gap before assembly is cut at that location}
 }
 \value{
-a list containing two matrices: a StrandFreqMatrix of W:C read frequencies, and a StrandReadMatrix of read counts
+a data,frame in bed format of all contigs split by regions where the sceFile and gapFile GRanges objects overlap.
 }
 \description{
 mapGapFromOverlap -- function to co-localize strand state changes with assembly gaps
-}
-\examples{
-#Get a list of BAM files containing libraries for cells from the same organism, aligned to the same genome
-#In this case these are the example BAM files provided with the package (hence the call to system.file);
-
-example.dir <- file.path(system.file(package='contiBAIT'), 'extdata')
-bam.files <- dir(example.dir, full.names=TRUE)
-
-strand.freq <- strandSeqFreqTable(bam.files, pairedEnd = FALSE)
-
-show(strand.freq[[1]])
-show(strand.freq[[2]])
-
 }
 

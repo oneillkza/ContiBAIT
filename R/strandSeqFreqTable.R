@@ -23,6 +23,7 @@
 #' @param pairedEnd  Whether the bam files being read are in paired end format. Default is TRUE. Note,
 #' since paired reads will be the same direction, only first mate read of pair is used in output
 #' @param verbose prints messages to the terminal (default is TRUE)
+#' @param BAITtables creates additional matrices in the returned list with just Watson and Crick read counts to be used in downstreat BAIT plotting. Default is FALSE
 #' 
 #' @return a list containing two matrices: a StrandFreqMatrix of W:C read frequencies, and a StrandReadMatrix of read counts
 #' @import Rsamtools
@@ -43,7 +44,8 @@ strandSeqFreqTable <- function(bamFileList,
 							   verbose=TRUE, 
 							   filter=FALSE, 
 							   tileChunk=100000, 
-							   pairedEnd=TRUE)
+							   pairedEnd=TRUE,
+							   BAITtables=FALSE)
 {
 	##### DEFINE FUNCTIONS
 
@@ -110,6 +112,11 @@ strandSeqFreqTable <- function(bamFileList,
 
 	rownames(strandTable) <- filter[,4]
 	countTable <- strandTable
+	
+	if(BAITtables == TRUE){
+		WatsonTable <- strandTable
+		CrickTable <- strandTable
+	}
 
 	for(fileName in bamFileList)
 	{
@@ -135,10 +142,23 @@ strandSeqFreqTable <- function(bamFileList,
 		strandTable[,indexCounter] <- strandCall 
 		countTable[,indexCounter] <- absCount
 
+		if(BAITtables == TRUE){
+			WatsonTable[,indexCounter] <- resultPos
+			CrickTable[,indexCounter] <- resultNeg
+		}
+
 		if(verbose){message(paste('-> Creating contig table for index ', index, " [", indexCounter, "/", bamFileLength, "]", sep=""), appendLF = TRUE)}
 		indexCounter <- indexCounter+1
 	}
 	if(verbose){message(" ")}
 
-  return(list(strandTable=new('StrandFreqMatrix', strandTable), countTable=new('StrandReadMatrix', countTable)))
-}
+	if(BAITtables == FALSE){
+		#Get rid of contigs that are entirely empty to prevent low quality calls in downstream functions
+		strandTable <- strandTable[which(apply(countTable, 1, sum) > 0),]
+		countTable <- countTable[which(apply(countTable, 1, sum) > 0),]
+  		return(list(strandTable=new('StrandFreqMatrix', strandTable), countTable=new('StrandReadMatrix', countTable)))
+  	}else{
+  		return(list(strandTable=new('StrandFreqMatrix', strandTable), countTable=new('StrandReadMatrix', countTable), WatsonReads=new('StrandReadMatrix', WatsonTable), CrickReads=new('StrandReadMatrix', CrickTable)))
+
+  	}
+}	
