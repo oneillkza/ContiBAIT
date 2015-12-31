@@ -36,10 +36,10 @@ Function to call contig ordering algorithms iteratively across each linkage grou
 \examples{
 #Get a data.frame of ordered contigs from cells from the same organism, aligned to the same genome
  
-data(exampleLGList)
-data(exampleWCMatrix)
-data(exampleStrandFreq)
-data(exampleReadCounts)
+data("exampleLGList")
+data("exampleWCMatrix")
+data("exampleStrandFreq")
+data("exampleReadCounts")
 contigOrder <- orderAllLinkageGroups(exampleLGList, exampleWCMatrix, exampleStrandFreq, exampleReadCounts)
 
 show(contigOrder)

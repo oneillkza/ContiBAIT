@@ -205,7 +205,6 @@ The quality of the libraries, specifically whether the files being analysed appe
 
 The returned list of strandSeqFreqTable can be converted to a strand state matrix that makes a contig-wide call on the overall strand state based on the frequencies of Watson and Crick reads. The function removes BAM files that either contain too few reads to make accurate strand calls or are not strand-seq libraries (i.e. every contig contains approximately equal numbers of + and - reads). Conversely the function removes contigs that either contain too few reads, or always contain roughly equal numbers of + and - reads.  More details on the parameters can be found in the function documentation.  The function returns a similar data.frame to strandSeqFreqTable, but with the frequencies converted to strand calls: 1 is a homozygous Watson call (by default, a frequency less than -0.8, but this can be changed with the filterThreshold argument), 2 is a heterozygous call (a frequency between -0.8 and 0.8 by default) and 3 is a homozygous Crick call (by default, a frequency above 0.8).  These factors can then be used to cluster similar contigs together.\\
 
-It is important to note that the relative directionality of any two fragments within an assembly is unknown. Contigs which belong on the same chromosome but are in different orientations will display as complete opposites; every library where one contig is homozygous Watson will have the other contig as homozygous Crick.  However, heterozygous contigs (where chromosomes inherited one Watson template and one Crick template), will not be mirrored, with one contig being "WC", while the other will be "CW".  As such, a data.frame without heterozygous calls is also generated to identify orientation issues.  
 
 \begin{Schunk}
 \begin{Sinput}
@@ -223,15 +222,14 @@ A strand state matrix for  75  contigs over  35  libraries.
 
 \section{Clustering contigs into chromosomes}
 
-clusterContigs utilizes a custom algorithm to cluster all fragments together that share a similar strand state across multiple cells.  For example, if two contigs are adjacent on the same chromosome, then they will inherit the same strand state in every cell that is analyzed. The function performs clustering only on homozygous calls (WW or CC) to identify dissimilarity arising from misoriented fragments that would otherwise be lost when heterozygous calls (WC) are included. Note for the purposes of this example, we are using the argument randomise=FALSE to ensure conformity of the vignette when running sweave. Randomisation is recommended for most applications and is set to TRUE by default.
+clusterContigs utilizes a custom algorithm to cluster all fragments together that share a similar strand state across multiple cells.  For example, if two contigs are adjacent on the same chromosome, then they will inherit the same strand state in every cell that is analyzed.  It is important to note however that the relative directionality of any two fragments within an assembly is unknown. Contigs which belong on the same chromosome but are in different orientations will display as complete opposites; every library where one contig is homozygous Watson will have the other contig as homozygous Crick.  However, heterozygous contigs (where chromosomes inherited one Watson template and one Crick template), will not be mirrored, with one contig being "WC", while the other will be "CW". As such, The function performs clustering only on homozygous calls (WW or CC) to identify dissimilarity arising from misoriented fragments that would otherwise be lost when heterozygous calls (WC) are included. Note for the purposes of this example, we are using the argument randomise=FALSE to ensure conformity of the vignette when running sweave. Randomisation is recommended for most applications and is set to TRUE by default.
 
 \begin{Schunk}
 \begin{Sinput}
 > exampleWCMatrix <- exampleStrandStateMatrix[[1]]
-> exampleWWCCMatrix <- exampleStrandStateMatrix[[2]]
-> clusteredContigs <- clusterContigs(exampleWWCCMatrix, randomise=FALSE)
+> clusteredContigs <- clusterContigs(exampleWCMatrix, randomise=FALSE)
 > LGOrientations <- reorientLinkageGroups(clusteredContigs,
-+  exampleWWCCMatrix)
++  exampleWCMatrix)
 > reorientedMatrix <- reorientStrandTable(exampleWCMatrix, 
 + linkageGroups=clusteredContigs, 
 + orientation=LGOrientations)

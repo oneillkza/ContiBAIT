@@ -1,5 +1,5 @@
-data(exampleLGList)
-data(exampleDividedChr)
+data("exampleLGList")
+data("exampleDividedChr")
 
 barplotLinkageGroupCalls(exampleLGList, exampleDividedChr)
 

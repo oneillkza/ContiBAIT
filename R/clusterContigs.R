@@ -84,6 +84,8 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 	linkageGroups <- list()
     
     #If no reclustering, just run once:
+    #Code starts here!
+	object <- replace(object, object == 2, NA)
 	if(is.null(recluster))
 	{
 		linkageGroups <- runOnce(object, randomise, randomWeight)
@@ -137,7 +139,7 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 #' clusterContigs -- agglomeratively clusters contigs into linkage groups based on strand inheritance
 #' 
 #' @param object \code{data.frame} containing strand inheritance information for every contig (rows)
-#' in every library (columns). This should be the WW/CC only matrix.
+#' in every library (columns). This should be the product of strandSeqFreqTable
 #' @param similarityCutoff place contigs in a cluster when their strand state is at least this similar
 #' @param recluster =NULL Number of times to recluster and take the consensus of. If NULL, clustering is 
 #' run only once.

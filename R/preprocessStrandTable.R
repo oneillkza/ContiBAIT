@@ -23,7 +23,7 @@
 #' 
 #' @example inst/examples/preprocessStrandTable.R
 #' 
-#' @return A list of three matrices -- 1: WW/WC/WW; 2: WW/CC; 3: sex contigs
+#' @return A list of two matrices and three quality data.frames -- 1: a matrix of WW/WC/WW calls for autosomes; 2: a matrix of W/C calls for sex chromosomes; 4: the quality of libraries used (based on frequencies outside expected ranges); 5: A data.frame of libraries that are of low quality and therefore excluded from analysis; 6: contigs that are present as WC in more libraries than expected. These are excluded from the strandStateMatrix, but are potentially worth investigating for chimerism.
 #' 
 #' @export
 #
@@ -167,9 +167,6 @@ if(ignoreInternalQual == FALSE)
 
 	strandMatrix <- data.frame(lapply(strandTable, function(x){factor(x, levels=c(1,2,3))}))  
 	rownames(strandMatrix) <- rownames(strandTable)
-	strandMatrix2 <- data.frame(lapply(strandTable2, function(x){factor(x, levels=c(1,2,3))}))	
-	rownames(strandMatrix2) <- rownames(strandTable2)
-
 
 	if (nrow(strandMatrixSex) > 2)
 	{
@@ -184,11 +181,8 @@ if(ignoreInternalQual == FALSE)
 	
 	#Filter out contigs that look like allosomes:
 	strandMatrix <- strandMatrix[setdiff(rownames(strandMatrix),rownames(strandMatrixSex)),]
-	strandMatrix2 <- strandMatrix2[setdiff(rownames(strandMatrix2),rownames(strandMatrixSex)),]
-
 
 	strandMatrix <- new('StrandStateMatrix', strandMatrix)
-	strandMatrix2 <- new('StrandStateMatrix', strandMatrix2)
 
-	return(list(strandMatrix=strandMatrix, strandMatrixWWCC=strandMatrix2, strandMatrixSex=strandMatrixSex, qualList=qualList, lowQualList=lowQualList, AWCcontigs=row.names(strandTableAWC)))
+	return(list(strandMatrix=strandMatrix, strandMatrixSex=strandMatrixSex, qualList=qualList, lowQualList=lowQualList, AWCcontigs=row.names(strandTableAWC)))
 }

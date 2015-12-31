@@ -10,7 +10,7 @@ reorientLinkageGroups(linkageGroups, allStrands, dissimilarityCutoff = 0.3,
 \arguments{
 \item{linkageGroups}{List of vectors containing names of contigs belonging to each LG.}
 
-\item{allStrands}{Table of strand state for all contigs.}
+\item{allStrands}{Table of strand state for all contigs. Product of StrandSeqFreqTable.}
 
 \item{dissimilarityCutoff}{Try to reorient all LGs more dissimilar than this to any other LG. Default is 0.3}
 
