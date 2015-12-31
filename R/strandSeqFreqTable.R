@@ -147,10 +147,9 @@ strandSeqFreqTable <- function(bamFileList,
 			CrickTable[,indexCounter] <- resultNeg
 		}
 
-		if(verbose){message(paste('-> Creating contig table for index ', index, " [", indexCounter, "/", bamFileLength, "]", sep=""), appendLF = TRUE)}
+		if(verbose){message('-> Creating contig table for index ', index, " [", indexCounter, "/", bamFileLength, "]")}
 		indexCounter <- indexCounter+1
 	}
-	if(verbose){message(" ")}
 
 	if(BAITtables == FALSE){
 		#Get rid of contigs that are entirely empty to prevent low quality calls in downstream functions

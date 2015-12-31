@@ -6,6 +6,7 @@
 #' not NULL
 #' @param labels =TRUE if TRUE, contig names will be plotted on the axes
 #' @param ... additional parameters to pass to heatmap.2
+#' @example inst/examples/plotLinkageGroup.R
 #' @export
 #' @importFrom gplots heatmap.2
 #' @importFrom colorspace rainbow_hcl

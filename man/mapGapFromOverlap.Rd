@@ -12,7 +12,7 @@ mapGapFromOverlap(sceFile, gapFile, chrTable, verbose = TRUE,
 
 \item{gapFile}{GRanges object of assembly gaps in BED format (can be downloaded from UCSC table browser)}
 
-\item{chrTable}{data..frame of chromosome table (product of makeChrTable)}
+\item{chrTable}{data.frame of chromosome table (product of makeChrTable)}
 
 \item{verbose}{prints messages to the terminal (default is TRUE)}
 

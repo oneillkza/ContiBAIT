@@ -119,7 +119,7 @@ A change in strand state within a contig can represent a number of things. At it
 > library(rtracklayer)
 > # Download GRCh38/hg38 gap track from UCSC
 > gapFile <- import.bed("http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=465319523_SLOtFPExny48YZFaXBh4sSTzuMcA&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_gap&hgta_ctDesc=table+browser+query+on+gap&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED", genome="hg38")
-> # Create fake SCE file containing four regions that overlap one such gap
+> # Create fake SCE file with four regions that overlap a gap
 > sceFile <- GRanges(rep('chr4',4), 
 + IRanges(c(1410000, 1415000, 1420000, 1425000), 
 + c(1430000, 1435000, 1430000, 1435000)))
@@ -223,13 +223,13 @@ A strand state matrix for  75  contigs over  35  libraries.
 
 \section{Clustering contigs into chromosomes}
 
-clusterContigs utilizes a custom algorithm to cluster all fragments together that share a similar strand state across multiple cells.  For example, if two contigs are adjacent on the same chromosome, then they will inherit the same strand state in every cell that is analyzed. The function performs clustering only on homozygous calls (WW or CC) to identify dissimilarity arising from misoriented fragments that would otherwise be lost when heterozygous calls (WC) are included.
+clusterContigs utilizes a custom algorithm to cluster all fragments together that share a similar strand state across multiple cells.  For example, if two contigs are adjacent on the same chromosome, then they will inherit the same strand state in every cell that is analyzed. The function performs clustering only on homozygous calls (WW or CC) to identify dissimilarity arising from misoriented fragments that would otherwise be lost when heterozygous calls (WC) are included. Note for the purposes of this example, we are using the argument randomise=FALSE to ensure conformity of the vignette when running sweave. Randomisation is recommended for most applications and is set to TRUE by default.
 
 \begin{Schunk}
 \begin{Sinput}
 > exampleWCMatrix <- exampleStrandStateMatrix[[1]]
 > exampleWWCCMatrix <- exampleStrandStateMatrix[[2]]
-> clusteredContigs <- clusterContigs(exampleWWCCMatrix)
+> clusteredContigs <- clusterContigs(exampleWWCCMatrix, randomise=FALSE)
 > LGOrientations <- reorientLinkageGroups(clusteredContigs,
 +  exampleWWCCMatrix)
 > reorientedMatrix <- reorientStrandTable(exampleWCMatrix, 
@@ -252,16 +252,16 @@ A linkage group list containing  4  linkage groups.
 > exampleLGList[[1]]
 \end{Sinput}
 \begin{Soutput}
- [1] "chr4:3000000-4000000"     "chr4:30000000-31000000"  
- [3] "chr4:10000000-11000000"   "chr4:1000000-2000000"    
- [5] "chr4:100000000-101000000" "chr4:40000000-41000000"  
- [7] "chr4:170000000-171000000" "chr4:150000000-151000000"
- [9] "chr4:160000000-161000000" "chr4:130000000-131000000"
-[11] "chr4:6000000-7000000"     "chr4:120000000-121000000"
-[13] "chr4:140000000-141000000" "chr4:90000000-91000000"  
-[15] "chr4:70000000-71000000"   "chr4:20000000-21000000"  
-[17] "chr4:60000000-61000000"   "chr4:80000000-81000000"  
-[19] "chr4:110000000-111000000"
+ [1] "chr2:3000000-4000000"     "chr2:170000000-171000000"
+ [3] "chr2:20000000-21000000"   "chr2:190000000-191000000"
+ [5] "chr2:6000000-7000000"     "chr2:230000000-231000000"
+ [7] "chr2:240000000-241000000" "chr2:60000000-61000000"  
+ [9] "chr2:80000000-81000000"   "chr2:200000000-201000000"
+[11] "chr2:40000000-41000000"   "chr2:220000000-221000000"
+[13] "chr2:50000000-51000000"   "chr2:10000000-11000000"  
+[15] "chr2:1000000-2000000"     "chr2:150000000-151000000"
+[17] "chr2:30000000-31000000"   "chr2:130000000-131000000"
+[19] "chr2:70000000-71000000"  
 \end{Soutput}
 \end{Schunk}
 
@@ -301,10 +301,12 @@ With contigs clustered to chromosomes, we can then order them within chromosomes
 > contigOrder
 \end{Sinput}
 \begin{Soutput}
-A data.frame of 1 LGs split into 10 sub-groups from 19 ordered fragments.
+A data.frame of 1 LGs split into 15 sub-groups from 19 ordered fragments.
 
- LG1.1 LG1.10  LG1.2  LG1.3  LG1.4  LG1.5  LG1.6  LG1.7  LG1.8  LG1.9 
-     1      1      7      1      2      1      1      1      3      1 
+ LG1.1 LG1.10 LG1.11 LG1.12 LG1.13 LG1.14 LG1.15  LG1.2  LG1.3  LG1.4  LG1.5 
+     2      1      1      1      1      1      1      2      1      2      2 
+ LG1.6  LG1.7  LG1.8  LG1.9 
+     1      1      1      1 
 \end{Soutput}
 \end{Schunk}
 \includegraphics{contiBAIT-orderAllLinkageGroupsExample}

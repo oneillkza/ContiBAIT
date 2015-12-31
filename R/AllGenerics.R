@@ -40,6 +40,28 @@ setGeneric("plotLGDistances",
                     allStrands) standardGeneric("plotLGDistances"))
 
 ## =========================================================================
+## Generic for barplotLinkageGroupCalls
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export barplotLinkageGroupCalls
+setGeneric("barplotLinkageGroupCalls", 
+           function(object, 
+                    assemblyBED, 
+                    by=NULL, 
+                    returnTable=NULL, 
+                    saveFile=NULL,
+                    ...) standardGeneric("barplotLinkageGroupCalls"))
+
+## =========================================================================
+## Generic for plotWCdistribution
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export plotWCdistribution
+setGeneric("plotWCdistribution", 
+           function(object, 
+                    allStrands,
+                    filterThreshold=NULL,
+                    saveFile=NULL) standardGeneric("plotWCdistribution"))
+
+## =========================================================================
 ## show Methods
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 

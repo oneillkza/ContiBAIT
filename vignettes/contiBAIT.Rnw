@@ -146,13 +146,13 @@ exampleStrandStateMatrix[[1]]
 
 \section{Clustering contigs into chromosomes}
 
-clusterContigs utilizes a custom algorithm to cluster all fragments together that share a similar strand state across multiple cells.  For example, if two contigs are adjacent on the same chromosome, then they will inherit the same strand state in every cell that is analyzed. The function performs clustering only on homozygous calls (WW or CC) to identify dissimilarity arising from misoriented fragments that would otherwise be lost when heterozygous calls (WC) are included.
+clusterContigs utilizes a custom algorithm to cluster all fragments together that share a similar strand state across multiple cells.  For example, if two contigs are adjacent on the same chromosome, then they will inherit the same strand state in every cell that is analyzed. The function performs clustering only on homozygous calls (WW or CC) to identify dissimilarity arising from misoriented fragments that would otherwise be lost when heterozygous calls (WC) are included. Note for the purposes of this example, we are using the argument randomise=FALSE to ensure conformity of the vignette when running sweave. Randomisation is recommended for most applications and is set to TRUE by default.
 
 <<clusterContigsExamplea, fig=FALSE>>=
 exampleWCMatrix <- exampleStrandStateMatrix[[1]]
 exampleWWCCMatrix <- exampleStrandStateMatrix[[2]]
 
-clusteredContigs <- clusterContigs(exampleWWCCMatrix)
+clusteredContigs <- clusterContigs(exampleWWCCMatrix, randomise=FALSE)
 
 LGOrientations <- reorientLinkageGroups(clusteredContigs,
  exampleWWCCMatrix)

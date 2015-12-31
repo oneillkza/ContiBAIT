@@ -1,6 +1,4 @@
-#make an example barplot of data
+data("exampleLGList")
+data("exampleWCMatrix")
 
-data(exampleLGList)
-data(exampleWWCCMatrix)
-plotLGDistances(exampleLGList, exampleWWCCMatrix)
-
+plotLGDistances(exampleLGList, exampleWCMatrix)

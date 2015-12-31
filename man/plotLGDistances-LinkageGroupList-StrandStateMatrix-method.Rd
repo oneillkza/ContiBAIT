@@ -18,4 +18,10 @@
 \description{
 plotLGDistances -- plots a heatmap of the distances between linkage groups
 }
+\examples{
+data("exampleLGList")
+data("exampleWCMatrix")
+
+plotLGDistances(exampleLGList, exampleWCMatrix)
+}
 

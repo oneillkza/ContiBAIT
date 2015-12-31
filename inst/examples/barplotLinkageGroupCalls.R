@@ -1,7 +1,5 @@
-#make an example barplot of data
-
-data(exampleChrTable)
 data(exampleLGList)
+data(exampleDividedChr)
 
-barplotLinkageGroupCalls(exampleLGList, exampleChrTable)
+barplotLinkageGroupCalls(exampleLGList, exampleDividedChr)
 

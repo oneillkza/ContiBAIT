@@ -30,12 +30,8 @@ Imports:
     snow,
     DNAcopy
 Suggests:
-    BiocStyle,
-    knitr,
-    rmarkdown
-biocViews: CellBasedAssays, QualityControl, WholeGenome, Genetics,
-    GenomeAssembly
-VignetteBuilder: knitr
+    BiocStyle
+biocViews: CellBasedAssays, QualityControl, WholeGenome, Genetics, GenomeAssembly
 Collate:
     'AllClasses.R'
     'AllGenerics.R'

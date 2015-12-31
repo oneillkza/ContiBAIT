@@ -14,7 +14,7 @@
 #' 
 #' @param sceFile GRanges object of strand state change locations in BED format 
 #' @param gapFile GRanges object of assembly gaps in BED format (can be downloaded from UCSC table browser)
-#' @param chrTable data..frame of chromosome table (product of makeChrTable)
+#' @param chrTable data.frame of chromosome table (product of makeChrTable)
 #' @param verbose prints messages to the terminal (default is TRUE)
 #' @param overlapNum  Minimal number of strand state changes that overlap with a gap before assembly is cut at that location
 #' 
