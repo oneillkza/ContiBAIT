@@ -1,4 +1,3 @@
-
 barplotLinkageGroupCalls.func <- function(object, assemblyBED, by='lg', returnTable=FALSE, saveFile=FALSE,  ...)
 {
 
@@ -6,7 +5,7 @@ barplotLinkageGroupCalls.func <- function(object, assemblyBED, by='lg', returnTa
 	complete.list <- unique(unlist(linkage.chr))
 
 	# If using chromosome notation, order by chromosome
-	if( length(grep('chr', complete.list)) == length(complete.list) )
+	if( length(grep('chr', complete.list)) == length(complete.list) & length(grep(':', complete.list)) == length(complete.list))
 	{ 
 		#if name in format chr:start-end, then find location of colon in string
 		locationOfColon <- sapply(lapply(strsplit(complete.list, ''), function(x) which(x == ':')), "[[", 1)-1

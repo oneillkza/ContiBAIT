@@ -1,3 +1,3 @@
 data("exampleStrandFreq")
 
-plotWCDistribution(exampleStrandFreq, filterThreshold=0.8)
+plotWCdistribution(exampleStrandFreq, filterThreshold=0.8)

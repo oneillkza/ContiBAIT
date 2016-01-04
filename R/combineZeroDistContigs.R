@@ -19,10 +19,10 @@ combineZeroDistContigs <- function(linkageStrands, rawStrandTable, lg)
 	linkageMat[which(abs(rawStrandTable) > 0.2 & abs(rawStrandTable) < 0.1 ) ] <- NA
 	
 	linkageStrands <- data.frame(linkageMat)
-	
-	linkageStrands <- data.frame(lapply(linkageStrands, as.factor))
+
+	linkageStrands <- data.frame(lapply(linkageStrands, function(x) factor(x, levels=c(1,2,3))))	
 	rownames(linkageStrands) <- contigNames
-	
+	linkageStrands <- linkageStrands[apply(linkageStrands, 1, function(x) length(which(is.na(x))) != ncol(linkageStrands)) ,apply(linkageStrands, 2, function(x) length(which(is.na(x))) != nrow(linkageStrands))]
 	
 	##Combine zero dist contigs:
 	strandDist <- daisy(linkageStrands)
@@ -49,6 +49,11 @@ combineZeroDistContigs <- function(linkageStrands, rawStrandTable, lg)
 	}
 	
 	orderedContigMatrix <- data.frame(LG=unlist(lapply(1:length(mergedContigs), function(x) rep(names(mergedContigs[x]), length(mergedContigs[[x]]) ))), contig=unlist(mergedContigs), row.names=NULL, stringsAsFactors=FALSE )
+
+	contigsByLG <- sapply(orderedContigMatrix$LG, function(x){strsplit(x, '[.]')[[1]]})
+	contigStarts <- sub('-.*', '', sub('.*:', '', orderedContigMatrix$contig))
+ 	orderedContigMatrix <- orderedContigMatrix[order(contigsByLG[1,], as.numeric(contigsByLG[2,] ), as.numeric(contigStarts)),]
+
 	orderedContigMatrix <- new("ContigOrdering", orderedContigMatrix)
 
 	mergedStrands <- data.frame(lapply(mergedStrands, function(x){factor(x, levels=c(1,2,3))}))  

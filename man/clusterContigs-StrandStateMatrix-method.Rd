@@ -14,7 +14,7 @@
 }
 \arguments{
 \item{object}{\code{data.frame} containing strand inheritance information for every contig (rows)
-in every library (columns). This should be the WW/CC only matrix.}
+in every library (columns). This should be the product of strandSeqFreqTable}
 
 \item{similarityCutoff}{place contigs in a cluster when their strand state is at least this similar}
 
@@ -50,14 +50,13 @@ since at every iteration a distance is computed to the existing clusters. Howeve
 more stringent cutoff may be necessary to reduce the number of contigs that are erroneously grouped.
 }
 \examples{
- data(exampleWWCCMatrix)
- data(exampleWCMatrix)
-
-clusteredContigs <- clusterContigs(exampleWWCCMatrix, verbose=FALSE)
+data("exampleWCMatrix")
+ 
+clusteredContigs <- clusterContigs(exampleWCMatrix, verbose=FALSE)
 show(clusteredContigs)
 show(clusteredContigs[[1]])
 
-LGOrientations <- reorientLinkageGroups(clusteredContigs, exampleWWCCMatrix)
+LGOrientations <- reorientLinkageGroups(clusteredContigs, exampleWCMatrix)
 reorientedMatrix <- reorientStrandTable(exampleWCMatrix, linkageGroups = clusteredContigs, orientation = LGOrientations)
 mergedLinkageGroups <- mergeLinkageGroups(clusteredContigs,reorientedMatrix)
 }

@@ -33,10 +33,10 @@ a matrix of lengths of each chromosome (rows) in each linkage group (columns)
 Bar plot all linkage groups, with the true chromosomes of contigs coloured.
 }
 \examples{
-data(exampleLGList)
-data(exampleChrTable)
+data("exampleLGList")
+data("exampleDividedChr")
 
-barplotLinkageGroupCalls(exampleLGList, exampleChrTable)
+barplotLinkageGroupCalls(exampleLGList, exampleDividedChr)
 
 }
 

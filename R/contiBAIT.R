@@ -62,7 +62,7 @@ contiBAIT <- function(path=".",
   
 
   if(verbose){message('-> Processing table and filtering data [2/6]')}
-  strandStateMatrixList <- preprocessStrandTable(strandFrequencyList[[1]], lowQualThreshold=0.8, minLib=6)
+  strandStateMatrixList <- preprocessStrandTable(strandFrequencyList[[1]], lowQualThreshold=0.8)
   if(saveName != FALSE){save(strandStateMatrixList, file=paste(saveName, '_strands.Rd', sep=""))}
 
   #create weighting criteria; median of read depth 
@@ -71,14 +71,14 @@ contiBAIT <- function(path=".",
 
   if(verbose){message('-> Clustering data ', cluster, 'x using ', clusNum, ' cores [3/6]')}      
   slaveNum <- makeCluster(clusNum)
-  linkage.groups <- clusterContigs(strandStateMatrixList[[2]], randomWeight=libWeight, snowCluster=slaveNum, recluster=cluster, randomise=TRUE, minimumLibraryOverlap=10, similarityCutoff=0.9)
+  linkage.groups <- clusterContigs(strandStateMatrixList[[1]], randomWeight=libWeight, snowCluster=slaveNum, recluster=cluster, randomise=TRUE, minimumLibraryOverlap=10, similarityCutoff=0.9)
   stopCluster(slaveNum)
   
   if(saveName != FALSE){ save(linkage.groups, file=paste(saveName, '_LG_', cluster, 'x_reclust.Rd', sep="") ) }	
 
    # make orientation calls for each group; WW and CC only
   if(verbose){message('-> Reorienting discordant fragments [4/6]')}
-  reorientedGroups <- reorientLinkageGroups(linkage.groups, strandStateMatrixList[[2]])
+  reorientedGroups <- reorientLinkageGroups(linkage.groups, strandStateMatrixList[[1]])
                  
   # perform reorientation of linkage groups that belong together but are misoriented with each other
   # convert the strand table to account for the reorientations
@@ -93,17 +93,17 @@ contiBAIT <- function(path=".",
 
   if(verbose){message('-> Checking for high quality sex chromosome fragments [6/6]')}
 
-  if(nrow(strandStateMatrixList[[3]]) > 2)
+  if(nrow(strandStateMatrixList[[2]]) > 2)
   {
-    if(verbose){message(paste('  -> ', nrow(strandStateMatrixList[[3]]), ' found. Processing.', sep=""))}
-    filtWeightSex <- strandFrequencyList[[2]][which(rownames(strandFrequencyList[[2]]) %in% rownames(strandStateMatrixList[[3]])  ),]
+    if(verbose){message(paste('  -> ', nrow(strandStateMatrixList[[2]]), ' found. Processing.', sep=""))}
+    filtWeightSex <- strandFrequencyList[[2]][which(rownames(strandFrequencyList[[2]]) %in% rownames(strandStateMatrixList[[2]])  ),]
     libWeightSex <- apply(filtWeightSex, 1, median)
     # cluster the sex groups if any (should only be present in males, assuming either C or W)
     slaveNum <- makeCluster(clusNum)
-    linkage.groups.sex <- clusterContigs(strandStateMatrixList[[3]], randomWeight=libWeightSex, snowCluster=slaveNum, recluster=cluster, randomise=TRUE, minimumLibraryOverlap=10, similarityCutoff=0.8)
+    linkage.groups.sex <- clusterContigs(strandStateMatrixList[[2]], randomWeight=libWeightSex, snowCluster=slaveNum, recluster=cluster, randomise=TRUE, minimumLibraryOverlap=10, similarityCutoff=0.8)
     stopCluster(slaveNum)
-    reorientedGroups.sex <- reorientLinkageGroups(linkage.groups.sex, strandStateMatrixList[[3]])
-    reorientedTable.sex <- reorientStrandTable(strandStateMatrixList[[3]], linkage.groups.sex, reorientedGroups.sex)
+    reorientedGroups.sex <- reorientLinkageGroups(linkage.groups.sex, strandStateMatrixList[[2]])
+    reorientedTable.sex <- reorientStrandTable(strandStateMatrixList[[2]], linkage.groups.sex, reorientedGroups.sex)
     linkage.merged.sex <- mergeLinkageGroups(linkage.groups.sex, reorientedTable.sex)
     if(saveName != FALSE){save(linkage.merged.sex, file=paste(saveName, '_', cluster, 'reclust_merged_sex.Rd', sep="")  )}
   } else {
@@ -117,8 +117,11 @@ contiBAIT <- function(path=".",
   }else{
     if(saveName == FALSE){saveName = 'contiBAIT'}
 
-    contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable, strandFrequencyList[[1]], strandFrequencyList[[2]], saveOrderedPDF=saveName)
-    plotWCDistribution(strandFrequencyList[[1]], filterThreshold=0.8,  saveFile=paste(saveName, '_WC_distributions', sep=''))
+    pdf(paste(saveName, 'contig_order.pdf', sep='_'))
+    contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable, strandFrequencyList[[1]], strandFrequencyList[[2]], saveOrdered=TRUE)
+    dev.off()
+  
+    plotWCdistribution(strandFrequencyList[[1]], filterThreshold=0.8,  saveFile=paste(saveName, '_WC_distributions', sep=''))
 
     png(paste(saveName, '_heatmap.png', sep=""))
     plotLGDistances(linkage.merged, strandStateMatrixList[[1]])

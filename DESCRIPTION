@@ -27,7 +27,8 @@ Imports:
     GenomicFiles,
     gtools,
     rtracklayer,
-    snow
+    snow,
+    DNAcopy
 Suggests:
     BiocStyle
 biocViews: CellBasedAssays, QualityControl, WholeGenome, Genetics, GenomeAssembly
@@ -46,6 +47,7 @@ Collate:
     'heatPlotLinkageGroupCalls.R'
     'makeBoxPlot.R'
     'makeChrTable.R'
+    'mapGapFromOverlap.R'
     'mergeLinkageGroups.R'
     'orderAllLinkageGroups.R'
     'orderContigsGreedy.R'

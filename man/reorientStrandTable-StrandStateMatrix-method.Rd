@@ -24,14 +24,13 @@ the strand table, reoriented according to the linkage group orientations
 Reorient a strand table, given the orientation vector computed from reorientLinkageGroups
 }
 \examples{
- data(exampleWWCCMatrix)
- data(exampleWCMatrix)
-
-clusteredContigs <- clusterContigs(exampleWWCCMatrix, verbose=FALSE)
+data("exampleWCMatrix")
+ 
+clusteredContigs <- clusterContigs(exampleWCMatrix, verbose=FALSE)
 show(clusteredContigs)
 show(clusteredContigs[[1]])
 
-LGOrientations <- reorientLinkageGroups(clusteredContigs, exampleWWCCMatrix)
+LGOrientations <- reorientLinkageGroups(clusteredContigs, exampleWCMatrix)
 reorientedMatrix <- reorientStrandTable(exampleWCMatrix, linkageGroups = clusteredContigs, orientation = LGOrientations)
 mergedLinkageGroups <- mergeLinkageGroups(clusteredContigs,reorientedMatrix)
 }

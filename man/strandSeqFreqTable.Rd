@@ -6,7 +6,7 @@
 \usage{
 strandSeqFreqTable(bamFileList, fieldSep = ".", field = 1, qual = 0,
   rmdup = TRUE, verbose = TRUE, filter = FALSE, tileChunk = 1e+05,
-  pairedEnd = TRUE)
+  pairedEnd = TRUE, BAITtables = FALSE)
 }
 \arguments{
 \item{bamFileList}{vector containing the location of the bams file to be read}
@@ -28,6 +28,8 @@ a filter table will be automatically generated from the header of the first file
 
 \item{pairedEnd}{Whether the bam files being read are in paired end format. Default is TRUE. Note,
 since paired reads will be the same direction, only first mate read of pair is used in output}
+
+\item{BAITtables}{creates additional matrices in the returned list with just Watson and Crick read counts to be used in downstreat BAIT plotting. Default is FALSE}
 }
 \value{
 a list containing two matrices: a StrandFreqMatrix of W:C read frequencies, and a StrandReadMatrix of read counts

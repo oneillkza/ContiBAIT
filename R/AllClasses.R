@@ -175,3 +175,9 @@ NULL
 #' @docType data
 #' @keywords data
 NULL
+
+#' Example of a split ChromosomeTable, containing contigs and their lengths
+#' @name exampleDividedChr
+#' @docType data
+#' @keywords data
+NULL

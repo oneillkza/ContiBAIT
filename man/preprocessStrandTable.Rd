@@ -28,18 +28,17 @@ preprocessStrandTable(strandTable, strandTableThreshold = 0.8,
 \item{ignoreInternalQual}{logical that prevents function for making an overall assessment of library quality. Very chimeric assemblies can appear low quality across all libraries.}
 }
 \value{
-A list of three matrices -- 1: WW/WC/WW; 2: WW/CC; 3: sex contigs
+A list of two matrices and three quality data.frames -- 1: a matrix of WW/WC/WW calls for autosomes; 2: a matrix of W/C calls for sex chromosomes; 4: the quality of libraries used (based on frequencies outside expected ranges); 5: A data.frame of libraries that are of low quality and therefore excluded from analysis; 6: contigs that are present as WC in more libraries than expected. These are excluded from the strandStateMatrix, but are potentially worth investigating for chimerism.
 }
 \description{
 preprocessStrandTable -- remove low quality libraries and contigs before attempting to build
 a genome
 }
 \examples{
-data(exampleStrandFreq)
+data("exampleStrandFreq")
 
-strandStates <- preprocessStrandTable(exampleStrandFreq)
+strandStates <- preprocessStrandTable(exampleStrandFreq, lowQualThreshold=0.8)
 
 show(strandStates[[1]]) # WW-WC-CC matrix
-show(strandStates[[2]]) # WW-CC only matrix
 }
 

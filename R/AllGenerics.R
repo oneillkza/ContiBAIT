@@ -52,14 +52,14 @@ setGeneric("barplotLinkageGroupCalls",
                     ...) standardGeneric("barplotLinkageGroupCalls"))
 
 ## =========================================================================
-## Generic for plotWCDistribution
+## Generic for plotWCdistribution
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-#' @export plotWCDistribution
-setGeneric("plotWCDistribution", 
+#' @export plotWCdistribution
+setGeneric("plotWCdistribution", 
            function(object, 
                     allStrands,
                     filterThreshold=NULL,
-                    saveFile=NULL) standardGeneric("plotWCDistribution"))
+                    saveFile=NULL) standardGeneric("plotWCdistribution"))
 
 ## =========================================================================
 ## show Methods
@@ -191,12 +191,12 @@ setMethod("show",
 		  {
 		  	if(ncol(object) == 2)
 		  	{
-			  	cat('A data.frame of', length(object[,1]), 'fragments from a ', sum(object[,2])/1000000, 'Mb genome.\n')
+			  	cat('A data.frame of', length(object[,1]), 'fragments from a', sum(object[,2])/1000000, 'Mb genome.\n')
 		  	}else{
-		  		cat('A data.frame of', length(object[,1]), 'fragments from a ', (sum(object[,3])-sum(object[,2]))/1000000, 'Mb genome.\n')
+		  		cat('A data.frame of', length(object[,1]), 'fragments from a', (sum(object[,3])-sum(object[,2]))/1000000, 'Mb genome.\n')
 		  	}
 		  	show(head(object))
-			cat('...')
+			cat('...\n')
 			show(tail(object))
 		  }
 )

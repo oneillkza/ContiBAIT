@@ -36,10 +36,12 @@ orderContigsGreedy <- function(linkageGroupReadTable, randomAttempts=75, verbose
         best_table <- temp_table
       }
     }
-  }
 
-  #order the table entered into function and convert to factor, then add factor levels.
   linkageGroupReadTable <- factorizedLinkageGroupReadTable[row.names(best_table)[best_order$order],]
-
   return(list(orderVector=row.names(best_table)[best_order$order], orderedMatrix=linkageGroupReadTable))
+
+  }else{
+    linkageGroupReadTable <- factorizedLinkageGroupReadTable[row.names(best_table)[best_order$order],]
+    return(list(orderVector=seq(1, nrow(linkageGroupReadTable)), orderedMatrix=linkageGroupReadTable))
+  }
 }
