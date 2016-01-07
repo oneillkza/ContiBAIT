@@ -78,16 +78,12 @@ contiBAIT <- function(path=".",
 
    # make orientation calls for each group; WW and CC only
   if(verbose){message('-> Reorienting discordant fragments [4/6]')}
-  reorientedGroups <- reorientLinkageGroups(linkage.groups, strandStateMatrixList[[1]])
-                 
-  # perform reorientation of linkage groups that belong together but are misoriented with each other
-  # convert the strand table to account for the reorientations
-  reorientedTable <- reorientStrandTable(strandStateMatrixList[[1]], linkage.groups, reorientedGroups)
+  reorientedTable <- reorientLinkageGroups(linkage.groups, strandStateMatrixList[[1]])
 
   if(saveName != FALSE){save(reorientedTable, file=paste(saveName, '_', cluster, 'x_reclust_reoriented.Rd', sep=""))}
 
   if(verbose){message('-> Merging related linkage groups [5/6]')}
-  linkage.merged <- mergeLinkageGroups(linkage.groups, reorientedTable)
+  linkage.merged <- mergeLinkageGroups(linkage.groups, reorientedTable[[1]])
 
   if(saveName != FALSE){save(linkage.merged, file=paste(saveName, '_', cluster, 'x_reclust_merged.Rd', sep="")  )}
 
