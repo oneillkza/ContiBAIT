@@ -30,8 +30,7 @@ clusteredContigs <- clusterContigs(exampleWCMatrix, verbose=FALSE)
 show(clusteredContigs)
 show(clusteredContigs[[1]])
 
-LGOrientations <- reorientLinkageGroups(clusteredContigs, exampleWCMatrix)
-reorientedMatrix <- reorientStrandTable(exampleWCMatrix, linkageGroups = clusteredContigs, orientation = LGOrientations)
-mergedLinkageGroups <- mergeLinkageGroups(clusteredContigs,reorientedMatrix)
+reorientedMatrix <- reorientLinkageGroups(clusteredContigs, exampleWCMatrix)
+mergedLinkageGroups <- mergeLinkageGroups(clusteredContigs,reorientedMatrix[[1]])
 }
 

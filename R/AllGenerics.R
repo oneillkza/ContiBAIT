@@ -10,6 +10,7 @@ setGeneric("clusterContigs",
 		   		 randomSeed=NULL,
 		   		 randomWeight=NULL,
 		   		 snowCluster=NULL,
+		   		 clusterBy=NULL,
 		   		 verbose=NULL) standardGeneric("clusterContigs"))
 
 

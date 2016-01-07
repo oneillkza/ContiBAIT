@@ -10,7 +10,7 @@
 \S4method{clusterContigs}{StrandStateMatrix}(object, similarityCutoff = 0.7,
   recluster = NULL, minimumLibraryOverlap = 5, randomise = TRUE,
   randomSeed = NULL, randomWeight = NULL, snowCluster = NULL,
-  verbose = TRUE)
+  clusterBy = "hetero", verbose = TRUE)
 }
 \arguments{
 \item{object}{\code{data.frame} containing strand inheritance information for every contig (rows)
@@ -56,8 +56,7 @@ clusteredContigs <- clusterContigs(exampleWCMatrix, verbose=FALSE)
 show(clusteredContigs)
 show(clusteredContigs[[1]])
 
-LGOrientations <- reorientLinkageGroups(clusteredContigs, exampleWCMatrix)
-reorientedMatrix <- reorientStrandTable(exampleWCMatrix, linkageGroups = clusteredContigs, orientation = LGOrientations)
-mergedLinkageGroups <- mergeLinkageGroups(clusteredContigs,reorientedMatrix)
+reorientedMatrix <- reorientLinkageGroups(clusteredContigs, exampleWCMatrix)
+mergedLinkageGroups <- mergeLinkageGroups(clusteredContigs,reorientedMatrix[[1]])
 }
 

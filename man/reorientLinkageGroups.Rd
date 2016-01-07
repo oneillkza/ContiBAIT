@@ -2,26 +2,21 @@
 % Please edit documentation in R/reorientLinkageGroups.R
 \name{reorientLinkageGroups}
 \alias{reorientLinkageGroups}
-\title{reorientLinkageGroups uses a greedy algorithm to try to find the correct orientations of linkage groups}
+\title{reorientLinkageGroups uses a simple dissimilarity to find misoriented fragments within linkage groups.}
 \usage{
-reorientLinkageGroups(linkageGroups, allStrands, dissimilarityCutoff = 0.3,
-  maxiter = 100, verbose = TRUE)
+reorientLinkageGroups(linkageGroups, allStrands, verbose = TRUE)
 }
 \arguments{
 \item{linkageGroups}{List of vectors containing names of contigs belonging to each LG.}
 
 \item{allStrands}{Table of strand state for all contigs. Product of StrandSeqFreqTable.}
 
-\item{dissimilarityCutoff}{Try to reorient all LGs more dissimilar than this to any other LG. Default is 0.3}
-
-\item{maxiter}{Maximum number of iterations to try reoriented for (to prevent possible infinite loops). Default is 100.}
-
 \item{verbose}{Outputs information to the terminal. Default is TRUE.}
 }
 \value{
-a vector of orientations, as '+' or '-', in the order of linkageGroups.
+a list consisting of a strandStateMatrix (a reoriented version of allStrands), and a data.frame of contig names and orientations, as '+' or '-'.
 }
 \description{
-reorientLinkageGroups uses a greedy algorithm to try to find the correct orientations of linkage groups
+reorientLinkageGroups uses a simple dissimilarity to find misoriented fragments within linkage groups.
 }
 

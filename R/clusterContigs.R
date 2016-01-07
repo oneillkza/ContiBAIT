@@ -6,6 +6,7 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 						   randomSeed=NULL,
 						   randomWeight=NULL,
 						   snowCluster=NULL,
+						   clusterBy='hetero',
 						   verbose=TRUE)
 {
 	
@@ -85,7 +86,17 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
     
     #If no reclustering, just run once:
     #Code starts here!
-	object <- replace(object, object == 2, NA)
+    if(clusterBy == 'homo')
+    {
+		object <- replace(object, object == 2, NA)
+	}else if (clusterBy == 'hetero'){
+		object <- replace(object, object == 3, 1)
+	}else{
+		warning('### Unrecognized clusterBy parameter! ###')
+		break
+	}
+	
+
 	if(is.null(recluster))
 	{
 		linkageGroups <- runOnce(object, randomise, randomWeight)
