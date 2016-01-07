@@ -160,6 +160,7 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 #' @param randomise whether to reorder contigs before clustering
 #' @param randomSeed random seed to initialize clustering
 #' @param randomWeight vector of weights for contigs for resampling. If NULL, uniform resampling is used.
+#' @param clusterBy Method for performing clustering. Default is 'hetero' (for comparing heterozygous calls to homozygous). Alternative is 'homo' (for compairson between the two homozygous calls)
 #' Typically this should be a measure of contig quality, such as library coverage, so that clustering tends to
 #' start from the better quality contigs.
 #' @param snowCluster optional snowCluster for parallel execution
