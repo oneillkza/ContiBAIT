@@ -155,13 +155,19 @@ NULL
 #' @keywords data
 NULL
 
-#' An example StrandStateMatrix containing only WW and CC calls for contigs
+#' An example Crick strand frequences extracted from BAMS by strandSeqFreqTable where BAITtables=TRUE
 #'
-#' @name exampleWWCCMatrix
+#' @name exampleCrickFreq
 #' @docType data
 #' @keywords data
 NULL
 
+#' An example Watson strand frequences extracted from BAMS by strandSeqFreqTable where BAITtables=TRUE
+#'
+#' @name exampleWatsonFreq
+#' @docType data
+#' @keywords data
+NULL
 
 #' Example of a LinkageGroupList output from clusterContigs
 #'

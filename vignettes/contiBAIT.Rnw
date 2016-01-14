@@ -101,7 +101,8 @@ To read in BAM files into ContiBAIT, create a strandFreMatrix instance by callin
 strandFrequencyList <- strandSeqFreqTable(bamFileList, 
 filter=dividedChrTable,
 qual=10, 
-pairedEnd=FALSE)
+pairedEnd=FALSE,
+BAITtables=TRUE)
 @
 
 This returns a list of two data.frames.  The first data.frame consists of a strand state frequency, calculated by taking the number of Watson (- strand) reads, subtracting the number of Crick (+ strand) reads, and dividing by the total number of reads.  These values range from -1 (entirely Watson reads) through to 1 (entirely Crick reads).  The second data.frame consists of the absolute number of reads covering the contig. This is used in thresholding the data, and in weighting the accuracy of calls in subsequent orderings. Note that the fewer reads used to make a strand call, the less accurate that call will be. In the absence of background reads, WC regions will follow a binomial distribution. If we assume any contigs with <-0.8 are WW, and >0.8 are CC (this is the default strandTableThreshold parameter used in preprocessStrandTable), then there is a probability of 0.044 that the strand state call is incorrect. As such we exclude calls that are made with fewer than 10 reads. Increasing this number will make calls more accurate, but will reduce the number of contigs included in analysis. Since the contigs are weighted based on read density during clustering, a minimum of 10 reads to support a strand call provides a good balance between accuracy and inclusion.
@@ -170,17 +171,17 @@ plotLGDistances(exampleLGList, exampleWCMatrix)
 @
 
 
-While the similarity within linkage groups can be visualized using plotLinkageGroup (here, the first linkage group is used for creating this heatmap).
+While the similarity within linkage groups can be visualized using plotLinkageGroup (here, the first linkage group is used for creating this heatmap). Note, side by side comparisons of linkage group members can be performs with multiple lg options (e.g. lg=1:2 will plot the first two linkage groups, lg=c(1,4) will plot the first and forth etc.).
 
 <<clustercontigsExamplec, fig=TRUE>>=
 
-plotLinkageGroup(exampleLGList[[1]], exampleWCMatrix)
+plotLGDistances(exampleLGList, exampleWCMatrix, lg=1)
 @
 
 
 \section{Ordering contigs within chromosomes}
 
-With contigs clustered to chromosomes, we can then order them within chromosomes. Just as meiotic recombination shuffles loci and allows genetic distances between them to be determined, sister chromatid exchanges (SCE) events reshuffle templates, and similarly allow us to infer a linkage distance. We have employed a greedy algorithm to do this, but have an argument allowing a TSP solution as an alternative. Contigs are ordered by similarity across libraries, then by contig name. Contigs that are zero distance apart (ie have no SCE events between them and are therefore unordered) are returned in contig name order. The output is split into sub-linkage groups, so Linkage group 1 will be split into a number of groups depending on the number of SCE events that occur within the chromosome.
+With contigs clustered to chromosomes, we can then order them within chromosomes. Just as meiotic recombination shuffles loci and allows genetic distances between them to be determined, sister chromatid exchanges (SCE) events reshuffle templates, and similarly allow us to infer a linkage distance. We have employed a greedy algorithm to do this, but have an argument allowing a TSP solution as an alternative. Contigs are ordered by similarity across libraries, then by contig name. Contigs that are zero distance apart (ie have no SCE events between them and are therefore unordered) are returned in contig name order. The output is split into sub-linkage groups, so Linkage group 1 will be split into a number of groups depending on the number of SCE events that occur within the chromosome. The output will be an S4 object of type contigOrdering.
 
 <<orderAllLinkageGroupsExample, fig=TRUE>>=
 contigOrder <- orderAllLinkageGroups(exampleLGList,
@@ -193,14 +194,64 @@ saveOrdered=TRUE)
 contigOrder
 @
 
-If the assembly is mostly complete and you wish to compare the actual location of the fragments against the output of orderAllLinkageGroups, contiBAIT has the built in plotContigOrder function 
+If the assembly is mostly complete and you wish to compare the actual location of the fragments in the assembly you're working with against the output of orderAllLinkageGroups, contiBAIT has the built in plotContigOrder function. This assumes that the contig name from the contigOrdering object is in a format of chr:start-end.
 
 <<orderAllLinkageGroupsExampleb, fig=TRUE>>=
 
-plotContigOrder(contigOrder$contig)
+plotContigOrder(contigOrder)
+@
+
+Alternatively, all contigs can be ordered simultaneously by omitting the whichLG argument. If saveOrdered is set to TRUE, plots will be generated for every linkage group.  By ordering all of the linkage groups we can proceed to create BED files of these data for the new assemblies.
+
+<<orderAllLinkageGroupsExamplec, fig=FALSE>>=
+contigOrderAll <- orderAllLinkageGroups(exampleLGList,
+exampleWCMatrix,
+exampleStrandFreq,
+exampleReadCounts)
+
+contigOrderAll
 @
 
 
+\section{Checking order using BAIT ideograms}
+
+It is possible to visually validate the ordering by creating ideogram plots of the data. The supplied test data comprises of reads from the first four chromosomes. Below is example code that will plot the second library from the output of strandSeqFreqTable. Note the third and forth elements of the strandFrequencyList are only generated if BAITtables is set to TRUE when running strandSeqFreqTable.  The plot below shows the location of the reads and highlights an SCE on chromosome 3. Note to only display the first library, we need to subset the strandReadMatrix and retain these as strandReadMatrix objects.
+
+<<ideogramExample, fig=TRUE>>=
+# extract elements from strandSeqFreqTable list
+WatsonFreqList <- strandFrequencyList[[3]]
+CrickFreqList <- strandFrequencyList[[4]]
+
+# subset elements to only analyze one library
+singleWatsonLibrary <- new('StrandReadMatrix', WatsonFreqList[,2, drop=FALSE])
+singleCrickLibrary <- new('StrandReadMatrix',CrickFreqList[,2, drop=FALSE]) 
+
+# Run ideogram plotter
+ideogramPlot(singleWatsonLibrary,
+singleCrickLibrary,
+dividedChrTable)
+@
+
+If chromosome builds are not complete (and so each contig has not been assigned a chromosome in the chrTable instance), these ideograms can be plotted using only the represented fragments in the order given to the function from the orderedContig object generated from orderAllLinkageGroups.  Here we will use the orderedContig object representing all 4 linkage groups.
+
+<<ideogramExampleb, fig=TRUE>>=
+
+ideogramPlot(singleWatsonLibrary,
+singleCrickLibrary,
+dividedChrTable,
+orderFrame=contigOrderAll)
+@
+
+Alternatively, all libraries can be compared side by side for a single chromosome. Because this will print to multiple pages, the showPage option can be used to limit the output to a user=specified page. Here we will use the orderedContig object representing just one linkage group.
+
+<<ideogramExamplec, fig=TRUE>>=
+ideogramPlot(WatsonFreqList,
+CrickFreqList,
+dividedChrTable,
+orderFrame=contigOrder,
+plotBy='chr',
+showPage=1)
+@
 
 
 \section{Writing out to a BED file}

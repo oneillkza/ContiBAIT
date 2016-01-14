@@ -7,15 +7,12 @@
 \alias{plotWCdistribution,StrandFreqMatrix-method}
 \title{Creates median distribution boxplots across all libraries and contigs}
 \usage{
-\S4method{plotWCdistribution}{StrandFreqMatrix}(object, filterThreshold = 0.8,
-  saveFile = FALSE)
+\S4method{plotWCdistribution}{StrandFreqMatrix}(object, filterThreshold = 0.8)
 }
 \arguments{
 \item{object}{object of class StrandFreqMatrix (product of strandSeqFreqTable)}
 
 \item{filterThreshold}{numeric value used in assessing the threshold for homozygous strand calls. Default is 0.8.}
-
-\item{saveFile}{character denoting whether plot should be saved. Plots to R graphics when FALSE. Default is FALSE}
 }
 \description{
 Creates median distribution boxplots across all libraries and contigs

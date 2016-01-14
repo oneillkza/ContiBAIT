@@ -3,7 +3,8 @@
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 #' @export clusterContigs
 setGeneric("clusterContigs", 
-		   function(object, similarityCutoff=NULL,
+		   function(object, 
+		   		 similarityCutoff=NULL,
 		   		 recluster=NULL, 
 		   		 minimumLibraryOverlap=NULL,
 		   		 randomise=NULL,
@@ -15,13 +16,13 @@ setGeneric("clusterContigs",
 
 
 ## =========================================================================
-## Generic for reorientStrandTable
+## Generic for reorientLinkageGroups
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-#' @export reorientStrandTable
-setGeneric("reorientStrandTable", 
+#' @export reorientLinkageGroups
+setGeneric("reorientLinkageGroups", 
 		   function(object, 
-		   		 linkageGroups=NULL, 
-		   		 orientation=NULL) standardGeneric("reorientStrandTable"))
+		   			allStrands,
+		   		 	verbose=NULL) standardGeneric("reorientLinkageGroups"))
 
 ## =========================================================================
 ## Generic for mergeLinkageGroups.R
@@ -38,7 +39,10 @@ setGeneric("mergeLinkageGroups",
 #' @export plotLGDistances
 setGeneric("plotLGDistances", 
            function(object, 
-                    allStrands) standardGeneric("plotLGDistances"))
+                    allStrands,
+                    lg=NULL,
+                    labels=NULL,
+                    lgChr=NULL) standardGeneric("plotLGDistances"))
 
 ## =========================================================================
 ## Generic for barplotLinkageGroupCalls
@@ -48,9 +52,7 @@ setGeneric("barplotLinkageGroupCalls",
            function(object, 
                     assemblyBED, 
                     by=NULL, 
-                    returnTable=NULL, 
-                    saveFile=NULL,
-                    ...) standardGeneric("barplotLinkageGroupCalls"))
+                    returnTable=NULL) standardGeneric("barplotLinkageGroupCalls"))
 
 ## =========================================================================
 ## Generic for plotWCdistribution
@@ -59,8 +61,20 @@ setGeneric("barplotLinkageGroupCalls",
 setGeneric("plotWCdistribution", 
            function(object, 
                     allStrands,
-                    filterThreshold=NULL,
-                    saveFile=NULL) standardGeneric("plotWCdistribution"))
+                    filterThreshold=NULL) standardGeneric("plotWCdistribution"))
+
+## =========================================================================
+## Generic for ideogramPlot
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export ideogramPlot
+setGeneric("ideogramPlot", 
+           function(WatsonFreqList, 
+                    CrickFreqList,
+                    chrTable,
+                    plotBy=NULL,
+                    showPage=NULL,
+                    orderFrame=NULL,
+                    verbose=NULL) standardGeneric("ideogramPlot"))
 
 ## =========================================================================
 ## show Methods

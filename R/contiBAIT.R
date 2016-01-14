@@ -46,10 +46,11 @@ contiBAIT <- function(path=".",
                         verbose=TRUE)
 {
 
+  options(scipen=20)
   #Create directory to store all the files
   bamFileList <- list.files(path=path, pattern=".bam$", full.names=TRUE)
 
-  if(verbose){message('RUNNING CONTIBAIT ON ', length(bamFileList), ' BAM FILES!\n\n PARAMETERS FOR BAM ANALYSIS: \n----------------------------------\n     -> paired end data=', pairedEnd, '\n     -> mapping quality=', readQual, '\n     -> bed filter=', if(length(filter)==1){'FALSE'}else{'TRUE'}, '\n     -> minimal reads required=', readLimit, '\n\n PARAMETERS FOR CLUSTERING: \n----------------------------------\n     -> number of reclusters=', cluster, '\n     -> number of cores to use=', clusNum, '\n\n ADDITIONAL PARAMETERS:', '\n----------------------------------\n     -> saving intermediate files =', if(saveName==FALSE){'FALSE'}else{'TRUE'}, '\n     -> creating analysis plots=', makePlots, '\n----------------------------------')}
+  if(verbose){message('RUNNING CONTIBAIT ON ', length(bamFileList), ' BAM FILES!\n\n PARAMETERS FOR BAM ANALYSIS: \n----------------------------------\n     -> paired end data=', pairedEnd, '\n     -> mapping quality=', readQual, '\n     -> bed filter=', if(length(filter)==1){'FALSE'}else{'TRUE'}, '\n     -> minimal reads required=', readLimit, '\n\n PARAMETERS FOR CLUSTERING: \n----------------------------------\n     -> number of reclusters=', cluster, '\n     -> number of cores to use=', clusNum, '\n\n ADDITIONAL PARAMETERS:', '\n----------------------------------\n     -> saving intermediate files=', if(saveName==FALSE){'FALSE'}else{'TRUE'}, '\n     -> creating analysis plots=', makePlots, '\n----------------------------------')}
 
   if(verbose){message('-> Creating read table from bam files [1/6]')}
   strandFrequencyList <- strandSeqFreqTable(bamFileList, filter=filter, qual=readQual, pairedEnd=pairedEnd)
@@ -99,8 +100,7 @@ contiBAIT <- function(path=".",
     linkage.groups.sex <- clusterContigs(strandStateMatrixList[[2]], randomWeight=libWeightSex, snowCluster=slaveNum, recluster=cluster, randomise=TRUE, minimumLibraryOverlap=10, similarityCutoff=0.8)
     stopCluster(slaveNum)
     reorientedGroups.sex <- reorientLinkageGroups(linkage.groups.sex, strandStateMatrixList[[2]])
-    reorientedTable.sex <- reorientStrandTable(strandStateMatrixList[[2]], linkage.groups.sex, reorientedGroups.sex)
-    linkage.merged.sex <- mergeLinkageGroups(linkage.groups.sex, reorientedTable.sex)
+    linkage.merged.sex <- mergeLinkageGroups(linkage.groups.sex, reorientedGroups.sex[[1]])
     if(saveName != FALSE){save(linkage.merged.sex, file=paste(saveName, '_', cluster, 'reclust_merged_sex.Rd', sep="")  )}
   } else {
     if(verbose){message('  -> None found')}
@@ -108,31 +108,29 @@ contiBAIT <- function(path=".",
 
   if(makePlots != TRUE)
   {
-    contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable, strandFrequencyList[[1]], strandFrequencyList[[2]])
+    contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable[[1]], strandFrequencyList[[1]], strandFrequencyList[[2]])
     if(saveName != FALSE){save(contigOrder, file=paste(saveName, '_', cluster, 'reclust_ordered_LGs.Rd', sep="")  )}
   }else{
     if(saveName == FALSE){saveName = 'contiBAIT'}
 
-    pdf(paste(saveName, 'contig_order.pdf', sep='_'))
-    contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable, strandFrequencyList[[1]], strandFrequencyList[[2]], saveOrdered=TRUE)
-    dev.off()
-  
-    plotWCdistribution(strandFrequencyList[[1]], filterThreshold=0.8,  saveFile=paste(saveName, '_WC_distributions', sep=''))
+    pdf(paste(saveName, '_all_plots.pdf', sep='_'))
 
-    png(paste(saveName, '_heatmap.png', sep=""))
-    plotLGDistances(linkage.merged, strandStateMatrixList[[1]])
-    graphics.off()
+    plotWCdistribution(strandFrequencyList[[1]], filterThreshold=0.8)
 
     if(length(filter) < 3){
       chrTable <- makeChrTable(bamFileList[1])
     }else{
-      chrTable <- data.frame(chr=as.character(filter[,4]), length=filter[,3]-filter[,2], stringsAsFactors=FALSE)
+      chrTable <- filter
     }
-    makeBoxPlot(chrTable, linkage.merged, saveFile=paste(saveName, '_included_contig_boxplot', sep=''))
+    makeBoxPlot(chrTable, linkage.merged)
 
-    barplotLinkageGroupCalls(linkage.merged, chrTable, saveFile=paste(saveName, '_barplot_LG', sep=''))
-    barplotLinkageGroupCalls(linkage.merged, chrTable, by='chr', saveFile=paste(saveName, '_barplot_chr', sep=''))
+    plotLGDistances(linkage.merged, strandStateMatrixList[[1]])
 
+    barplotLinkageGroupCalls(linkage.merged, chrTable)
+    barplotLinkageGroupCalls(linkage.merged, chrTable, by='chr')
+    contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable[[1]], strandFrequencyList[[1]], strandFrequencyList[[2]], saveOrdered=TRUE)
+
+    dev.off()
   }
 
   return(contigOrder)

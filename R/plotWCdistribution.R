@@ -1,6 +1,6 @@
 
 
-plotWCdistribution.func <- function(object, filterThreshold=0.8, saveFile=FALSE)
+plotWCdistribution.func <- function(object, filterThreshold=0.8)
 {
 	object <- object[, colSums(!(is.na(object))) > 0]
 	breaks <-  round( seq(-1,1, by=2/40),digits=2)
@@ -17,8 +17,6 @@ plotWCdistribution.func <- function(object, filterThreshold=0.8, saveFile=FALSE)
 	nameLabs[round((filterThreshold+((1-filterThreshold)/2))*40, digits=0)] <- filterThreshold
 	nameLabs[round((1-filterThreshold-((1-filterThreshold)/2)) *40, digits=0) ] <- -filterThreshold
 
-	if(saveFile != FALSE){pdf(paste(saveFile, '.pdf', sep=""))}
-
 	plotList <- boxplot(matrixHistogram, col=colors, xlab="WC frequency per contig (W-C)/(W+C)", ylab="Number of contigs", main=paste("WC distributions from", nrow(matrixHistogram), "libraries\nwith an average of", round(avContNum, digits=0), "fragments", sep=" ") )
 	lines(names(matrixTable), matrixTable, col='mediumblue', lwd=2)
 
@@ -27,7 +25,6 @@ plotWCdistribution.func <- function(object, filterThreshold=0.8, saveFile=FALSE)
 	lines(c(41-length(bob[which(as.numeric(names(bob)) >= filterThreshold)]), 40), c(sum(bob[which(as.numeric(names(bob)) >= filterThreshold)]),sum(bob[which(as.numeric(names(bob)) >= filterThreshold)])), col='green4', lwd=2)
 	text(5, sum(bob[which(as.numeric(names(bob)) <= filterThreshold)]), pos=3, 'Av. CC contigs', cex=0.7, col='green4')
 	text(36, sum(bob[which(as.numeric(names(bob)) >= filterThreshold)]), pos=3, 'Av. WW contigs', cex=0.7, col='green4')
-	if(saveFile != FALSE){dev.off()}
 
 }
 
@@ -35,7 +32,6 @@ plotWCdistribution.func <- function(object, filterThreshold=0.8, saveFile=FALSE)
 #' Creates median distribution boxplots across all libraries and contigs
 #' @param object object of class StrandFreqMatrix (product of strandSeqFreqTable)
 #' @param filterThreshold numeric value used in assessing the threshold for homozygous strand calls. Default is 0.8.
-#' @param saveFile character denoting whether plot should be saved. Plots to R graphics when FALSE. Default is FALSE
 #' @aliases plotWCdistribution plotWCdistribution,StrandFreqMatrix,StrandFreqMatrix-method 
 #' @example inst/examples/plotWCdistribution.R
 #' @export

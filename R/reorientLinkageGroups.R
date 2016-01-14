@@ -1,23 +1,13 @@
-####################################################################################################
-#' reorientLinkageGroups uses a simple dissimilarity to find misoriented fragments within linkage groups.
-#' @param linkageGroups List of vectors containing names of contigs belonging to each LG.
-#' @param allStrands Table of strand state for all contigs. Product of StrandSeqFreqTable.
-#' @param verbose Outputs information to the terminal. Default is TRUE.
-#' @return a list consisting of a strandStateMatrix (a reoriented version of allStrands), and a data.frame of contig names and orientations, as '+' or '-'.
-#' 
-#' @export
-####################################################################################################
-
-reorientLinkageGroups <- function(linkageGroups, allStrands, verbose=TRUE)
+reorientLinkageGroups.func <- function(object, allStrands, verbose=TRUE)
 {
 
 	completeOrientation <- data.frame(contig=vector(), orientation=vector())
 
-	for(lg in seq(1:length(linkageGroups)))
+	for(lg in seq(1:length(object)))
 	{
-		if(verbose){message('Reorienting fragments from LG', lg, ' [', lg, '/', length(linkageGroups), ']' )}
+		if(verbose){message('Reorienting fragments from LG', lg, ' [', lg, '/', length(object), ']' )}
 
-		linkageGroup <- linkageGroups[[lg]]
+		linkageGroup <- object[[lg]]
 		if(length(linkageGroup) > 1)
 		{
 			subsetStrands <- allStrands[which(rownames(allStrands) %in% linkageGroup),]
@@ -47,7 +37,7 @@ reorientLinkageGroups <- function(linkageGroups, allStrands, verbose=TRUE)
 
 	toReorientStrands <- allStrands[toReorient,]
 	toReorientStrands <- data.frame(
-		apply(toReorientStrands, c(1,2), 
+		apply(toReorientStrands, c(1,2),
 			  function(entry)
 			  {
 			  	if(!is.na(entry)&&entry=='3') return('1')
@@ -59,3 +49,19 @@ reorientLinkageGroups <- function(linkageGroups, allStrands, verbose=TRUE)
 	allStrands[toReorient,] <- toReorientStrands
 	return(list(new('StrandStateMatrix', allStrands), completeOrientation))
 }
+
+####################################################################################################
+#' reorientLinkageGroups uses a simple dissimilarity to find misoriented fragments within linkage groups.
+#' @param object List of vectors containing names of contigs belonging to each LG.
+#' @param allStrands Table of strand state for all contigs. Product of StrandSeqFreqTable.
+#' @param verbose Outputs information to the terminal. Default is TRUE.
+#' @aliases reorientLinkageGroups reorientLinkageGroups,LinkageGroupList,LinkageGroupList-method, strandStateMatrix, strandStateMatrix-method
+#' @return a list consisting of a strandStateMatrix (a reoriented version of allStrands), and a data.frame of contig names and orientations, as '+' or '-'.
+#' 
+#' @export
+####################################################################################################
+
+setMethod('reorientLinkageGroups',
+		  signature = signature(object='LinkageGroupList', allStrands = 'StrandStateMatrix'),
+		  definition = reorientLinkageGroups.func
+		  )
