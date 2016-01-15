@@ -10,7 +10,7 @@
 \S4method{clusterContigs}{StrandStateMatrix}(object, similarityCutoff = 0.7,
   recluster = NULL, minimumLibraryOverlap = 5, randomise = TRUE,
   randomSeed = NULL, randomWeight = NULL, snowCluster = NULL,
-  verbose = TRUE)
+  clusterBy = "hetero", verbose = TRUE)
 }
 \arguments{
 \item{object}{\code{data.frame} containing strand inheritance information for every contig (rows)
@@ -29,11 +29,13 @@ similarityCutoff)}
 
 \item{randomSeed}{random seed to initialize clustering}
 
-\item{randomWeight}{vector of weights for contigs for resampling. If NULL, uniform resampling is used.
-Typically this should be a measure of contig quality, such as library coverage, so that clustering tends to
-start from the better quality contigs.}
+\item{randomWeight}{vector of weights for contigs for resampling. If NULL, uniform resampling is used.}
 
 \item{snowCluster}{optional snowCluster for parallel execution}
+
+\item{clusterBy}{Method for performing clustering. Default is 'hetero' (for comparing heterozygous calls to homozygous). Alternative is 'homo' (for compairson between the two homozygous calls)
+Typically this should be a measure of contig quality, such as library coverage, so that clustering tends to
+start from the better quality contigs.}
 
 \item{verbose}{= TRUE prints function progress}
 }
@@ -56,8 +58,7 @@ clusteredContigs <- clusterContigs(exampleWCMatrix, verbose=FALSE)
 show(clusteredContigs)
 show(clusteredContigs[[1]])
 
-LGOrientations <- reorientLinkageGroups(clusteredContigs, exampleWCMatrix)
-reorientedMatrix <- reorientStrandTable(exampleWCMatrix, linkageGroups = clusteredContigs, orientation = LGOrientations)
-mergedLinkageGroups <- mergeLinkageGroups(clusteredContigs,reorientedMatrix)
+reorientedMatrix <- reorientLinkageGroups(clusteredContigs, exampleWCMatrix)
+mergedLinkageGroups <- mergeLinkageGroups(clusteredContigs,reorientedMatrix[[1]])
 }
 

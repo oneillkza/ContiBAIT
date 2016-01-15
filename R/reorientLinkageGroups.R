@@ -1,66 +1,67 @@
+reorientLinkageGroups.func <- function(object, allStrands, verbose=TRUE)
+{
+
+	completeOrientation <- data.frame(contig=vector(), orientation=vector())
+
+	for(lg in seq(1:length(object)))
+	{
+		if(verbose){message('Reorienting fragments from LG', lg, ' [', lg, '/', length(object), ']' )}
+
+		linkageGroup <- object[[lg]]
+		if(length(linkageGroup) > 1)
+		{
+			subsetStrands <- allStrands[which(rownames(allStrands) %in% linkageGroup),]
+			subsetStrands <- replace(subsetStrands, subsetStrands == 2, NA)
+			sim <- suppressWarnings(1-as.matrix(daisy(data.frame(subsetStrands))))
+			sim[is.na(sim)] <- 0
+
+			rownames(sim) <- rownames(subsetStrands)
+			findGroups <- cutree(hclust(dist(sim)), h=10)
+	  		getMax <- names(sort(table(findGroups), decreasing=TRUE))
+	  		forwardStrands <- names(findGroups)[which(findGroups == getMax[1])]
+			reverseStrands <- names(findGroups)[which(findGroups == getMax[2])]
+
+			orientVec <- linkageGroup
+			orientVec[which(orientVec %in% forwardStrands)] <- '+'
+			orientVec[which(orientVec %in% reverseStrands)] <- '-'
+			orientVec[which(!((orientVec == '+') | (orientVec == '-')))] <- '*'
+			orientationFrame <- data.frame(contig=linkageGroup, orientation=orientVec)
+		}else{
+			orientationFrame <-  data.frame(contig=linkageGroup, orientation='+')
+		}
+		completeOrientation <- rbind(completeOrientation, orientationFrame)
+	}
+
+	toReorient <- as.character(completeOrientation$contig[which(completeOrientation$orientation == '-')])
+
+
+	toReorientStrands <- allStrands[toReorient,]
+	toReorientStrands <- data.frame(
+		apply(toReorientStrands, c(1,2),
+			  function(entry)
+			  {
+			  	if(!is.na(entry)&&entry=='3') return('1')
+			  	if(!is.na(entry)&&entry=='1') return('3')
+			  	entry
+			  }
+	))
+
+	allStrands[toReorient,] <- toReorientStrands
+	return(list(new('StrandStateMatrix', allStrands), completeOrientation))
+}
+
 ####################################################################################################
-#' reorientLinkageGroups uses a greedy algorithm to try to find the correct orientations of linkage groups
-#' @param linkageGroups List of vectors containing names of contigs belonging to each LG.
+#' reorientLinkageGroups uses a simple dissimilarity to find misoriented fragments within linkage groups.
+#' @param object List of vectors containing names of contigs belonging to each LG.
 #' @param allStrands Table of strand state for all contigs. Product of StrandSeqFreqTable.
-#' @param dissimilarityCutoff Try to reorient all LGs more dissimilar than this to any other LG. Default is 0.3
-#' @param maxiter Maximum number of iterations to try reoriented for (to prevent possible infinite loops). Default is 100.
 #' @param verbose Outputs information to the terminal. Default is TRUE.
-#' @return a vector of orientations, as '+' or '-', in the order of linkageGroups.
+#' @aliases reorientLinkageGroups reorientLinkageGroups,LinkageGroupList,LinkageGroupList-method, strandStateMatrix, strandStateMatrix-method
+#' @return a list consisting of a strandStateMatrix (a reoriented version of allStrands), and a data.frame of contig names and orientations, as '+' or '-'.
 #' 
 #' @export
 ####################################################################################################
 
-reorientLinkageGroups <- function(linkageGroups, allStrands, dissimilarityCutoff=0.3, maxiter=100, verbose=TRUE)
-{
-	linkageStrands <- data.frame(do.call(rbind, lapply(linkageGroups, computeConsensus, allStrands)))
-	orientation <- rep('+', nrow(linkageStrands))
-	rownames(linkageStrands) <- 1:nrow(linkageStrands)
-
-	linkageStrands <- replace(linkageStrands, linkageStrands == 2, NA)
-
-
-	####REDUNDANT
-	#	sim <- 1-as.matrix(daisy(data.frame(linkageStrands)))
-	#	rownames(sim) <- rownames(linkageStrands)
-	
-	#Greedy algorithm to try to reorient linkage groups.
-	#Picks the most misoriented-looking of the contis with one or more apparent misorientation
-	for(iteration in 1:maxiter)
-	{
-		#Compute similarity matrix:
-		sim <- 1-as.matrix(daisy(data.frame(linkageStrands)))
-		rownames(sim) <- rownames(linkageStrands)
-		
-		#If no LGs need reorientation, then we're done
-		if(min(sim[which(!is.na(sim))]) > dissimilarityCutoff)
-			break
-		
-		#Figure out which LGs need reorientation, and score them, then pick one:
-		groupNeedsInversion <- apply(sim, 1, function(x){any(x < (dissimilarityCutoff))})
-		groupScores <- apply(sim, 1, sum, na.rm=TRUE) / nrow(sim)
-		toInvert <- names(which.min(groupScores[which(groupNeedsInversion)]))[1]
-		
-		#Invert LG and record:
-		toInvertStrands <- linkageStrands[toInvert, ]
-		suppressWarnings(toInvertStrands[which(toInvertStrands==3)] <- 100)
-		suppressWarnings(toInvertStrands[which(toInvertStrands==1)] <- 3)
-		suppressWarnings(toInvertStrands[which(toInvertStrands==100)] <- 1)
-		suppressWarnings(linkageStrands[toInvert, ] <- toInvertStrands)
-
-		if(verbose){message("Reorienting LG ", toInvert , "   \r", appendLF=FALSE)}
-		
-		if(orientation[as.numeric(toInvert)]=='+') 
-		{
-			suppressWarnings(orientation[as.numeric(toInvert)] <- '-')
-		}else
-		{
-			suppressWarnings(orientation[as.numeric(toInvert)] <- '+')
-		}
-		if(iteration==maxiter){
-			warning('Maximum iterations reached while reorienting without convergence.')
-		}
-	}
-	if(verbose){message("\n")}
-
-	return(orientation)
-}
+setMethod('reorientLinkageGroups',
+		  signature = signature(object='LinkageGroupList', allStrands = 'StrandStateMatrix'),
+		  definition = reorientLinkageGroups.func
+		  )

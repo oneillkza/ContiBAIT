@@ -17,7 +17,6 @@ LinkingTo: Rcpp, BH
 Imports:
     clue,
     cluster,
-    colorspace,
     gplots,
     IRanges,
     GenomicRanges,
@@ -28,10 +27,15 @@ Imports:
     gtools,
     rtracklayer,
     snow,
-    DNAcopy
+    DNAcopy,
+    colorspace,
+    reshape,
+    ggplot2,
+    diagram
 Suggests:
     BiocStyle
-biocViews: CellBasedAssays, QualityControl, WholeGenome, Genetics, GenomeAssembly
+biocViews: CellBasedAssays, QualityControl, WholeGenome, Genetics,
+    GenomeAssembly
 Collate:
     'AllClasses.R'
     'AllGenerics.R'
@@ -45,6 +49,7 @@ Collate:
     'contiBAIT.R'
     'divideMyChr.R'
     'heatPlotLinkageGroupCalls.R'
+    'ideogramPlot.R'
     'makeBoxPlot.R'
     'makeChrTable.R'
     'mapGapFromOverlap.R'
@@ -54,11 +59,9 @@ Collate:
     'orderContigsTSP.R'
     'plotContigOrder.R'
     'plotLGDistances.R'
-    'plotLinkageGroup.R'
     'plotWCdistribution.R'
     'preprocessStrandTable.R'
     'reorientLinkageGroups.R'
-    'reorientStrandTable.R'
     'strandSeqFreqTable.R'
     'writeBed.R'
 RoxygenNote: 5.0.1

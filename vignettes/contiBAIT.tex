@@ -9,8 +9,8 @@
 \usepackage{Sweave}
 \begin{document}
 \input{contiBAIT-concordance}
-\setkeys{Gin}{width=0.65\textwidth}
-\setkeys{Gin}{height=0.65\textwidth}
+\setkeys{Gin}{width=0.75\textwidth}
+\setkeys{Gin}{height=0.75\textwidth}
 
 \maketitle
 \begin{center}
@@ -21,6 +21,8 @@
 
 \tableofcontents
 \newpage
+
+
 
 \section{Licensing}
 Under the Two-Clause BSD License, you are free to use and redistribute this software.
@@ -132,7 +134,7 @@ A change in strand state within a contig can represent a number of things. At it
 \begin{Soutput}
 A data.frame of 25 fragments from a 3095.682 Mb genome.
                         chr   start       end
-chr4:0-1434206         chr4       0   1434206
+4:0-1434206               4       0   1434206
 chr4:1429359-191154276 chr4 1429359 191154276
 chr1:0-249250621       chr1       0 249250621
 chr2:0-243199373       chr2       0 243199373
@@ -162,7 +164,8 @@ To read in BAM files into ContiBAIT, create a strandFreMatrix instance by callin
 > strandFrequencyList <- strandSeqFreqTable(bamFileList, 
 + filter=dividedChrTable,
 + qual=10, 
-+ pairedEnd=FALSE)
++ pairedEnd=FALSE,
++ BAITtables=TRUE)
 \end{Sinput}
 \end{Schunk}
 
@@ -175,10 +178,16 @@ This returns a list of two data.frames.  The first data.frame consists of a stra
 \end{Sinput}
 \begin{Soutput}
 $strandTable
-A matrix of strand frequencies for  76  contigs over  35  libraries.
+A matrix of strand frequencies for  3113  contigs over  35  libraries.
 
 $countTable
-A matrix of read counts for  76  contigs over  35  libraries.
+A matrix of read counts for  3113  contigs over  35  libraries.
+
+$WatsonReads
+A matrix of read counts for  3113  contigs over  35  libraries.
+
+$CrickReads
+A matrix of read counts for  3113  contigs over  35  libraries.
 \end{Soutput}
 \begin{Sinput}
 > # Exclude frequencies calculated from
@@ -222,19 +231,16 @@ A strand state matrix for  75  contigs over  35  libraries.
 
 \section{Clustering contigs into chromosomes}
 
-clusterContigs utilizes a custom algorithm to cluster all fragments together that share a similar strand state across multiple cells.  For example, if two contigs are adjacent on the same chromosome, then they will inherit the same strand state in every cell that is analyzed.  It is important to note however that the relative directionality of any two fragments within an assembly is unknown. Contigs which belong on the same chromosome but are in different orientations will display as complete opposites; every library where one contig is homozygous Watson will have the other contig as homozygous Crick.  However, heterozygous contigs (where chromosomes inherited one Watson template and one Crick template), will not be mirrored, with one contig being "WC", while the other will be "CW". As such, The function performs clustering only on homozygous calls (WW or CC) to identify dissimilarity arising from misoriented fragments that would otherwise be lost when heterozygous calls (WC) are included. Note for the purposes of this example, we are using the argument randomise=FALSE to ensure conformity of the vignette when running sweave. Randomisation is recommended for most applications and is set to TRUE by default.
+clusterContigs utilizes a custom algorithm to cluster all fragments together that share a similar strand state across multiple cells.  For example, if two contigs are adjacent on the same chromosome, then they will inherit the same strand state in every cell that is analyzed.  It is important to note however that the relative directionality of any two fragments within an assembly is unknown. Contigs which belong on the same chromosome but are in different orientations will display as complete opposites; every library where one contig is homozygous Watson will have the other contig as homozygous Crick.  However, heterozygous contigs (where chromosomes inherited one Watson template and one Crick template), will not be mirrored, with one contig being "WC", while the other will be "CW". As such, by default the function performs clustering between homozygous calls (WW or CC treated the same) and heterozygous calls (WC) to identify contigs that belong together despite their misorientation status with respect to each other. Using the clusterBy='homo' option will perform the clustering just between WW and CC calls (ignoring WC calls) and misoriented fragments from the same chromosome will cluster into different linkage groups. Once clustered, the misorientated fragments are identified in each linkage group using reorientLinkageGroups. Since chromosome orientation cannot be determined by sequence alone, the largest sub-group is arbitrarily considered "+", while the smaller group is considered "-". The product of this function is a list where the first element is a StrandStateMatrix instance that has been correctly oriented, and the second element is a data.frame of contigs and orientations. Note for the purposes of this example, we are using the argument randomise=FALSE to ensure conformity of the vignette when running sweave. Randomisation is recommended for most applications and is set to TRUE by default.
 
 \begin{Schunk}
 \begin{Sinput}
 > exampleWCMatrix <- exampleStrandStateMatrix[[1]]
 > clusteredContigs <- clusterContigs(exampleWCMatrix, randomise=FALSE)
-> LGOrientations <- reorientLinkageGroups(clusteredContigs,
+> reorientedMatrix <- reorientLinkageGroups(clusteredContigs,
 +  exampleWCMatrix)
-> reorientedMatrix <- reorientStrandTable(exampleWCMatrix, 
-+ linkageGroups=clusteredContigs, 
-+ orientation=LGOrientations)
 > exampleLGList <- mergeLinkageGroups(clusteredContigs,
-+ reorientedMatrix)
++ reorientedMatrix[[1]])
 > exampleLGList
 \end{Sinput}
 \begin{Soutput}
@@ -274,11 +280,11 @@ The clusterContigs function generates a list of linkage groups consisting of all
 \includegraphics{contiBAIT-clusterContigsExampleb}
 
 
-While the similarity within linkage groups can be visualized using plotLinkageGroup (here, the first linkage group is used for creating this heatmap).
+While the similarity within linkage groups can be visualized using plotLinkageGroup (here, the first linkage group is used for creating this heatmap). Note, side by side comparisons of linkage group members can be performs with multiple lg options (e.g. lg=1:2 will plot the first two linkage groups, lg=c(1,4) will plot the first and forth etc.).
 
 \begin{Schunk}
 \begin{Sinput}
-> plotLinkageGroup(exampleLGList[[1]], exampleWCMatrix)
+> plotLGDistances(exampleLGList, exampleWCMatrix, lg=1)
 \end{Sinput}
 \end{Schunk}
 \includegraphics{contiBAIT-clustercontigsExamplec}
@@ -286,7 +292,7 @@ While the similarity within linkage groups can be visualized using plotLinkageGr
 
 \section{Ordering contigs within chromosomes}
 
-With contigs clustered to chromosomes, we can then order them within chromosomes. Just as meiotic recombination shuffles loci and allows genetic distances between them to be determined, sister chromatid exchanges (SCE) events reshuffle templates, and similarly allow us to infer a linkage distance. We have employed a greedy algorithm to do this, but have an argument allowing a TSP solution as an alternative. Contigs are ordered by similarity across libraries, then by contig name. Contigs that are zero distance apart (ie have no SCE events between them and are therefore unordered) are returned in contig name order. The output is split into sub-linkage groups, so Linkage group 1 will be split into a number of groups depending on the number of SCE events that occur within the chromosome.
+With contigs clustered to chromosomes, we can then order them within chromosomes. Just as meiotic recombination shuffles loci and allows genetic distances between them to be determined, sister chromatid exchanges (SCE) events reshuffle templates, and similarly allow us to infer a linkage distance. We have employed a greedy algorithm to do this, but have an argument allowing a TSP solution as an alternative. Contigs are ordered by similarity across libraries, then by contig name. Contigs that are zero distance apart (ie have no SCE events between them and are therefore unordered) are returned in contig name order. The output is split into sub-linkage groups, so Linkage group 1 will be split into a number of groups depending on the number of SCE events that occur within the chromosome. The output will be an S4 object of type contigOrdering.
 
 \begin{Schunk}
 \begin{Sinput}
@@ -309,16 +315,87 @@ A data.frame of 1 LGs split into 15 sub-groups from 19 ordered fragments.
 \end{Schunk}
 \includegraphics{contiBAIT-orderAllLinkageGroupsExample}
 
-If the assembly is mostly complete and you wish to compare the actual location of the fragments against the output of orderAllLinkageGroups, contiBAIT has the built in plotContigOrder function 
+If the assembly is mostly complete and you wish to compare the actual location of the fragments in the assembly you're working with against the output of orderAllLinkageGroups, contiBAIT has the built in plotContigOrder function. This assumes that the contig name from the contigOrdering object is in a format of chr:start-end.
 
 \begin{Schunk}
 \begin{Sinput}
-> plotContigOrder(contigOrder$contig)
+> plotContigOrder(contigOrder)
 \end{Sinput}
 \end{Schunk}
 \includegraphics{contiBAIT-orderAllLinkageGroupsExampleb}
 
+Alternatively, all contigs can be ordered simultaneously by omitting the whichLG argument. If saveOrdered is set to TRUE, plots will be generated for every linkage group.  By ordering all of the linkage groups we can proceed to create BED files of these data for the new assemblies.
 
+\begin{Schunk}
+\begin{Sinput}
+> contigOrderAll <- orderAllLinkageGroups(exampleLGList,
++ exampleWCMatrix,
++ exampleStrandFreq,
++ exampleReadCounts)
+> contigOrderAll
+\end{Sinput}
+\begin{Soutput}
+A data.frame of 4 LGs split into 15 sub-groups from 75 ordered fragments.
+
+ LG1.1 LG1.10 LG1.11 LG1.12 LG1.13 LG1.14 LG1.15  LG1.2  LG1.3  LG1.4  LG1.5 
+     2      1      1      1      1      1      1      2      1      2      2 
+ LG1.6  LG1.7  LG1.8  LG1.9  LG2.1 LG2.10 LG2.11  LG2.2  LG2.3  LG2.4  LG2.5 
+     1      1      1      1      6      1      1      1      1      3      1 
+ LG2.6  LG2.7  LG2.8  LG2.9  LG3.1 LG3.10 LG3.11 LG3.12  LG3.2  LG3.3  LG3.4 
+     1      1      1      2      1      1      2      1      2      3      1 
+ LG3.5  LG3.6  LG3.7  LG3.8  LG3.9  LG4.1 LG4.10 LG4.11 LG4.12 LG4.13  LG4.2 
+     2      1      3      1      1      1      1      2      1      1      2 
+ LG4.3  LG4.4  LG4.5  LG4.6  LG4.7  LG4.8  LG4.9 
+     1      2      1      2      1      2      1 
+\end{Soutput}
+\end{Schunk}
+
+
+\section{Checking order using BAIT ideograms}
+
+It is possible to visually validate the ordering by creating ideogram plots of the data. The supplied test data comprises of reads from the first four chromosomes. Below is example code that will plot the second library from the output of strandSeqFreqTable. Note the third and forth elements of the strandFrequencyList are only generated if BAITtables is set to TRUE when running strandSeqFreqTable.  The plot below shows the location of the reads and highlights an SCE on chromosome 3. Note to only display the first library, we need to subset the strandReadMatrix and retain these as strandReadMatrix objects.
+
+\begin{Schunk}
+\begin{Sinput}
+> # extract elements from strandSeqFreqTable list
+> WatsonFreqList <- strandFrequencyList[[3]]
+> CrickFreqList <- strandFrequencyList[[4]]
+> # subset elements to only analyze one library
+> singleWatsonLibrary <- new('StrandReadMatrix', WatsonFreqList[,2, drop=FALSE])
+> singleCrickLibrary <- new('StrandReadMatrix',CrickFreqList[,2, drop=FALSE]) 
+> # Run ideogram plotter
+> ideogramPlot(singleWatsonLibrary,
++ singleCrickLibrary,
++ dividedChrTable)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{contiBAIT-ideogramExample}
+
+If chromosome builds are not complete (and so each contig has not been assigned a chromosome in the chrTable instance), these ideograms can be plotted using only the represented fragments in the order given to the function from the orderedContig object generated from orderAllLinkageGroups.  Here we will use the orderedContig object representing all 4 linkage groups.
+
+\begin{Schunk}
+\begin{Sinput}
+> ideogramPlot(singleWatsonLibrary,
++ singleCrickLibrary,
++ dividedChrTable,
++ orderFrame=contigOrderAll)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{contiBAIT-ideogramExampleb}
+
+Alternatively, all libraries can be compared side by side for a single chromosome. Because this will print to multiple pages, the showPage option can be used to limit the output to a user=specified page. Here we will use the orderedContig object representing just one linkage group.
+
+\begin{Schunk}
+\begin{Sinput}
+> ideogramPlot(WatsonFreqList,
++ CrickFreqList,
++ dividedChrTable,
++ orderFrame=contigOrder,
++ plotBy='chr',
++ showPage=1)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{contiBAIT-ideogramExamplec}
 
 
 \section{Writing out to a BED file}
@@ -346,4 +423,16 @@ Furthermore we can determine the proportion of assembly fragments in each linkag
 
 Note that if clustering did not occur correctly, some bars would be a mixture of colors.  While the above displays the proportion of fragments from one chromosome that has clustered into each linkage group, but omitting the by='chr' parameter, the plot changes to the proportion of linkage groups within each chromosome.
 
+\newpage
+
+\section{Flow diagram}
+Here is the basic functionality of the contiBAIT package.  The input BAM file(s) and output BED file are displayed in the grey ovals. All plotting functions are shown in blue hexagons and all analysis functions are in white boxes.
+
+
+\setkeys{Gin}{width=\textwidth}
+\setkeys{Gin}{height=15cm}
+\begin{center}
+
+\includegraphics{contiBAIT-fig1}
+\end{center}
 \end{document}

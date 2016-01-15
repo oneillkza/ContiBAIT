@@ -18,7 +18,7 @@
 #'  
 #' @details makeChrTable creates a table with chromosome name and chromosome length by extracting 
 #' header data from the supplied bam file.
-#'
+#' @example inst/examples/makeChrTable.R
 #' 
 #' @import Rsamtools
 #' @export
@@ -29,24 +29,23 @@
 #function to create a chromosome table (chromosome, length) from a user-input bam file.
 makeChrTable <- function(bamFile, verbose=TRUE, asBed=FALSE, asRownames=TRUE)
 {
-	options(scipen=20)
 	if(verbose){message(paste("-> Creating chromosome table from", bamFile, sep=""))}
 	lengthOfContigs <- scanBamHeader(bamFile)[[1]][["text"]]
-	#bamTable <-  as.data.frame(as.character(unlist(lengthOfContigs[which(grepl("\\<SN:", lengthOfContigs))])))
 	bamChr <- sapply(lengthOfContigs[grep("SN:", lengthOfContigs)], "[",1)
+	bamChr <- gsub("SN:", "", as.character(bamChr))
+
 	bamLength <- sapply(lengthOfContigs[grep("LN:", lengthOfContigs)], "[",2)
-	#bamChr <- gsub("SN:", "", as.character(bamChr[seq(1, length(bamChr), by=2)]))
-	#bamLength <- gsub("LN:", "", as.character(bamLength[seq(2, length(bamLength), by=2)]))
+	bamLength <-  as.numeric(gsub("LN:", "", bamLength))
+
 	if(asBed)
 	{
 		chrTable <- data.frame(chr=bamChr, start=0, end=bamLength)
-		chrTable$end <-  as.numeric(gsub("LN:", "", chrTable$end))
 	}else{
 		chrTable <- data.frame(chr=bamChr, length=bamLength)
-		chrTable$length <-  as.numeric(gsub("LN:", "", chrTable$length))
 	}
-	chrTable$chr <- gsub("SN:", "", as.character(chrTable$chr))
-	if(asRownames){rownames(chrTable) <- chrTable[,1] }  
+	chrTable$chr <- factor(chrTable$chr, levels=bamChr)
+
+	if(asRownames){rownames(chrTable) <- as.character(chrTable[,1]) }  
 
 	return(new("ChrTable", chrTable))
 }

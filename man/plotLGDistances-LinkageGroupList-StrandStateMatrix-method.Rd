@@ -8,12 +8,22 @@
 \title{plotLGDistances -- plots a heatmap of the distances between linkage groups}
 \usage{
 \S4method{plotLGDistances}{LinkageGroupList,StrandStateMatrix}(object,
-  allStrands)
+  allStrands, lg = "all", labels = TRUE, lgChr = NULL)
 }
 \arguments{
 \item{object}{LinkageGroupList}
 
 \item{allStrands}{StrandStateMatrix for all linkageGroups (usually reoriented by reorientStrandTable)}
+
+\item{lg}{='all' vector of integers to determine which linkage group(s) to plot. 'all' will calculate consensus
+strand calls for all linkage groups and plot them side by side (default it 'all')}
+
+\item{labels}{=TRUE if TRUE, contig names will be plotted on the axes}
+
+\item{lgChr}{=NULL vector of true calls for chromosomes of contigs, will be plotted as side colours if 
+not NULL}
+
+\item{...}{additional parameters to pass to heatmap.2}
 }
 \description{
 plotLGDistances -- plots a heatmap of the distances between linkage groups
@@ -23,5 +33,6 @@ data("exampleLGList")
 data("exampleWCMatrix")
 
 plotLGDistances(exampleLGList, exampleWCMatrix)
+plotLGDistances(exampleLGList, exampleWCMatrix, lg=1)
 }
 

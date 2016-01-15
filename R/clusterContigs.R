@@ -6,6 +6,7 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 						   randomSeed=NULL,
 						   randomWeight=NULL,
 						   snowCluster=NULL,
+						   clusterBy='hetero',
 						   verbose=TRUE)
 {
 	
@@ -85,7 +86,17 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
     
     #If no reclustering, just run once:
     #Code starts here!
-	object <- replace(object, object == 2, NA)
+    if(clusterBy == 'homo')
+    {
+		object <- replace(object, object == 2, NA)
+	}else if (clusterBy == 'hetero'){
+		object <- replace(object, object == 3, 1)
+	}else{
+		warning('### Unrecognized clusterBy parameter! ###')
+		break
+	}
+	
+
 	if(is.null(recluster))
 	{
 		linkageGroups <- runOnce(object, randomise, randomWeight)
@@ -149,6 +160,7 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 #' @param randomise whether to reorder contigs before clustering
 #' @param randomSeed random seed to initialize clustering
 #' @param randomWeight vector of weights for contigs for resampling. If NULL, uniform resampling is used.
+#' @param clusterBy Method for performing clustering. Default is 'hetero' (for comparing heterozygous calls to homozygous). Alternative is 'homo' (for compairson between the two homozygous calls)
 #' Typically this should be a measure of contig quality, such as library coverage, so that clustering tends to
 #' start from the better quality contigs.
 #' @param snowCluster optional snowCluster for parallel execution

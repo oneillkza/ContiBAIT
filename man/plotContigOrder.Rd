@@ -4,12 +4,24 @@
 \alias{plotContigOrder}
 \title{Plot ordering of contigs within a single linkage group.}
 \usage{
-plotContigOrder(contigOrder)
+plotContigOrder(contigOrder, lg)
 }
 \arguments{
-\item{contigOrder}{vector with the names of the contigs to plot}
+\item{contigOrder}{data.frame from orderAllContigs with the subdivided linkage groups and the names of the contigs to plot}
+
+\item{lg}{Integer specifying the linkage group by which to plot}
 }
 \description{
 Plot ordering of contigs within a single linkage group.
+}
+\examples{
+#Get a data.frame of ordered contigs from cells from the same organism, aligned to the same genome
+ 
+data("exampleLGList")
+data("exampleWCMatrix")
+data("exampleStrandFreq")
+data("exampleReadCounts")
+contigOrder <- orderAllLinkageGroups(exampleLGList, exampleWCMatrix, exampleStrandFreq, exampleReadCounts)
+plotContigOrder(contigOrder)
 }
 
