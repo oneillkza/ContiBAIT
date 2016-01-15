@@ -30,7 +30,8 @@ Imports:
     DNAcopy,
     colorspace,
     reshape,
-    ggplot2
+    ggplot2,
+    diagram
 Suggests:
     BiocStyle
 biocViews: CellBasedAssays, QualityControl, WholeGenome, Genetics,

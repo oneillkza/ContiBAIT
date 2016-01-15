@@ -377,7 +377,6 @@ If chromosome builds are not complete (and so each contig has not been assigned 
 + singleCrickLibrary,
 + dividedChrTable,
 + orderFrame=contigOrderAll)
-> 
 \end{Sinput}
 \end{Schunk}
 \includegraphics{contiBAIT-ideogramExampleb}
@@ -392,7 +391,6 @@ Alternatively, all libraries can be compared side by side for a single chromosom
 + orderFrame=contigOrder,
 + plotBy='chr',
 + showPage=1)
-> 
 \end{Sinput}
 \end{Schunk}
 \includegraphics{contiBAIT-ideogramExamplec}
@@ -422,5 +420,18 @@ Furthermore we can determine the proportion of assembly fragments in each linkag
 \includegraphics{contiBAIT-makeChrTableExampled}
 
 Note that if clustering did not occur correctly, some bars would be a mixture of colors.  While the above displays the proportion of fragments from one chromosome that has clustered into each linkage group, but omitting the by='chr' parameter, the plot changes to the proportion of linkage groups within each chromosome.
+
+
+\section{Flow diagram}
+Here is the basic functionality of the contiBAIT package:
+
+
+\begin{figure}
+\begin{center}
+\includegraphics{contiBAIT-fig1}
+
+\end{center}
+\caption{Flow diagram of contiBAIT}
+\end{figure}
 
 \end{document}

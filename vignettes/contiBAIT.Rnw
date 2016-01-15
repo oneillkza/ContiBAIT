@@ -273,4 +273,75 @@ barplotLinkageGroupCalls(exampleLGList, dividedChrTable)
 
 Note that if clustering did not occur correctly, some bars would be a mixture of colors.  While the above displays the proportion of fragments from one chromosome that has clustered into each linkage group, but omitting the by='chr' parameter, the plot changes to the proportion of linkage groups within each chromosome.
 
+
+\section{Flow diagram}
+Here is the basic functionality of the contiBAIT package:
+
+<<label=fig1plot,include=FALSE,echo=FALSE>>=
+library(diagram)
+par(mar = c(1, 1, 1, 1))
+ openplotmat()
+ elpos <- coordinates (c(5, 5, 5, 5, 5, 5, 5, 5))
+fromto <- matrix(ncol = 2, byrow = TRUE, data = c(
+	    3, 8,
+ 	    3, 4,
+	    4, 9,
+	    9, 14,
+	    8, 7, 
+	    8, 13, 
+	    13, 18, 
+	    18, 23, 
+	    23, 28, 
+	    28, 33, 
+	    33, 38, 
+	    8, 12, 
+	    12, 27, 
+	    27, 33, 
+	    9, 8, 
+	    13, 14, 
+	    13, 19, 
+	    28, 19, 
+	    23, 24, 
+	    24, 34, 
+	    34, 33, 
+	    18, 22, 
+	    22, 27, 
+	    27, 33,
+	    9, 10,
+	    10, 30,
+	    28, 30))
+
+ nr <- nrow(fromto)
+ arrpos <- matrix(ncol = 2, nrow = nr)
+ for (i in 1:nr)
+arrpos[i, ] <- straightarrow (to = elpos[fromto[i, 2], ], from = elpos[fromto[i, 1], ], lwd = 2, arr.pos = 0.6, arr.length = 0.5)
+
+textround(elpos[3,], 0.03, lab = "BAMFILE", box.col = "grey70", shadow.col = "grey10", shadow.size = 0.005, cex = 1)
+textrect(elpos[4,], 0.06, 0.03,lab = "makeChrTable", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
+textrect(elpos[9,], 0.06, 0.03,lab = "divideMyChr", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
+textrect(elpos[8,], 0.06, 0.03,lab = "strandSeq\nFreqTable", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
+textrect(elpos[13,], 0.06, 0.03,lab = "preprocess\nStrandTable", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
+textrect(elpos[18,], 0.06, 0.03,lab = "cluster\nContigs", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
+textrect(elpos[23,], 0.06, 0.03,lab = "reorient\nLinkageGroups", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
+textrect(elpos[28,], 0.06, 0.03,lab = "merge\nLinkageGroup", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
+textrect(elpos[33,], 0.06, 0.03,lab = "orderAll\nLinkageGroups", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
+textround(elpos[38,], 0.03, lab = "writeBed", box.col = "grey70", shadow.col = "grey10", shadow.size = 0.005, cex = 1)
+
+texthexa(elpos[14,], 0.06, 0.03,lab = "make\nBoxPlot", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
+texthexa(elpos[7,], 0.06, 0.03,lab = "plotWC\nDistribution", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
+texthexa(elpos[19,], 0.06, 0.03,lab = "plotLG\nDistances", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
+texthexa(elpos[30,], 0.06, 0.03,lab = "barplotLinkage\nGroupCalls", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
+
+@
+
+\begin{figure}
+\begin{center}
+<<label=fig1,fig=TRUE,echo=FALSE,width=6,height=8=>>=
+<<fig1plot>>
+@
+
+\end{center}
+\caption{Flow diagram of contiBAIT}
+\end{figure}
+
 \end{document}
