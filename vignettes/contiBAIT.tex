@@ -234,7 +234,7 @@ clusterContigs utilizes a custom algorithm to cluster all fragments together tha
 \begin{Schunk}
 \begin{Sinput}
 > exampleWCMatrix <- exampleStrandStateMatrix[[1]]
-> clusteredContigs <- clusterContigs(exampleWCMatrix, randomise=FALSE)
+> clusteredContigs <- clusterContigs(exampleWCMatrix, randomise=TRUE)
 > reorientedMatrix <- reorientLinkageGroups(clusteredContigs,
 +  exampleWCMatrix)
 > exampleLGList <- mergeLinkageGroups(clusteredContigs,
@@ -254,16 +254,16 @@ A linkage group list containing  4  linkage groups.
 > exampleLGList[[1]]
 \end{Sinput}
 \begin{Soutput}
- [1] "chr2:3000000-4000000"     "chr2:170000000-171000000"
- [3] "chr2:20000000-21000000"   "chr2:190000000-191000000"
- [5] "chr2:6000000-7000000"     "chr2:230000000-231000000"
- [7] "chr2:240000000-241000000" "chr2:60000000-61000000"  
- [9] "chr2:80000000-81000000"   "chr2:200000000-201000000"
-[11] "chr2:40000000-41000000"   "chr2:220000000-221000000"
-[13] "chr2:50000000-51000000"   "chr2:10000000-11000000"  
-[15] "chr2:1000000-2000000"     "chr2:150000000-151000000"
-[17] "chr2:30000000-31000000"   "chr2:130000000-131000000"
-[19] "chr2:70000000-71000000"  
+ [1] "chr3:10000000-11000000"   "chr3:110000000-111000000"
+ [3] "chr3:60000000-61000000"   "chr3:130000000-131000000"
+ [5] "chr3:80000000-81000000"   "chr3:40000000-41000000"  
+ [7] "chr3:30000000-31000000"   "chr3:190000000-191000000"
+ [9] "chr3:70000000-71000000"   "chr3:120000000-121000000"
+[11] "chr3:3000000-4000000"     "chr3:160000000-161000000"
+[13] "chr3:150000000-151000000" "chr3:1000000-2000000"    
+[15] "chr3:100000000-101000000" "chr3:6000000-7000000"    
+[17] "chr3:20000000-21000000"   "chr3:170000000-171000000"
+[19] "chr3:50000000-51000000"  
 \end{Soutput}
 \end{Schunk}
 
@@ -303,12 +303,12 @@ With contigs clustered to chromosomes, we can then order them within chromosomes
 > contigOrder
 \end{Sinput}
 \begin{Soutput}
-A data.frame of 1 LGs split into 15 sub-groups from 19 ordered fragments.
+A data.frame of 1 LGs split into 12 sub-groups from 19 ordered fragments.
 
- LG1.1 LG1.10 LG1.11 LG1.12 LG1.13 LG1.14 LG1.15  LG1.2  LG1.3  LG1.4  LG1.5 
-     2      1      1      1      1      1      1      2      1      2      2 
- LG1.6  LG1.7  LG1.8  LG1.9 
-     1      1      1      1 
+ LG1.1 LG1.10 LG1.11 LG1.12  LG1.2  LG1.3  LG1.4  LG1.5  LG1.6  LG1.7  LG1.8 
+     1      1      1      3      1      2      3      1      1      2      2 
+ LG1.9 
+     1 
 \end{Soutput}
 \end{Schunk}
 \includegraphics{contiBAIT-orderAllLinkageGroupsExample}
@@ -335,16 +335,16 @@ Alternatively, all contigs can be ordered simultaneously by omitting the whichLG
 \begin{Soutput}
 A data.frame of 4 LGs split into 15 sub-groups from 75 ordered fragments.
 
- LG1.1 LG1.10 LG1.11 LG1.12 LG1.13 LG1.14 LG1.15  LG1.2  LG1.3  LG1.4  LG1.5 
-     2      1      1      1      1      1      1      2      1      2      2 
- LG1.6  LG1.7  LG1.8  LG1.9  LG2.1 LG2.10 LG2.11  LG2.2  LG2.3  LG2.4  LG2.5 
-     1      1      1      1      6      1      1      1      1      3      1 
- LG2.6  LG2.7  LG2.8  LG2.9  LG3.1 LG3.10 LG3.11 LG3.12  LG3.2  LG3.3  LG3.4 
-     1      1      1      2      1      1      2      1      2      3      1 
- LG3.5  LG3.6  LG3.7  LG3.8  LG3.9  LG4.1 LG4.10 LG4.11 LG4.12 LG4.13  LG4.2 
-     2      1      3      1      1      1      1      2      1      1      2 
- LG4.3  LG4.4  LG4.5  LG4.6  LG4.7  LG4.8  LG4.9 
-     1      2      1      2      1      2      1 
+ LG1.1 LG1.10 LG1.11 LG1.12  LG1.2  LG1.3  LG1.4  LG1.5  LG1.6  LG1.7  LG1.8 
+     1      1      1      3      1      2      3      1      1      2      2 
+ LG1.9  LG2.1 LG2.10 LG2.11  LG2.2  LG2.3  LG2.4  LG2.5  LG2.6  LG2.7  LG2.8 
+     1      2      1      1      1      1      1      6      1      1      1 
+ LG2.9  LG3.1 LG3.10 LG3.11 LG3.12 LG3.13 LG3.14 LG3.15  LG3.2  LG3.3  LG3.4 
+     3      1      1      1      2      1      1      1      1      1      2 
+ LG3.5  LG3.6  LG3.7  LG3.8  LG3.9  LG4.1 LG4.10 LG4.11 LG4.12  LG4.2  LG4.3 
+     2      2      1      1      1      1      1      1      1      2      1 
+ LG4.4  LG4.5  LG4.6  LG4.7  LG4.8  LG4.9 
+     2      1      4      1      2      1 
 \end{Soutput}
 \end{Schunk}
 

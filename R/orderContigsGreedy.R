@@ -41,7 +41,7 @@ orderContigsGreedy <- function(linkageGroupReadTable, randomAttempts=75, verbose
   return(list(orderVector=row.names(best_table)[best_order$order], orderedMatrix=linkageGroupReadTable))
 
   }else{
-    linkageGroupReadTable <- factorizedLinkageGroupReadTable[row.names(best_table)[best_order$order],]
-    return(list(orderVector=seq(1, nrow(linkageGroupReadTable)), orderedMatrix=linkageGroupReadTable))
+    linkageGroupReadTable <- factorizedLinkageGroupReadTable
+    return(list(orderVector=row.names(linkageGroupReadTable), orderedMatrix=linkageGroupReadTable))
   }
 }
