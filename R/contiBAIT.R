@@ -46,7 +46,6 @@ contiBAIT <- function(path=".",
                         verbose=TRUE)
 {
 
-  options(scipen=20)
   #Create directory to store all the files
   bamFileList <- list.files(path=path, pattern=".bam$", full.names=TRUE)
 
@@ -72,7 +71,7 @@ contiBAIT <- function(path=".",
 
   if(verbose){message('-> Clustering data ', cluster, 'x using ', clusNum, ' cores [3/6]')}      
   slaveNum <- makeCluster(clusNum)
-  linkage.groups <- clusterContigs(strandStateMatrixList[[1]], randomWeight=libWeight, snowCluster=slaveNum, recluster=cluster, randomise=TRUE, minimumLibraryOverlap=10, similarityCutoff=0.9)
+  linkage.groups <- clusterContigs(strandStateMatrixList[[1]], randomWeight=libWeight, snowCluster=slaveNum, recluster=cluster, randomise=TRUE)
   stopCluster(slaveNum)
   
   if(saveName != FALSE){ save(linkage.groups, file=paste(saveName, '_LG_', cluster, 'x_reclust.Rd', sep="") ) }	
@@ -97,7 +96,7 @@ contiBAIT <- function(path=".",
     libWeightSex <- apply(filtWeightSex, 1, median)
     # cluster the sex groups if any (should only be present in males, assuming either C or W)
     slaveNum <- makeCluster(clusNum)
-    linkage.groups.sex <- clusterContigs(strandStateMatrixList[[2]], randomWeight=libWeightSex, snowCluster=slaveNum, recluster=cluster, randomise=TRUE, minimumLibraryOverlap=10, similarityCutoff=0.8)
+    linkage.groups.sex <- clusterContigs(strandStateMatrixList[[2]], randomWeight=libWeightSex, snowCluster=slaveNum, recluster=cluster, randomise=TRUE)
     stopCluster(slaveNum)
     reorientedGroups.sex <- reorientLinkageGroups(linkage.groups.sex, strandStateMatrixList[[2]])
     linkage.merged.sex <- mergeLinkageGroups(linkage.groups.sex, reorientedGroups.sex[[1]])

@@ -18,7 +18,7 @@
 #'  
 #' @details makeChrTable creates a table with chromosome name and chromosome length by extracting 
 #' header data from the supplied bam file.
-#'
+#' @example inst/examples/makeChrTable.R
 #' 
 #' @import Rsamtools
 #' @export
@@ -29,7 +29,6 @@
 #function to create a chromosome table (chromosome, length) from a user-input bam file.
 makeChrTable <- function(bamFile, verbose=TRUE, asBed=FALSE, asRownames=TRUE)
 {
-	options(scipen=20)
 	if(verbose){message(paste("-> Creating chromosome table from", bamFile, sep=""))}
 	lengthOfContigs <- scanBamHeader(bamFile)[[1]][["text"]]
 	bamChr <- sapply(lengthOfContigs[grep("SN:", lengthOfContigs)], "[",1)
@@ -44,7 +43,9 @@ makeChrTable <- function(bamFile, verbose=TRUE, asBed=FALSE, asRownames=TRUE)
 	}else{
 		chrTable <- data.frame(chr=bamChr, length=bamLength)
 	}
-	if(asRownames){rownames(chrTable) <- chrTable[,1] }  
+	chrTable$chr <- factor(chrTable$chr, levels=bamChr)
+
+	if(asRownames){rownames(chrTable) <- as.character(chrTable[,1]) }  
 
 	return(new("ChrTable", chrTable))
 }

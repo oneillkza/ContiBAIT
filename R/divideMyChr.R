@@ -3,6 +3,7 @@
 #' @param chrTable data.frame consisting of either chromosome name and length, or chromosome name, start and end. Can
 #' generate from makeChrTable
 #' @param splitBy numeric value dictating the size of each bin in nucleotides. Default is 200000. 
+#' @example inst/examples/divideMyChr.R
 #' @export
 ####################################################################################################
 
@@ -28,7 +29,7 @@ divideMyChr <- function(chrTable, splitBy=200000)
 	}
 	smallFragTab <- data.frame(chr=chrTable[which(!(chrTable$length >= splitBy)),1], start= chrTable[which(!(chrTable$length >= splitBy)),2], end=chrTable[which(!(chrTable$length >= splitBy)),3] )
 	splitChromosomes <- rbind(splitChromosomes, smallFragTab)
-	rownames(splitChromosomes) <- paste(splitChromosomes$chr, ":", splitChromosomes$start, "-", splitChromosomes$end, sep="")
+	rownames(splitChromosomes) <- paste(splitChromosomes$chr, ":", as.character(splitChromosomes$start), "-", as.character(splitChromosomes$end), sep="")
 	splitChromosomes <- new("ChrTable", splitChromosomes)
 	return(splitChromosomes)
 }

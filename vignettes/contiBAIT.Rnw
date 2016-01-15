@@ -8,8 +8,8 @@
 
 \begin{document}
 \SweaveOpts{concordance=TRUE}
-\setkeys{Gin}{width=0.65\textwidth}
-\setkeys{Gin}{height=0.65\textwidth}
+\setkeys{Gin}{width=0.75\textwidth}
+\setkeys{Gin}{height=0.75\textwidth}
 
 \maketitle
 \begin{center}
@@ -20,6 +20,8 @@
 
 \tableofcontents
 \newpage
+
+
 
 \section{Licensing}
 Under the Two-Clause BSD License, you are free to use and redistribute this software.
@@ -273,75 +275,76 @@ barplotLinkageGroupCalls(exampleLGList, dividedChrTable)
 
 Note that if clustering did not occur correctly, some bars would be a mixture of colors.  While the above displays the proportion of fragments from one chromosome that has clustered into each linkage group, but omitting the by='chr' parameter, the plot changes to the proportion of linkage groups within each chromosome.
 
+\newpage
 
 \section{Flow diagram}
-Here is the basic functionality of the contiBAIT package:
+Here is the basic functionality of the contiBAIT package.  The input BAM file(s) and output BED file are displayed in the grey ovals. All plotting functions are shown in blue hexagons and all analysis functions are in white boxes.
 
 <<label=fig1plot,include=FALSE,echo=FALSE>>=
 library(diagram)
+
 par(mar = c(1, 1, 1, 1))
- openplotmat()
- elpos <- coordinates (c(5, 5, 5, 5, 5, 5, 5, 5))
+openplotmat()
+elpos <- coordinates (rep(4,8))
+
 fromto <- matrix(ncol = 2, byrow = TRUE, data = c(
-	    3, 8,
- 	    3, 4,
-	    4, 9,
-	    9, 14,
-	    8, 7, 
-	    8, 13, 
-	    13, 18, 
-	    18, 23, 
-	    23, 28, 
-	    28, 33, 
-	    33, 38, 
-	    8, 12, 
-	    12, 27, 
-	    27, 33, 
-	    9, 8, 
-	    13, 14, 
-	    13, 19, 
-	    28, 19, 
-	    23, 24, 
-	    24, 34, 
-	    34, 33, 
+	    2, 6,
+ 	    2, 3,
+	    3, 7,
+	    7, 11,
+	    6, 5, 
+	    6, 10, 
+	    10, 14, 
+	    14, 18, 
 	    18, 22, 
-	    22, 27, 
-	    27, 33,
-	    9, 10,
-	    10, 30,
-	    28, 30))
+	    22, 26, 
+	    26, 30, 
+	    6, 9, 
+	    9, 21, 
+	    21, 26, 
+	    7, 6, 
+	    10, 11, 
+	    10, 15, 
+	    22, 15, 
+	    18, 19, 
+	    19, 27, 
+	    27, 26, 
+	    14, 17, 
+	    17, 21, 
+	    21, 26,
+	    7, 8,
+	    8, 24,
+	    22, 24))
 
  nr <- nrow(fromto)
  arrpos <- matrix(ncol = 2, nrow = nr)
  for (i in 1:nr)
-arrpos[i, ] <- straightarrow (to = elpos[fromto[i, 2], ], from = elpos[fromto[i, 1], ], lwd = 2, arr.pos = 0.6, arr.length = 0.5)
+arrpos[i, ] <- straightarrow (to = elpos[fromto[i, 2], ], from = elpos[fromto[i, 1], ], lwd = 2, arr.pos = 0.6, arr.width=0.1, arr.length = 0.5)
 
-textround(elpos[3,], 0.03, lab = "BAMFILE", box.col = "grey70", shadow.col = "grey10", shadow.size = 0.005, cex = 1)
-textrect(elpos[4,], 0.06, 0.03,lab = "makeChrTable", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
-textrect(elpos[9,], 0.06, 0.03,lab = "divideMyChr", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
-textrect(elpos[8,], 0.06, 0.03,lab = "strandSeq\nFreqTable", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
-textrect(elpos[13,], 0.06, 0.03,lab = "preprocess\nStrandTable", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
-textrect(elpos[18,], 0.06, 0.03,lab = "cluster\nContigs", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
-textrect(elpos[23,], 0.06, 0.03,lab = "reorient\nLinkageGroups", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
-textrect(elpos[28,], 0.06, 0.03,lab = "merge\nLinkageGroup", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
-textrect(elpos[33,], 0.06, 0.03,lab = "orderAll\nLinkageGroups", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
-textround(elpos[38,], 0.03, lab = "writeBed", box.col = "grey70", shadow.col = "grey10", shadow.size = 0.005, cex = 1)
+textround(elpos[2,], 0.04, lab = "BAMFILE", box.col = "grey70", shadow.col = "grey10", shadow.size = 0.005, cex = 0.8)
+textrect(elpos[3,], 0.09, 0.04,lab = "makeChr\nTable", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
+textrect(elpos[7,], 0.09, 0.04,lab = "divide\nMyChr", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
+textrect(elpos[6,], 0.09, 0.04,lab = "strandSeq\nFreqTable", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
+textrect(elpos[10,], 0.09, 0.04,lab = "preprocess\nStrandTable", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
+textrect(elpos[14,], 0.09, 0.04,lab = "cluster\nContigs", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
+textrect(elpos[18,], 0.09, 0.04,lab = "reorient\nLinkageGroups", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
+textrect(elpos[22,], 0.09, 0.04,lab = "merge\nLinkageGroup", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
+textrect(elpos[26,], 0.09, 0.04,lab = "orderAll\nLinkageGroups", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
+textround(elpos[30,], 0.04, lab = "writeBed", box.col = "grey70", shadow.col = "grey10", shadow.size = 0.005, cex = 0.8)
 
-texthexa(elpos[14,], 0.06, 0.03,lab = "make\nBoxPlot", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
-texthexa(elpos[7,], 0.06, 0.03,lab = "plotWC\nDistribution", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
-texthexa(elpos[19,], 0.06, 0.03,lab = "plotLG\nDistances", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
-texthexa(elpos[30,], 0.06, 0.03,lab = "barplotLinkage\nGroupCalls", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.75)
+texthexa(elpos[11,], 0.09, 0.04,lab = "make\nBoxPlot", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
+texthexa(elpos[5,], 0.09, 0.04,lab = "plotWC\nDistribution", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
+texthexa(elpos[15,], 0.09, 0.04,lab = "plotLG\nDistances", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
+texthexa(elpos[24,], 0.09, 0.04,lab = "barplotLinkage\nGroupCalls", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
 
 @
 
-\begin{figure}
+\setkeys{Gin}{width=\textwidth}
+\setkeys{Gin}{height=15cm}
 \begin{center}
-<<label=fig1,fig=TRUE,echo=FALSE,width=6,height=8=>>=
+
+<<label=fig1,fig=TRUE,echo=FALSE>>=
 <<fig1plot>>
 @
-
 \end{center}
-\caption{Flow diagram of contiBAIT}
-\end{figure}
-
 \end{document}
