@@ -68,8 +68,8 @@ to generate a sub-divided table.
 
 <<makeChrTableExampleb, fig=FALSE>>=
 
-dividedChrTable <- divideMyChr(exampleChrTable, splitBy=1000000)
-dividedChrTable
+exampleDividedChr <- divideMyChr(exampleChrTable, splitBy=1000000)
+exampleDividedChr
 @
 
 \subsection{\textit{Splitting a chromosome table based on strand state changes}}
@@ -101,7 +101,7 @@ To read in BAM files into ContiBAIT, create a strandFreMatrix instance by callin
 # Create a strandFreqTable instance 
 
 strandFrequencyList <- strandSeqFreqTable(bamFileList, 
-filter=dividedChrTable,
+filter=exampleDividedChr,
 qual=10, 
 pairedEnd=FALSE,
 BAITtables=TRUE)
@@ -231,7 +231,7 @@ singleCrickLibrary <- new('StrandReadMatrix',CrickFreqList[,2, drop=FALSE])
 # Run ideogram plotter
 ideogramPlot(singleWatsonLibrary,
 singleCrickLibrary,
-dividedChrTable)
+exampleDividedChr)
 @
 
 If chromosome builds are not complete (and so each contig has not been assigned a chromosome in the chrTable instance), these ideograms can be plotted using only the represented fragments in the order given to the function from the orderedContig object generated from orderAllLinkageGroups.  Here we will use the orderedContig object representing all 4 linkage groups.
@@ -240,7 +240,7 @@ If chromosome builds are not complete (and so each contig has not been assigned 
 
 ideogramPlot(singleWatsonLibrary,
 singleCrickLibrary,
-dividedChrTable,
+exampleDividedChr,
 orderFrame=contigOrderAll)
 @
 
@@ -249,7 +249,7 @@ Alternatively, all libraries can be compared side by side for a single chromosom
 <<ideogramExamplec, fig=TRUE>>=
 ideogramPlot(WatsonFreqList,
 CrickFreqList,
-dividedChrTable,
+exampleDividedChr,
 orderFrame=contigOrder,
 plotBy='chr',
 showPage=1)
@@ -257,20 +257,29 @@ showPage=1)
 
 
 \section{Writing out to a BED file}
-This file can be passed to bedtools along with the original (draft) reference genome to create a new FASTA file containing the assembled genome.
+This file can be passed to bedtools along with the original (draft) reference genome to create a new FASTA file containing the assembled genome. the writeBed function requires a chrTable of class ChrTable with which to extract the contig names and locations, the orientation information derived from reorientLinkageGroups to populate the strand column, the library weight to populate the score column, and an object of type ContigOrdering to invoke the actual order of fragments.  A fileName can be supplied, or the default is used. BED files will be written to the working directory
 
+<<writeBedExample, fig=FALSE>>=
+
+writeBed(exampleDividedChr,
+reorientedMatrix[[2]],
+contigOrder)
+@
+
+\newpage
 \section{Additional plotting functions}
 
 Using a chromosome table instance, comparisons can be made between the portion of contigs that are included in the analysis verses those that are excluded based on either poor coverage or non-Strand-seq patterning. The code below generates a box plot of contig sizes that are included in the analysis. Note, since sample data are uniform 1 Mb framgents, the box plot does not deviate from the median.  The example bam files contain reads from 76 separate 1 Mb fragments from chromsomes 1, 2, 3, and 4.  Since the assembly is >3 Gb in size, only a few percent of the assembly will be included in our analysis.
 
 <<makeChrTableExamplec, fig=TRUE>>=
-makeBoxPlot(dividedChrTable, exampleLGList)
+makeBoxPlot(exampleDividedChr, exampleLGList)
 @
 
+\newpage
 Furthermore we can determine the proportion of assembly fragments in each linkage group in a barplot. If data are in the format chr:start-end, then each unique chromosome name will have a unique color. If data are not in this format, then each fragment will have a unique color.  Here, all fragments from chr1 will be colored differently to fragments from chr2, etc.
 
 <<makeChrTableExampled, fig=TRUE>>=
-barplotLinkageGroupCalls(exampleLGList, dividedChrTable)
+barplotLinkageGroupCalls(exampleLGList, exampleDividedChr)
 @
 
 Note that if clustering did not occur correctly, some bars would be a mixture of colors.  While the above displays the proportion of fragments from one chromosome that has clustered into each linkage group, but omitting the by='chr' parameter, the plot changes to the proportion of linkage groups within each chromosome.

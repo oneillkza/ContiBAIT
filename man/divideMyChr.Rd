@@ -20,6 +20,5 @@ Creates a data.frame of chromosomes split into user-derived bin sizes
 
 data("exampleChrTable")
 dividedChr <- divideMyChr(exampleChrTable, splitBy=1000000)
-show(dividedChr)
 }
 

@@ -2,4 +2,3 @@
 
 data("exampleChrTable")
 dividedChr <- divideMyChr(exampleChrTable, splitBy=1000000)
-show(dividedChr)

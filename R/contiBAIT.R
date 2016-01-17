@@ -52,7 +52,7 @@ contiBAIT <- function(path=".",
   if(verbose){message('RUNNING CONTIBAIT ON ', length(bamFileList), ' BAM FILES!\n\n PARAMETERS FOR BAM ANALYSIS: \n----------------------------------\n     -> paired end data=', pairedEnd, '\n     -> mapping quality=', readQual, '\n     -> bed filter=', if(length(filter)==1){'FALSE'}else{'TRUE'}, '\n     -> minimal reads required=', readLimit, '\n\n PARAMETERS FOR CLUSTERING: \n----------------------------------\n     -> number of reclusters=', cluster, '\n     -> number of cores to use=', clusNum, '\n\n ADDITIONAL PARAMETERS:', '\n----------------------------------\n     -> saving intermediate files=', if(saveName==FALSE){'FALSE'}else{'TRUE'}, '\n     -> creating analysis plots=', makePlots, '\n----------------------------------')}
 
   if(verbose){message('-> Creating read table from bam files [1/6]')}
-  strandFrequencyList <- strandSeqFreqTable(bamFileList, filter=filter, qual=readQual, pairedEnd=pairedEnd)
+  strandFrequencyList <- strandSeqFreqTable(bamFileList, filter=filter, qual=readQual, pairedEnd=pairedEnd, BAITtables=TRUE)
 
   # subset data with: strandFrequencyList[[1]][which(strandFrequencyList[[2]] < 100)] <- NA
   if(saveName != FALSE){save(strandFrequencyList, file=paste(saveName, '_table.Rd', sep="")) }
@@ -128,6 +128,7 @@ contiBAIT <- function(path=".",
     barplotLinkageGroupCalls(linkage.merged, chrTable)
     barplotLinkageGroupCalls(linkage.merged, chrTable, by='chr')
     contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable[[1]], strandFrequencyList[[1]], strandFrequencyList[[2]], saveOrdered=TRUE)
+    ideogramPlot(strandFrequencyList[[3]], strandFrequencyList[[4]], chrTable, plotBy='chr', orderFrame=contigOrder, verbose=TRUE)
 
     dev.off()
   }

@@ -1,35 +1,4 @@
-# Copyright (c) 2015, Mark Hills & Kieran O'Neill
-# All rights reserved.
-
-# Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-
-#    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-#    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-
-#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-
-####################################################################################################
-#' preprocessStrandTable -- remove low quality libraries and contigs before attempting to build
-#' a genome
-#' @param strandTable data.frame containing the strand table to use as input
-#' @param strandTableThreshold threshold at which to call a contig WW or CC rather than WC
-#' @param filterThreshold maximum number of libraries a contig can be NA or WC in
-#' @param orderMethod the method to oder contigs. currently libsAndConc only option. Set to FALSE to not order contigs based on library quality
-#' @param lowQualThreshold background threshold at which to toss an entire library
-#' @param minLib minimum number of libraries a contig must be present in to be included in the output
-#' @param ignoreInternalQual logical that prevents function for making an overall assessment of library quality. Very chimeric assemblies can appear low quality across all libraries. 
-#' @param verbose messages written to terminal
-#' 
-#' @example inst/examples/preprocessStrandTable.R
-#' 
-#' @return A list of two matrices and three quality data.frames -- 1: a matrix of WW/WC/WW calls for autosomes; 2: a matrix of W/C calls for sex chromosomes; 4: the quality of libraries used (based on frequencies outside expected ranges); 5: A data.frame of libraries that are of low quality and therefore excluded from analysis; 6: contigs that are present as WC in more libraries than expected. These are excluded from the strandStateMatrix, but are potentially worth investigating for chimerism.
-#' 
-#' @export
-#
-####################################################################################################
-
-preprocessStrandTable <- function(strandTable, strandTableThreshold=0.8, filterThreshold=0.8, orderMethod='libsAndConc', lowQualThreshold=0.9, verbose=TRUE, minLib=10, ignoreInternalQual=FALSE)
+preprocessStrandTable.func <- function(strandTable, strandTableThreshold=0.8, filterThreshold=0.8, orderMethod='libsAndConc', lowQualThreshold=0.9, verbose=TRUE, minLib=10, ignoreInternalQual=FALSE)
 {
 	strandTableLength <- nrow(strandTable)
 	
@@ -186,3 +155,39 @@ if(ignoreInternalQual == FALSE)
 
 	return(list(strandMatrix=strandMatrix, strandMatrixSex=strandMatrixSex, qualList=qualList, lowQualList=lowQualList, AWCcontigs=row.names(strandTableAWC)))
 }
+
+# Copyright (c) 2015, Mark Hills & Kieran O'Neill
+# All rights reserved.
+
+# Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+#    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+####################################################################################################
+#' preprocessStrandTable -- remove low quality libraries and contigs before attempting to build
+#' a genome
+#' @param strandTable data.frame containing the strand table to use as input
+#' @param strandTableThreshold threshold at which to call a contig WW or CC rather than WC
+#' @param filterThreshold maximum number of libraries a contig can be NA or WC in
+#' @param orderMethod the method to oder contigs. currently libsAndConc only option. Set to FALSE to not order contigs based on library quality
+#' @param lowQualThreshold background threshold at which to toss an entire library
+#' @param minLib minimum number of libraries a contig must be present in to be included in the output
+#' @param ignoreInternalQual logical that prevents function for making an overall assessment of library quality. Very chimeric assemblies can appear low quality across all libraries. 
+#' @param verbose messages written to terminal
+#' @aliases preprocessStrandTable preprocessStrandTable,StrandFreqMatrix,StrandFreqMatrix-method
+#' 
+#' @example inst/examples/preprocessStrandTable.R
+#' 
+#' @return A list of two matrices and three quality data.frames -- 1: a matrix of WW/WC/WW calls for autosomes; 2: a matrix of W/C calls for sex chromosomes; 4: the quality of libraries used (based on frequencies outside expected ranges); 5: A data.frame of libraries that are of low quality and therefore excluded from analysis; 6: contigs that are present as WC in more libraries than expected. These are excluded from the strandStateMatrix, but are potentially worth investigating for chimerism.
+#' 
+#' @export
+#
+####################################################################################################
+
+setMethod('preprocessStrandTable',
+		  signature = signature(strandTable='StrandFreqMatrix'),
+		  definition = preprocessStrandTable.func
+		  )

@@ -36,10 +36,10 @@ if(lg == 'all')
     names(chrCols) <- chrLabels
     rowCols <- chrCols[lgChr]
     colCols <- rowCols
-    heatmap.2(sim, trace='none', col=cols(100), labRow=labRow, breaks=breaks, labCol=labCol, RowSideColors=rowCols, ColSideColors=colCols)
+    heatmap.2(sim, trace='none', col=cols(100), labRow=labRow, breaks=breaks, labCol=labCol, RowSideColors=rowCols, ColSideColors=colCols, main=paste('Distances of ', nrow(sim) , ' linkage groups', sep=''))
 
   }else{
-    heatmap.2(sim, trace='none', col=cols(100), breaks=breaks, labRow=labRow, labCol=labCol, cexRow=labelScale, cexCol=labelScale )
+    heatmap.2(sim, trace='none', col=cols(100), breaks=breaks, labRow=labRow, labCol=labCol, cexRow=labelScale, cexCol=labelScale, main=paste('Distances of ', nrow(sim) , ' linkage groups', sep=''))
   }
 }
 

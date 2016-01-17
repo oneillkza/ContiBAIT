@@ -114,6 +114,21 @@ setClass("ContigOrdering",
 		 contains='data.frame')
 
 # =========================================================================
+#' A class for storing contig orientations
+#'
+#' \describe{
+#'  This class is data.frame of two character vectors that represent the orientation of contigs. 
+#'  The first element of this data.frame is the contigs name
+#'  The second element is the orinetation (as either + or -.
+#' }
+#
+#' @export
+#' @rdname OrientationFrame
+
+setClass("OrientationFrame",
+		 contains='data.frame')
+
+# =========================================================================
 #' A class for storing chromosome/fragment lengths
 #'
 #' \describe{

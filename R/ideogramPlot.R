@@ -1,4 +1,10 @@
-ideogramPlot.func <- function(WatsonFreqList, CrickFreqList, chrTable, plotBy='lib', showPage=FALSE, orderFrame=FALSE, verbose=TRUE)
+ideogramPlot.func <- function(WatsonFreqList,
+ 							  CrickFreqList, 
+ 							  chrTable, 
+ 							  plotBy='lib', 
+ 							  showPage=FALSE, 
+ 							  orderFrame=FALSE, 
+ 							  verbose=TRUE)
 {
 
 	capOffPlots <- function(object, capper)
@@ -8,8 +14,14 @@ ideogramPlot.func <- function(WatsonFreqList, CrickFreqList, chrTable, plotBy='l
 
 		pointFrameW <- data.frame(bin=1, chr=object$chr[1], max=0)
 		pointFrameC <- pointFrameW
-		if(length(which(object$WatsonPlot == capper)) > 0) {pointFrameW <- data.frame(bin=object$bin[which(object$WatsonPlot == capper)], chr=object$chr[which(object$WatsonPlot == capper)], max=capper, lib=object$lib[which(object$WatsonPlot == capper)])}
-		if(length(which(object$CrickPlot == capper)) > 0) {pointFrameC <- data.frame(bin=object$bin[which(object$CrickPlot == -capper)], chr=object$chr[which(object$CrickPlot == -capper)], max=-capper, lib=object$lib[which(object$CrickPlot == capper)])}
+		if(length(which(object$WatsonPlot == capper)) > 0) {pointFrameW <- data.frame(bin=object$bin[which(object$WatsonPlot == capper)], 
+																					  chr=object$chr[which(object$WatsonPlot == capper)], 
+																					  max=capper, 
+																					  lib=object$lib[which(object$WatsonPlot == capper)])}
+		if(length(which(object$CrickPlot == capper)) > 0) {pointFrameC <- data.frame(bin=object$bin[which(object$CrickPlot == -capper)], 
+																					 chr=object$chr[which(object$CrickPlot == -capper)], 
+																					 max=-capper, 
+																					 lib=object$lib[which(object$CrickPlot == capper)])}
 		return(list(object, pointFrameW, pointFrameC))
 	}
 
@@ -20,12 +32,18 @@ ideogramPlot.func <- function(WatsonFreqList, CrickFreqList, chrTable, plotBy='l
 	{
 		WatsonFreqList <- WatsonFreqList[orderFrame[,2],,drop=FALSE]
 		CrickFreqList <- CrickFreqList[orderFrame[,2],,drop=FALSE]
-		chrTable <- chrTable[orderFrame[,2],]
+		chrTable <- chrTable[orderFrame$contig,]
+		chrTable$chr <- sub("\\..*", "", orderFrame$LG)
+
 	}
 
 	if(plotBy == 'chr')
 	{
-		superMix <- data.frame(WatsonPlot=vector(), CrickPlot=vector(), bin=vector(), chr=vector(), lib=vector())
+		allLibraryDataFrame <- data.frame(WatsonPlot=vector(), 
+							   CrickPlot=vector(), 
+							   bin=vector(), 
+							   chr=vector(), 
+							   lib=vector())
 	}
 
 	for(lib in seq(1,ncol(WatsonFreqList)))
@@ -39,7 +57,11 @@ ideogramPlot.func <- function(WatsonFreqList, CrickFreqList, chrTable, plotBy='l
 		findMax <- max(binNums)
 		maxCap <- vector()
 		totalReads <- 0
-		megaMix <- data.frame(WatsonPlot=vector(), CrickPlot=vector(), bin=vector(), chr=vector(), lib=vector())
+		allChrDataFrame <- data.frame(WatsonPlot=vector(), 
+							 CrickPlot=vector(), 
+							 bin=vector(), 
+							 chr=vector(), 
+							 lib=vector())
 
 		for(i in unique(chrTable$chr))
 		{
@@ -51,8 +73,12 @@ ideogramPlot.func <- function(WatsonFreqList, CrickFreqList, chrTable, plotBy='l
 			plotOffset <- findMax-length(CrickPlot)
 			CrickPlot <- c(rep(0, plotOffset), CrickPlot)
 
-			mix <- data.frame(WatsonPlot, CrickPlot, bin=seq(1, length(WatsonPlot)), chr=i, lib=colnames(WatsonFreqList)[lib])
-			megaMix <- rbind(megaMix, mix)
+			chrDataFrame <- data.frame(WatsonPlot, 
+						     CrickPlot, 
+						     bin=seq(1, length(WatsonPlot)), 
+						     chr=i, 
+						     lib=colnames(WatsonFreqList)[lib])
+			allChrDataFrame <- rbind(allChrDataFrame, chrDataFrame)
 
 			binCounts <-abs(CrickPlot)+ WatsonPlot
 			readsPerChr <- sum(binCounts)
@@ -64,12 +90,12 @@ ideogramPlot.func <- function(WatsonFreqList, CrickFreqList, chrTable, plotBy='l
 
 		if(plotBy == 'chr')
 		{
-			superMix <- rbind(superMix, megaMix)
+			allLibraryDataFrame <- rbind(allLibraryDataFrame, allChrDataFrame)
 
 		}else{
 
 			maxCap <- max(maxCap, na.rm=T)
-			plotList <- capOffPlots(megaMix, maxCap)
+			plotList <- capOffPlots(allChrDataFrame, maxCap)
 			levels(plotList[[1]]$chr) <- mixedsort(levels(plotList[[1]]$chr))
 			levels(ideos) <- levels(plotList[[1]]$chr)
 			print(ggplot()+
@@ -84,15 +110,21 @@ ideogramPlot.func <- function(WatsonFreqList, CrickFreqList, chrTable, plotBy='l
 			ggtitle(paste("Library ", colnames(WatsonFreqList)[lib],  sep=""))+
 			facet_wrap( ~ chr, nrow=2, switch='x')+
 		
-			theme(legend.position="none", axis.ticks.y = element_blank(), axis.text.y=element_blank(), axis.title.y = element_blank(), axis.text.x=element_blank(), axis.title.x=element_blank(), axis.ticks.x = element_blank()))
+			theme(legend.position="none", 
+				  axis.ticks.y = element_blank(), 
+				  axis.text.y=element_blank(), 
+				  axis.title.y = element_blank(), 
+				  axis.text.x=element_blank(), 
+				  axis.title.x=element_blank(), 
+				  axis.ticks.x = element_blank()))
 		}
 	}
 
 	if(plotBy == 'chr')
 	{
-		for(chr in unique(superMix$chr))
+		for(chr in unique(allLibraryDataFrame$chr))
 		{
-			subsetChr <- superMix[superMix$chr == chr,]
+			subsetChr <- allLibraryDataFrame[allLibraryDataFrame$chr == chr,]
 
 			for(page in seq(1, ceiling(length(unique(subsetChr$lib))/25)))
 			{
@@ -125,7 +157,13 @@ ideogramPlot.func <- function(WatsonFreqList, CrickFreqList, chrTable, plotBy='l
 				ggtitle(paste("Chromosome ", chr, "  (Page", page, ")", sep=""))+
 				facet_wrap( ~ lib, nrow=2, switch='x')+
 			
-				theme(legend.position="none", axis.ticks.y = element_blank(), axis.text.y=element_blank(), axis.title.y = element_blank(), axis.text.x=element_blank(), axis.title.x=element_blank(), axis.ticks.x = element_blank()))
+				theme(legend.position="none", 
+					  axis.ticks.y = element_blank(), 
+					  axis.text.y=element_blank(), 
+					  axis.title.y = element_blank(), 
+					  axis.text.x=element_blank(), 
+					  axis.title.x=element_blank(), 
+					  axis.ticks.x = element_blank()))
 				if(page == showPage){break}
 			}	
 		}

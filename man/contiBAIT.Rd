@@ -45,7 +45,5 @@ data("exampleDividedChr")
 example.dir <- file.path(system.file(package='contiBAIT'), 'extdata')
 
 orderedContigs <- contiBAIT(path=example.dir, cluster=1, clusNum=1, filter=exampleDividedChr, pairedEnd=FALSE)
-
-show(orderedContigs)
 }
 

@@ -1,16 +1,40 @@
+
+writeBed.func <- function(chrTable, 
+					 	  orientationData, 
+					 	  contigOrder,
+					 	  libWeight=NULL,
+					 	  fileName='contiBAIT_assembly')
+{
+
+	if(is.null(libWeight))
+	{
+		libWeight <- rep(0, length(contigOrder$contig))
+		names(libWeight) <- contigOrder$contig
+	}
+
+	toBed <- data.frame(chrTable[contigOrder$contig,], strand=orientationData[contigOrder$contig,2] )
+	bedNames <- paste(contigOrder$LG,contigOrder$contig, sep="_")
+	bedRange <- GRanges(toBed[,1:3], strand=toBed$strand, score=libWeight[contigOrder$contig], name=bedNames)
+	export.bed(con = paste(fileName, '.bed', sep=''),bedRange)
+
+}
+
 ####################################################################################################
 #' function to write contig order to BED file
-#' @param fileName bed file name to write
-#' @param contigOrder a contig ordering
+#' @param fileName character string for bed file name to write
+#' @param chrTable an object of type ChrTable with rownames matching contig names. Product of makeChrTable
+#' @param orientationData data.frame of contig and strand (with rownames matching contig names). Product of reorientLinkageGroups[[2]]
+#' @param contigOrder an object of type ContigOrdering with ordered Linkage Groups and contigs. Product of orderAllLinkageGroups 
 #' @param libWeight average quality across all libraries for a contig
 #' @importFrom rtracklayer export.bed
 #' @import GenomicRanges
-#' @return void; BED file written to working directory names by fileName, chromosome and state.
+#' @aliases writeBed writeBed,ChrTable,ChrTable-method,OrientationFrame,OrientationFrame-method,ContigOrdering,ContigOrdering-method
+#' @return void; BED file written to working directory as fileName.bed.
 #' 
 #' @export
 ####################################################################################################
 
-writeBed <- function(fileName,contigOrder,libWeight ){
-
-  export.bed(con = fileName,GRanges(contigOrder, score  =libWeight[contigOrder]))
-}
+setMethod('writeBed',
+		  signature = signature(chrTable='ChrTable', orientationData='OrientationFrame', contigOrder='ContigOrdering'),
+		  definition = writeBed.func
+		  )

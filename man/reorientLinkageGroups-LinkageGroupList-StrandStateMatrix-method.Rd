@@ -20,7 +20,7 @@
 \item{verbose}{Outputs information to the terminal. Default is TRUE.}
 }
 \value{
-a list consisting of a strandStateMatrix (a reoriented version of allStrands), and a data.frame of contig names and orientations, as '+' or '-'.
+a list consisting of a strandStateMatrix (a reoriented version of allStrands), and a data.frame of type OrientationFrame containing contig names and orientations, as '+' or '-'.
 }
 \description{
 reorientLinkageGroups uses a simple dissimilarity to find misoriented fragments within linkage groups.

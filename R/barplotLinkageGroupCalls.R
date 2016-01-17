@@ -11,20 +11,25 @@ barplotLinkageGroupCalls.func <- function(object, assemblyBED, by='lg', returnTa
 	#Plot by linkage group
 	if(by=='lg')
 	{	
+		if(length(unique(chromoFrame$chr)) > 50){leg='none'}else{leg='right'}
 		print(ggplot(chromoFrame, aes(LG, count))+
 		geom_bar(stat="identity", aes(fill=chr), colour='black')+
 		theme(axis.text.x = element_text(angle = 90, hjust = 1))+
 		labs(x="Linkage Group", y="DNA Represented in Linkage Groups (Mb)")+
+		theme(legend.position=leg)+
 		ggtitle(paste("Barplot of ", length(unique(chromoFrame$chr)), " contigs clustered into ", length(unique(chromoFrame$LG)), " linkage groups",  sep="")))
 	}
 	
 	#Alternately, plot by chromosome:
 	if(by=='chr')
 	{
+
+		if(length(unique(chromoFrame$LG)) > 50){leg='none'}else{leg='right'}
 		print(ggplot(chromoFrame, aes(chr, count))+
 		geom_bar(stat="identity", aes(fill=LG), colour='black')+
 		theme(axis.text.x = element_text(angle = 90, hjust = 1))+
 		labs(x="Chromosome", y="DNA Represented in Chromosome (Mb)")+
+		theme(legend.position=leg)+
 		ggtitle(paste("Barplot of ", length(unique(chromoFrame$LG)), " linkage groups clustering into ", length(unique(chromoFrame$chr)), " chromosomes",  sep="")))
 	}
 

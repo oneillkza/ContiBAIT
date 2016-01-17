@@ -47,7 +47,8 @@ reorientLinkageGroups.func <- function(object, allStrands, verbose=TRUE)
 	))
 
 	allStrands[toReorient,] <- toReorientStrands
-	return(list(new('StrandStateMatrix', allStrands), completeOrientation))
+	rownames(completeOrientation) <- completeOrientation$contig
+	return(list(new('StrandStateMatrix', allStrands), new('OrientationFrame', completeOrientation)))
 }
 
 ####################################################################################################
@@ -56,7 +57,7 @@ reorientLinkageGroups.func <- function(object, allStrands, verbose=TRUE)
 #' @param allStrands Table of strand state for all contigs. Product of StrandSeqFreqTable.
 #' @param verbose Outputs information to the terminal. Default is TRUE.
 #' @aliases reorientLinkageGroups reorientLinkageGroups,LinkageGroupList,LinkageGroupList-method, strandStateMatrix, strandStateMatrix-method
-#' @return a list consisting of a strandStateMatrix (a reoriented version of allStrands), and a data.frame of contig names and orientations, as '+' or '-'.
+#' @return a list consisting of a strandStateMatrix (a reoriented version of allStrands), and a data.frame of type OrientationFrame containing contig names and orientations, as '+' or '-'.
 #' 
 #' @export
 ####################################################################################################

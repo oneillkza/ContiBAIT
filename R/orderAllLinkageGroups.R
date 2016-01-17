@@ -1,26 +1,4 @@
-####################################################################################################
-#' Function to call contig ordering algorithms iteratively across each linkage group element
-#' @useDynLib contiBAIT
-#' @param linkageGroupList list of vectors, each specifying which contigs belong in which linkage group (product of clusterContigs)
-#' @param strandStateMatrix table of strand calls for all contigs (product of preprocessStrandTable)
-#' @param strandFreqMatrix table of W:C read proportions (used for QC) (product of strandSeqFreqTable[[1]])
-#' @param strandReadCount table of read counts (product of strandSeqFreqTable[[2]])  
-#' @param whichLG vector of integers specifying the element(s) of linkageGroupList to be ordered (i.e. which specific linkage groups to try to order). Default is all LGs.
-#' @param saveOrdered Will return a pdf of heatmaps for each linkage group; String entered becomes the fileName (default is saveOrderedPDF=FALSE)
-#' @param orderCall currently either 'greedy' for greedy algorithm or 'TSP' for travelling salesperson alogrithm (default is 'greedy')
-#' @param verbose Pringts messages to the terminal. Default is TRUE
-#' @param randomAttempts iterger specifying number of randomized clusterings to identify the best ordering. Default is 75
-#' 
-#' @return a data.frame of ordered contigs with linkage group names
-#' 
-#' @example inst/examples/orderAllLinkageGroups.R
-#' @export
-#' @importFrom cluster daisy
-#' @importFrom gplots heatmap.2
-####################################################################################################
-
-
-orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFreqMatrix, strandReadCount, whichLG=NULL, saveOrdered=FALSE, orderCall='greedy', randomAttempts=75, verbose=TRUE)
+orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, strandFreqMatrix, strandReadCount, whichLG=NULL, saveOrdered=FALSE, orderCall='greedy', randomAttempts=75, verbose=TRUE)
 {
   if(is.null(whichLG)){whichLG=c(1:length(linkageGroupList))}
 #  if(saveOrderedPDF != FALSE) {pdf(paste(saveOrderedPDF, 'contig_order.pdf', sep='_'))}
@@ -80,3 +58,29 @@ orderAllLinkageGroups <- function(linkageGroupList, strandStateMatrix, strandFre
   return(orderedGroups)
 }
 
+####################################################################################################
+#' Function to call contig ordering algorithms iteratively across each linkage group element
+#' @useDynLib contiBAIT
+#' @param linkageGroupList list of vectors, each specifying which contigs belong in which linkage group (product of clusterContigs)
+#' @param strandStateMatrix table of strand calls for all contigs (product of preprocessStrandTable)
+#' @param strandFreqMatrix table of W:C read proportions (used for QC) (product of strandSeqFreqTable[[1]])
+#' @param strandReadCount table of read counts (product of strandSeqFreqTable[[2]])  
+#' @param whichLG vector of integers specifying the element(s) of linkageGroupList to be ordered (i.e. which specific linkage groups to try to order). Default is all LGs.
+#' @param saveOrdered Will return a pdf of heatmaps for each linkage group; String entered becomes the fileName (default is saveOrderedPDF=FALSE)
+#' @param orderCall currently either 'greedy' for greedy algorithm or 'TSP' for travelling salesperson alogrithm (default is 'greedy')
+#' @param verbose Pringts messages to the terminal. Default is TRUE
+#' @param randomAttempts iterger specifying number of randomized clusterings to identify the best ordering. Default is 75
+#' @aliases orderAllLinkageGroups orderAllLinkageGroups,LinkageGroupList,LinkageGroupList-method, StrandStateMatrix, StrandStateMatrix-method, StrandFreqMatrix, StrandFreqMatrix-method, StrandReadMatrix, StrandReadMatrix-method
+#' 
+#' @return a data.frame of ordered contigs with linkage group names
+#' 
+#' @example inst/examples/orderAllLinkageGroups.R
+#' @export
+#' @importFrom cluster daisy
+#' @importFrom gplots heatmap.2
+####################################################################################################
+
+setMethod('orderAllLinkageGroups',
+      signature = signature(linkageGroupList='LinkageGroupList', strandStateMatrix= 'StrandStateMatrix', strandFreqMatrix='StrandFreqMatrix', strandReadCount='StrandReadMatrix'),
+      definition = orderAllLinkageGroups.func
+      )
