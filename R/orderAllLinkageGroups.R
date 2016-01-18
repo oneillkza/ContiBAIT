@@ -128,7 +128,8 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
 #' @param orderCall currently either 'greedy' for greedy algorithm or 'TSP' for travelling salesperson alogrithm (default is 'greedy')
 #' @param verbose Pringts messages to the terminal. Default is TRUE
 #' @param randomAttempts iterger specifying number of randomized clusterings to identify the best ordering. Default is 75
-#' @aliases orderAllLinkageGroups orderAllLinkageGroups,LinkageGroupList,LinkageGroupList-method,StrandStateMatrix,StrandStateMatrix-method,StrandFreqMatrix,StrandFreqMatrix-method,StrandReadMatrix,StrandReadMatrix-method
+#' @aliases orderAllLinkageGroups orderAllLinkageGroups,orderAllLinkageGroups-LinkageGroupList-StrandStateMatrix-StrandFreqMatrix-StrandReadMatrix-method
+#' @rdname orderAllLinkageGroups
 #' 
 #' @return a data.frame of ordered contigs with linkage group names
 #' 

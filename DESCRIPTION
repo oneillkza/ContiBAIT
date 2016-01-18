@@ -39,6 +39,7 @@ biocViews: CellBasedAssays, QualityControl, WholeGenome, Genetics,
 Collate:
     'AllClasses.R'
     'AllGenerics.R'
+    'BAIT.R'
     'barplotLinkageGroupCalls.R'
     'clusterContigs.R'
     'computeConsensus.R'

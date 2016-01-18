@@ -2,15 +2,9 @@
 % Please edit documentation in R/orderAllLinkageGroups.R
 \docType{methods}
 \name{orderAllLinkageGroups,LinkageGroupList,StrandStateMatrix,StrandFreqMatrix,StrandReadMatrix-method}
-\alias{StrandFreqMatrix,}
-\alias{StrandFreqMatrix-method,}
-\alias{StrandReadMatrix,}
-\alias{StrandReadMatrix-method}
-\alias{StrandStateMatrix,}
-\alias{StrandStateMatrix-method,}
 \alias{orderAllLinkageGroups}
-\alias{orderAllLinkageGroups,LinkageGroupList,LinkageGroupList-method,}
 \alias{orderAllLinkageGroups,LinkageGroupList,StrandStateMatrix,StrandFreqMatrix,StrandReadMatrix-method}
+\alias{orderAllLinkageGroups,orderAllLinkageGroups-LinkageGroupList-StrandStateMatrix-StrandFreqMatrix-StrandReadMatrix-method}
 \title{Function to call contig ordering algorithms iteratively across each linkage group element}
 \usage{
 

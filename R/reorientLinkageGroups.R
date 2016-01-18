@@ -24,7 +24,7 @@ reorientLinkageGroups.func <- function(object, allStrands, verbose=TRUE)
 
 	for(lg in names(object))
 	{
-		if(verbose){message('Reorienting fragments from LG', lg, ' [', counter, '/', length(object), ']' )}
+		if(verbose){message('Reorienting fragments from ', lg, ' [', counter, '/', length(object), ']' )}
 
 		linkageGroup <- object[[lg]]
 		if(length(linkageGroup) > 1)
