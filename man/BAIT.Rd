@@ -25,18 +25,9 @@ BAIT(path = ".", splitBy = 2e+05, readQual = 10, pairedEnd = TRUE,
 \item{verbose}{prints messages to the terminal (default is TRUE)}
 }
 \value{
-ordered contigs in bed format. Depending on options, intermediate files and plots will also be generated
+ideogram plots
 }
 \description{
 BAIT -- master function to process strand-seq libraries into BAIT ideograms
-}
-\examples{
-#Get a list of BAM files containing libraries for cells from the same organism, aligned to the same genome
-#In this case these are the example BAM files provided with the package (hence the call to system.file);
-data("exampleDividedChr")
-
-example.dir <- file.path(system.file(package='contiBAIT'), 'extdata')
-
-orderedContigs <- contiBAIT(path=example.dir, cluster=1, clusNum=1, filter=exampleDividedChr, pairedEnd=FALSE)
 }
 

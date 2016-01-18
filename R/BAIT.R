@@ -21,10 +21,7 @@
 #' @param chroms vector of chromosome number to prevent contig plotting. eg for humans use 1:24. Default is 'all'
 #' @param verbose prints messages to the terminal (default is TRUE)
 #' 
-#' @return ordered contigs in bed format. Depending on options, intermediate files and plots will also be generated
-#' @import snow
-#' @importFrom S4Vectors DataFrame
-#' @example inst/examples/contiBAIT.R
+#' @return ideogram plots
 #' @export
 #' @include AllClasses.R
 ####################################################################################################
