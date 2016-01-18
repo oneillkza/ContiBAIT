@@ -4,7 +4,7 @@ plotLGDistances.func <- function(object, allStrands, lg='all', labels=TRUE, lgCh
 if(lg == 'all')
 {
   linkageStrands <- data.frame(do.call(rbind, lapply(object, computeConsensus, allStrands)))
-  rownames(linkageStrands) <- sapply(1:nrow(linkageStrands), function(x){paste('LG', x, ' (', length(object[[x]]), ')', sep='') })
+#  rownames(linkageStrands) <- sapply(1:nrow(linkageStrands), function(x){paste('LG', x, ' (', length(object[[x]]), ')', sep='') })
 }else{
   linkageStrands <- allStrands[unlist(object[lg]),]
   #For brevity, only report chromosome name, not split locations.

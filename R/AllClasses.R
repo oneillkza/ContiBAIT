@@ -93,7 +93,8 @@ setClass("RawReadStrands",
 #' @rdname LinkageGroupList
 
 setClass("LinkageGroupList", 
-		 contains='list')
+		 representation('list', names='character')
+		 )
 
 
 

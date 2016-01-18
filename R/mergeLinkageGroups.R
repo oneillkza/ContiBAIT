@@ -43,9 +43,11 @@ mergeLinkageGroups.func <- function(object, allStrands, similarityCutoff=0.7)
   
   newGroups <- newGroups[order(sapply(newGroups, length), decreasing=TRUE)]
 
-  return(new('LinkageGroupList',newGroups))
+  return(new('LinkageGroupList',
+            newGroups,
+            names= sapply(1:length(newGroups), function(x){paste('LG', x, ' (', length(newGroups[[x]]), ')', sep='') }) ))
   
-  
+ 
   
 }
 ####################################################################################################

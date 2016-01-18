@@ -71,10 +71,14 @@ contiBAIT <- function(path=".",
 
   if(verbose){message('-> Clustering data ', cluster, 'x using ', clusNum, ' cores [3/6]')}      
   slaveNum <- makeCluster(clusNum)
+  #linkage.groups <- clusterContigs(strandStateMatrixList[[1]], randomWeight=libWeight, snowCluster=slaveNum, recluster=cluster, randomise=TRUE, minimumLibraryOverlap=10, similarityCutoff=0.8)
   linkage.groups <- clusterContigs(strandStateMatrixList[[1]], randomWeight=libWeight, snowCluster=slaveNum, recluster=cluster, randomise=TRUE)
+
+   
   stopCluster(slaveNum)
   
   if(saveName != FALSE){ save(linkage.groups, file=paste(saveName, '_LG_', cluster, 'x_reclust.Rd', sep="") ) }	
+if(saveName != FALSE){ save(linkage.groups2, file=paste(saveName, '_LG_homo_', cluster, 'x_reclust.Rd', sep="") ) } 
 
    # make orientation calls for each group; WW and CC only
   if(verbose){message('-> Reorienting discordant fragments [4/6]')}
