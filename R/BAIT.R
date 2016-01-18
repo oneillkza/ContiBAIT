@@ -16,6 +16,7 @@
 #' @param readQual Integer dictating the minimal mapping quality required for a read to be accepted. Default is 10. 
 #' @param pairedEnd  Whether the bam files being read are in paired end format. Default is TRUE. Note,
 #' @param plotBy Whether to plot by library ('lib') or chromosome ('chr')
+#' @param splitBy numeric value of binsize for plotting. default is 200000
 #' @param plotName character which determines file name to be saved. Default is to open an R plot from the terminal
 #' @param chroms vector of chromosome number to prevent contig plotting. eg for humans use 1:24. Default is 'all'
 #' @param verbose prints messages to the terminal (default is TRUE)

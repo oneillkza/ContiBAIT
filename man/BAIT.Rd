@@ -10,6 +10,8 @@ BAIT(path = ".", splitBy = 2e+05, readQual = 10, pairedEnd = TRUE,
 \arguments{
 \item{path}{String denoting location of Strand-seq bam files (default is ".")}
 
+\item{splitBy}{numeric value of binsize for plotting. default is 200000}
+
 \item{readQual}{Integer dictating the minimal mapping quality required for a read to be accepted. Default is 10.}
 
 \item{pairedEnd}{Whether the bam files being read are in paired end format. Default is TRUE. Note,}
