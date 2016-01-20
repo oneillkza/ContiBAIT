@@ -39,7 +39,7 @@ BAIT <- function(path=".",
 
 	if(!(is.null(plotName)))
 	{
-		pdf(paste(plotName, "_", plotBy, ".pdf", sep=""))	
+		pdf(plotName)	
 	}
 
 	bamFileList <- list.files(path=path, pattern=".bam$", full.names=TRUE)

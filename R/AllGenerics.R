@@ -45,7 +45,9 @@ setGeneric("reorientLinkageGroups",
 #' @export mergeLinkageGroups
 setGeneric("mergeLinkageGroups", 
            function(object, 
-                    allStrands, 
+                    allStrands,
+                    clusNum=NULL, 
+                    cluster=NULL,
                     similarityCutoff=NULL) standardGeneric("mergeLinkageGroups"))
 
 ## =========================================================================
@@ -71,8 +73,7 @@ setGeneric("plotLGDistances",
            function(object, 
                     allStrands,
                     lg=NULL,
-                    labels=NULL,
-                    lgChr=NULL) standardGeneric("plotLGDistances"))
+                    labels=NULL) standardGeneric("plotLGDistances"))
 
 ## =========================================================================
 ## Generic for barplotLinkageGroupCalls
@@ -124,7 +125,7 @@ setGeneric("writeBed",
 					orientationData, 
 					contigOrder,
 					libWeight=NULL,
-					fileName=NULL) standardGeneric("writeBed"))
+					file=NULL) standardGeneric("writeBed"))
 
 ## =========================================================================
 ## show Methods

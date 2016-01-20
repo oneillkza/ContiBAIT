@@ -88,7 +88,7 @@ barplotLinkageGroupCalls.func <- function(object, assemblyBED, by='lg', returnTa
 #' @example inst/examples/barplotLinkageGroupCalls.R
 #' @export
 #' @import ggplot2
-#' @importFrom reshape melt melt.matrix
+#' @importFrom reshape2 melt 
 #' @importFrom gtools mixedsort
 ####################################################################################################
 

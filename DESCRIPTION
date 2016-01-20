@@ -29,7 +29,7 @@ Imports:
     snow,
     DNAcopy,
     colorspace,
-    reshape,
+    reshape2,
     ggplot2,
     diagram
 Suggests:
@@ -43,7 +43,6 @@ Collate:
     'barplotLinkageGroupCalls.R'
     'clusterContigs.R'
     'computeConsensus.R'
-    'computeQCMatrix.R'
     'computeSim.R'
     'contiBAIT.R'
     'divideMyChr.R'

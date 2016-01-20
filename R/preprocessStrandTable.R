@@ -1,4 +1,11 @@
-preprocessStrandTable.func <- function(strandTable, strandTableThreshold=0.8, filterThreshold=0.8, orderMethod='libsAndConc', lowQualThreshold=0.9, verbose=TRUE, minLib=10, ignoreInternalQual=FALSE)
+preprocessStrandTable.func <- function(strandTable, 
+									   strandTableThreshold=0.8, 
+									   filterThreshold=0.8, 
+									   orderMethod='libsAndConc', 
+									   lowQualThreshold=0.9, 
+									   verbose=TRUE, 
+									   minLib=10, 
+									   ignoreInternalQual=FALSE)
 {
 	strandTableLength <- nrow(strandTable)
 	

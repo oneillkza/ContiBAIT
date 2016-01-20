@@ -88,6 +88,8 @@ if(saveName != FALSE){ save(linkage.groups2, file=paste(saveName, '_LG_homo_', c
 
   if(verbose){message('-> Merging related linkage groups [5/6]')}
   linkage.merged <- mergeLinkageGroups(linkage.groups, reorientedTable[[1]])
+ 
+  reorientedTable <- reorientLinkageGroups(linkage.merged, reorientedTable[[1]], verbose=FALSE)
 
   if(saveName != FALSE){save(linkage.merged, file=paste(saveName, '_', cluster, 'x_reclust_merged.Rd', sep="")  )}
 

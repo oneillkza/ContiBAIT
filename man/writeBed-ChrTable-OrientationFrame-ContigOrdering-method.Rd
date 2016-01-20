@@ -9,7 +9,7 @@
 \usage{
 \S4method{writeBed}{ChrTable,OrientationFrame,ContigOrdering}(chrTable,
   orientationData, contigOrder, libWeight = NULL,
-  fileName = "contiBAIT_assembly")
+  file = "contiBAIT_assembly")
 }
 \arguments{
 \item{chrTable}{an object of type ChrTable with rownames matching contig names. Product of makeChrTable}
@@ -20,10 +20,10 @@
 
 \item{libWeight}{average quality across all libraries for a contig}
 
-\item{fileName}{character string for bed file name to write}
+\item{file}{character string for bed file name to write}
 }
 \value{
-void; BED file written to working directory as fileName.bed.
+void; BED file written to working directory as file
 }
 \description{
 function to write contig order to BED file

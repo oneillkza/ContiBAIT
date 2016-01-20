@@ -3,7 +3,7 @@ writeBed.func <- function(chrTable,
 					 	  orientationData, 
 					 	  contigOrder,
 					 	  libWeight=NULL,
-					 	  fileName='contiBAIT_assembly')
+					 	  file='contiBAIT_assembly')
 {
 
 	if(is.null(libWeight))
@@ -15,13 +15,13 @@ writeBed.func <- function(chrTable,
 	toBed <- data.frame(chrTable[contigOrder$contig,], strand=orientationData[contigOrder$contig,2] )
 	bedNames <- paste(contigOrder$LG,contigOrder$contig, sep="_")
 	bedRange <- GRanges(toBed[,1:3], strand=toBed$strand, score=libWeight[contigOrder$contig], name=bedNames)
-	export.bed(con = paste(fileName, '.bed', sep=''),bedRange)
+	export.bed(con =file,bedRange)
 
 }
 
 ####################################################################################################
 #' function to write contig order to BED file
-#' @param fileName character string for bed file name to write
+#' @param file character string for bed file name to write
 #' @param chrTable an object of type ChrTable with rownames matching contig names. Product of makeChrTable
 #' @param orientationData data.frame of contig and strand (with rownames matching contig names). Product of reorientLinkageGroups[[2]]
 #' @param contigOrder an object of type ContigOrdering with ordered Linkage Groups and contigs. Product of orderAllLinkageGroups 
@@ -29,7 +29,7 @@ writeBed.func <- function(chrTable,
 #' @importFrom rtracklayer export.bed
 #' @import GenomicRanges
 #' @aliases writeBed writeBed,ChrTable,ChrTable-method,OrientationFrame,OrientationFrame-method,ContigOrdering,ContigOrdering-method
-#' @return void; BED file written to working directory as fileName.bed.
+#' @return void; BED file written to working directory as file
 #' 
 #' @export
 ####################################################################################################
