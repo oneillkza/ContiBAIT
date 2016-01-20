@@ -10,6 +10,9 @@
 \arguments{
 \item{object}{a LinkageGrouplist}
 }
+\value{
+nothing
+}
 \description{
 Shows a LinkageGroupList
 }

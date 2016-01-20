@@ -10,6 +10,9 @@
 \arguments{
 \item{object}{a OrientationFrame}
 }
+\value{
+nothing
+}
 \description{
 Shows a OrientationFrame
 }

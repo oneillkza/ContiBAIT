@@ -10,6 +10,9 @@
 \arguments{
 \item{object}{a ChrTable}
 }
+\value{
+nothing
+}
 \description{
 Shows a ChrTable
 }

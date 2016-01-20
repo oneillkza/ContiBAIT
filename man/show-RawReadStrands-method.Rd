@@ -10,6 +10,9 @@
 \arguments{
 \item{object}{a RawReadStrands}
 }
+\value{
+nothing
+}
 \description{
 Shows a RawReadStrands
 }
