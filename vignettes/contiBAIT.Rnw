@@ -262,7 +262,7 @@ showPage=1)
 \section{Writing out to a BED file}
 This file can be passed to bedtools along with the original (draft) reference genome to create a new FASTA file containing the assembled genome. the writeBed function requires a chrTable of class ChrTable with which to extract the contig names and locations, the orientation information derived from reorientLinkageGroups to populate the strand column, the library weight to populate the score column, and an object of type ContigOrdering to invoke the actual order of fragments.  A fileName can be supplied, or the default is used. BED files will be written to the working directory
 
-<<writeBedExample, fig=FALSE>>=
+<<writeBedExample, eval=FALSE, echo=TRUE, fig=FALSE>>=
 
 writeBed(exampleDividedChr,
 reorientedMatrix[[2]],
