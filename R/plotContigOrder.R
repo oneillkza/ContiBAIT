@@ -4,6 +4,7 @@
 #' @param lg Integer specifying the linkage group by which to plot
 #' @import ggplot2
 #' @example inst/examples/plotContigOrder.R
+#' @return A ggplot object (which will be plotted automatically if not assigned).
 #' @export
 ####################################################################################################
 

@@ -3,10 +3,8 @@
 \docType{methods}
 \name{reorientLinkageGroups,LinkageGroupList,StrandStateMatrix-method}
 \alias{reorientLinkageGroups}
-\alias{reorientLinkageGroups,LinkageGroupList,LinkageGroupList-method,}
 \alias{reorientLinkageGroups,LinkageGroupList,StrandStateMatrix-method}
-\alias{strandStateMatrix,}
-\alias{strandStateMatrix-method}
+\alias{reorientLinkageGroups-LinkageGroupList-StrandStateMatrix-method}
 \title{reorientLinkageGroups uses a simple dissimilarity to find misoriented fragments within linkage groups.}
 \usage{
 \S4method{reorientLinkageGroups}{LinkageGroupList,StrandStateMatrix}(object,
@@ -24,5 +22,15 @@ a list consisting of a strandStateMatrix (a reoriented version of allStrands), a
 }
 \description{
 reorientLinkageGroups uses a simple dissimilarity to find misoriented fragments within linkage groups.
+}
+\examples{
+data(exampleWCMatrix)
+clusteredContigs <- clusterContigs(exampleWCMatrix, randomise=FALSE)
+
+reorientedMatrix <- reorientLinkageGroups(clusteredContigs,
+										  exampleWCMatrix)
+
+# Note that in this example data, everything is correctly oreiented to
+# to begin with, so all contigs come out as + orientation
 }
 

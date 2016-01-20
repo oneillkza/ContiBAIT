@@ -29,7 +29,9 @@ mergeLinkageGroups.func <- function(object, allStrands, clusNum=1, cluster=1, si
 #' @return list of indices within the allStrands matrix indicating linkage group membership,  
 #' a list consisting of a strandStateMatrix (a reoriented version of allStrands), 
 #' and a data.frame of type OrientationFrame containing contig names and orientations, as '+' or '-'.
-#' @aliases mergeLinkageGroups mergeLinkageGroups,LinkageGroupList,LinkageGroupList-method
+#' @aliases mergeLinkageGroups mergeLinkageGroups-LinkageGroupList-StrandStateMatrix-method
+#' @rdname mergeLinkageGroups
+#' @example inst/examples/mergeLinkageGroups.R
 #' @export
 #' @import snow
 #' @importFrom reshape2 melt 

@@ -3,8 +3,8 @@
 \docType{methods}
 \name{mergeLinkageGroups,LinkageGroupList,StrandStateMatrix-method}
 \alias{mergeLinkageGroups}
-\alias{mergeLinkageGroups,LinkageGroupList,LinkageGroupList-method}
 \alias{mergeLinkageGroups,LinkageGroupList,StrandStateMatrix-method}
+\alias{mergeLinkageGroups-LinkageGroupList-StrandStateMatrix-method}
 \title{mergeLinkageGroups -- merge very similar linkage groups, including those in reverse orientation}
 \usage{
 \S4method{mergeLinkageGroups}{LinkageGroupList,StrandStateMatrix}(object,
@@ -28,5 +28,15 @@ and a data.frame of type OrientationFrame containing contig names and orientatio
 }
 \description{
 mergeLinkageGroups -- merge very similar linkage groups, including those in reverse orientation
+}
+\examples{
+data(exampleWCMatrix)
+clusteredContigs <- clusterContigs(exampleWCMatrix, randomise=FALSE)
+
+reorientedMatrix <- reorientLinkageGroups(clusteredContigs,
+										  exampleWCMatrix)
+
+exampleLGList <- mergeLinkageGroups(clusteredContigs,
+									reorientedMatrix[[1]])
 }
 

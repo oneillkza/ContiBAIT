@@ -34,6 +34,7 @@ plotWCdistribution.func <- function(object, filterThreshold=0.8)
 #' @param filterThreshold numeric value used in assessing the threshold for homozygous strand calls. Default is 0.8.
 #' @aliases plotWCdistribution plotWCdistribution,StrandFreqMatrix,StrandFreqMatrix-method 
 #' @example inst/examples/plotWCdistribution.R
+#' @return nothing, just plots.
 #' @export
 ####################################################################################################
 

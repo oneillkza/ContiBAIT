@@ -3,13 +3,13 @@
 \docType{methods}
 \name{writeBed,ChrTable,OrientationFrame,ContigOrdering-method}
 \alias{writeBed}
-\alias{writeBed,ChrTable,ChrTable-method,OrientationFrame,OrientationFrame-method,ContigOrdering,ContigOrdering-method}
 \alias{writeBed,ChrTable,OrientationFrame,ContigOrdering-method}
+\alias{writeBed-ChrTable-OrientationFrame-ContigOrdering-method}
 \title{function to write contig order to BED file}
 \usage{
 \S4method{writeBed}{ChrTable,OrientationFrame,ContigOrdering}(chrTable,
   orientationData, contigOrder, libWeight = NULL,
-  file = "contiBAIT_assembly")
+  file = "contiBAIT_assembly.bed")
 }
 \arguments{
 \item{chrTable}{an object of type ChrTable with rownames matching contig names. Product of makeChrTable}
@@ -23,9 +23,19 @@
 \item{file}{character string for bed file name to write}
 }
 \value{
-void; BED file written to working directory as file
+NULL; BED file written to file
 }
 \description{
 function to write contig order to BED file
+}
+\examples{
+\dontrun{
+
+data(exampleDividedChr)
+
+writeBed(exampleDividedChr,
+		 reorientedMatrix[[2]],
+		 contigOrder)
+}
 }
 

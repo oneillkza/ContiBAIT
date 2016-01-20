@@ -19,6 +19,7 @@
 #' @details makeChrTable creates a table with chromosome name and chromosome length by extracting 
 #' header data from the supplied bam file.
 #' @example inst/examples/makeChrTable.R
+#' @return a ChrTable object, containing information on the organism's chromosomes as extracted from the BAM file header.
 #' 
 #' @import Rsamtools
 #' @export

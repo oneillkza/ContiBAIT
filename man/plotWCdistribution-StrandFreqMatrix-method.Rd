@@ -14,6 +14,9 @@
 
 \item{filterThreshold}{numeric value used in assessing the threshold for homozygous strand calls. Default is 0.8.}
 }
+\value{
+nothing, just plots.
+}
 \description{
 Creates median distribution boxplots across all libraries and contigs
 }

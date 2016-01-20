@@ -70,7 +70,9 @@ reorientLinkageGroups.func <- function(object, allStrands, verbose=TRUE)
 #' @param object List of vectors containing names of contigs belonging to each LG.
 #' @param allStrands Table of strand state for all contigs. Product of StrandSeqFreqTable.
 #' @param verbose Outputs information to the terminal. Default is TRUE.
-#' @aliases reorientLinkageGroups reorientLinkageGroups,LinkageGroupList,LinkageGroupList-method, strandStateMatrix, strandStateMatrix-method
+#' @aliases reorientLinkageGroups reorientLinkageGroups-LinkageGroupList-StrandStateMatrix-method
+#' @rdname reorientLinkageGroups
+#' @example inst/examples/reorientLinkageGroups.R
 #' @return a list consisting of a strandStateMatrix (a reoriented version of allStrands), and a data.frame of type OrientationFrame containing contig names and orientations, as '+' or '-'.
 #' 
 #' @export

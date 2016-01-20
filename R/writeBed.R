@@ -3,7 +3,7 @@ writeBed.func <- function(chrTable,
 					 	  orientationData, 
 					 	  contigOrder,
 					 	  libWeight=NULL,
-					 	  file='contiBAIT_assembly')
+					 	  file='contiBAIT_assembly.bed')
 {
 
 	if(is.null(libWeight))
@@ -28,8 +28,10 @@ writeBed.func <- function(chrTable,
 #' @param libWeight average quality across all libraries for a contig
 #' @importFrom rtracklayer export.bed
 #' @import GenomicRanges
-#' @aliases writeBed writeBed,ChrTable,ChrTable-method,OrientationFrame,OrientationFrame-method,ContigOrdering,ContigOrdering-method
-#' @return void; BED file written to working directory as file
+#' @aliases writeBed writeBed-ChrTable-OrientationFrame-ContigOrdering-method
+#' @rdname writeBed
+#' @example inst/examples/writeBed.R
+#' @return NULL; BED file written to file
 #' 
 #' @export
 ####################################################################################################

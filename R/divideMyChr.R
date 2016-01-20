@@ -4,6 +4,7 @@
 #' generate from makeChrTable
 #' @param splitBy numeric value dictating the size of each bin in nucleotides. Default is 200000. 
 #' @example inst/examples/divideMyChr.R
+#' @return a ChrTable object, containing the newly-divided chromosomes 
 #' @export
 ####################################################################################################
 
