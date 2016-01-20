@@ -14,7 +14,7 @@ plotContigOrder <- function(contigOrder, lg)
 	contigOrder <- contigOrder[grep(paste(unique(sapply(1:nrow(contigOrder), function(x) strsplit(as.character(contigOrder$LG), "\\.")[[x]][1]))[lg],"\\.", sep="") , contigOrder$LG),]
 
 	contigChr <- sub(':.*', '', contigOrder[,2])
-	primaryContigChr <- names(sort(table(contigChr), decreasing=T))[1]
+	primaryContigChr <- names(sort(table(contigChr), decreasing=TRUE))[1]
 
 	contigLengths <- sub('.*:', '', contigOrder[,2])
 	contigStarts <- sub('-.*', '', contigLengths)
