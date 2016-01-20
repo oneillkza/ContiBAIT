@@ -21,7 +21,10 @@ data("exampleLGList")
 data("exampleWCMatrix")
 data("exampleStrandFreq")
 data("exampleReadCounts")
-contigOrder <- orderAllLinkageGroups(exampleLGList, exampleWCMatrix, exampleStrandFreq, exampleReadCounts)
+contigOrder <- orderAllLinkageGroups(exampleLGList, 
+								     exampleWCMatrix, 
+								     exampleStrandFreq, 
+								     exampleReadCounts)
 plotContigOrder(contigOrder)
 }
 

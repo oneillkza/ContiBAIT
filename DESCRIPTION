@@ -29,7 +29,7 @@ Imports:
     snow,
     DNAcopy,
     colorspace,
-    reshape,
+    reshape2,
     ggplot2,
     diagram
 Suggests:
@@ -39,16 +39,13 @@ biocViews: CellBasedAssays, QualityControl, WholeGenome, Genetics,
 Collate:
     'AllClasses.R'
     'AllGenerics.R'
+    'BAIT.R'
     'barplotLinkageGroupCalls.R'
     'clusterContigs.R'
-    'combineZeroDistContigs.R'
-    'computeBarPlotMatrix.R'
     'computeConsensus.R'
-    'computeQCMatrix.R'
     'computeSim.R'
     'contiBAIT.R'
     'divideMyChr.R'
-    'heatPlotLinkageGroupCalls.R'
     'ideogramPlot.R'
     'makeBoxPlot.R'
     'makeChrTable.R'

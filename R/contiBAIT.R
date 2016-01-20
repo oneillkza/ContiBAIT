@@ -52,7 +52,7 @@ contiBAIT <- function(path=".",
   if(verbose){message('RUNNING CONTIBAIT ON ', length(bamFileList), ' BAM FILES!\n\n PARAMETERS FOR BAM ANALYSIS: \n----------------------------------\n     -> paired end data=', pairedEnd, '\n     -> mapping quality=', readQual, '\n     -> bed filter=', if(length(filter)==1){'FALSE'}else{'TRUE'}, '\n     -> minimal reads required=', readLimit, '\n\n PARAMETERS FOR CLUSTERING: \n----------------------------------\n     -> number of reclusters=', cluster, '\n     -> number of cores to use=', clusNum, '\n\n ADDITIONAL PARAMETERS:', '\n----------------------------------\n     -> saving intermediate files=', if(saveName==FALSE){'FALSE'}else{'TRUE'}, '\n     -> creating analysis plots=', makePlots, '\n----------------------------------')}
 
   if(verbose){message('-> Creating read table from bam files [1/6]')}
-  strandFrequencyList <- strandSeqFreqTable(bamFileList, filter=filter, qual=readQual, pairedEnd=pairedEnd)
+  strandFrequencyList <- strandSeqFreqTable(bamFileList, filter=filter, qual=readQual, pairedEnd=pairedEnd, BAITtables=TRUE)
 
   # subset data with: strandFrequencyList[[1]][which(strandFrequencyList[[2]] < 100)] <- NA
   if(saveName != FALSE){save(strandFrequencyList, file=paste(saveName, '_table.Rd', sep="")) }
@@ -71,10 +71,14 @@ contiBAIT <- function(path=".",
 
   if(verbose){message('-> Clustering data ', cluster, 'x using ', clusNum, ' cores [3/6]')}      
   slaveNum <- makeCluster(clusNum)
+  #linkage.groups <- clusterContigs(strandStateMatrixList[[1]], randomWeight=libWeight, snowCluster=slaveNum, recluster=cluster, randomise=TRUE, minimumLibraryOverlap=10, similarityCutoff=0.8)
   linkage.groups <- clusterContigs(strandStateMatrixList[[1]], randomWeight=libWeight, snowCluster=slaveNum, recluster=cluster, randomise=TRUE)
+
+   
   stopCluster(slaveNum)
   
   if(saveName != FALSE){ save(linkage.groups, file=paste(saveName, '_LG_', cluster, 'x_reclust.Rd', sep="") ) }	
+if(saveName != FALSE){ save(linkage.groups2, file=paste(saveName, '_LG_homo_', cluster, 'x_reclust.Rd', sep="") ) } 
 
    # make orientation calls for each group; WW and CC only
   if(verbose){message('-> Reorienting discordant fragments [4/6]')}
@@ -84,6 +88,8 @@ contiBAIT <- function(path=".",
 
   if(verbose){message('-> Merging related linkage groups [5/6]')}
   linkage.merged <- mergeLinkageGroups(linkage.groups, reorientedTable[[1]])
+ 
+  reorientedTable <- reorientLinkageGroups(linkage.merged, reorientedTable[[1]], verbose=FALSE)
 
   if(saveName != FALSE){save(linkage.merged, file=paste(saveName, '_', cluster, 'x_reclust_merged.Rd', sep="")  )}
 
@@ -128,6 +134,7 @@ contiBAIT <- function(path=".",
     barplotLinkageGroupCalls(linkage.merged, chrTable)
     barplotLinkageGroupCalls(linkage.merged, chrTable, by='chr')
     contigOrder <- orderAllLinkageGroups(linkage.merged, reorientedTable[[1]], strandFrequencyList[[1]], strandFrequencyList[[2]], saveOrdered=TRUE)
+    ideogramPlot(strandFrequencyList[[3]], strandFrequencyList[[4]], chrTable, plotBy='chr', orderFrame=contigOrder, verbose=TRUE)
 
     dev.off()
   }

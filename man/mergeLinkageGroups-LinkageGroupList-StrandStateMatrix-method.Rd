@@ -8,18 +8,23 @@
 \title{mergeLinkageGroups -- merge very similar linkage groups, including those in reverse orientation}
 \usage{
 \S4method{mergeLinkageGroups}{LinkageGroupList,StrandStateMatrix}(object,
-  allStrands, similarityCutoff = 0.7)
+  allStrands, clusNum = 1, cluster = 1, similarityCutoff = 0.7)
 }
 \arguments{
 \item{object}{LinkageGroupList}
 
 \item{allStrands}{StrandStateMatrix for all linkageGroups (usually reoriented by reorientStrandTable)}
 
+\item{clusNum}{Number of parallel processors to use when clustering contigs. Default is 1.}
+
+\item{cluster}{Integer denoting the number of reclusterings to be performed for creating linkage groups (default is 1)}
+
 \item{similarityCutoff}{merge contigs that are more similar this this}
 }
 \value{
-list of indices within the allStrands matrix indicating linkage group membership, 
- vector of orientation changes
+list of indices within the allStrands matrix indicating linkage group membership,  
+a list consisting of a strandStateMatrix (a reoriented version of allStrands), 
+and a data.frame of type OrientationFrame containing contig names and orientations, as '+' or '-'.
 }
 \description{
 mergeLinkageGroups -- merge very similar linkage groups, including those in reverse orientation

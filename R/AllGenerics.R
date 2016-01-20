@@ -1,5 +1,20 @@
 ## =========================================================================
-## Generic for clusterContigs
+## Generic for preprocessStrandTable.R
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export preprocessStrandTable
+setGeneric("preprocessStrandTable", 
+		   function(strandTable, 
+		   			strandTableThreshold=NULL, 
+		   			filterThreshold=NULL, 
+		   			orderMethod=NULL, 
+		   			lowQualThreshold=NULL, 
+		   			verbose=NULL, 
+		   			minLib=NULL, 
+		   			ignoreInternalQual=NULL) standardGeneric("preprocessStrandTable"))
+
+
+## =========================================================================
+## Generic for clusterContigs.R
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 #' @export clusterContigs
 setGeneric("clusterContigs", 
@@ -16,7 +31,7 @@ setGeneric("clusterContigs",
 
 
 ## =========================================================================
-## Generic for reorientLinkageGroups
+## Generic for reorientLinkageGroups.R
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 #' @export reorientLinkageGroups
 setGeneric("reorientLinkageGroups", 
@@ -30,8 +45,25 @@ setGeneric("reorientLinkageGroups",
 #' @export mergeLinkageGroups
 setGeneric("mergeLinkageGroups", 
            function(object, 
-                    allStrands, 
+                    allStrands,
+                    clusNum=NULL, 
+                    cluster=NULL,
                     similarityCutoff=NULL) standardGeneric("mergeLinkageGroups"))
+
+## =========================================================================
+## Generic for orderAllLinkageGroups.R
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export orderAllLinkageGroups
+setGeneric("orderAllLinkageGroups", 
+           function(linkageGroupList,
+            		strandStateMatrix, 
+            		strandFreqMatrix, 
+            		strandReadCount, 
+            		whichLG=NULL, 
+            		saveOrdered=NULL, 
+            		orderCall=NULL, 
+            		randomAttempts=NULL, 
+            		verbose=NULL) standardGeneric("orderAllLinkageGroups"))
 
 ## =========================================================================
 ## Generic for plotLGDistances.R
@@ -41,8 +73,7 @@ setGeneric("plotLGDistances",
            function(object, 
                     allStrands,
                     lg=NULL,
-                    labels=NULL,
-                    lgChr=NULL) standardGeneric("plotLGDistances"))
+                    labels=NULL) standardGeneric("plotLGDistances"))
 
 ## =========================================================================
 ## Generic for barplotLinkageGroupCalls
@@ -64,6 +95,15 @@ setGeneric("plotWCdistribution",
                     filterThreshold=NULL) standardGeneric("plotWCdistribution"))
 
 ## =========================================================================
+## Generic for makeBoxPlot
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export makeBoxPlot
+setGeneric("makeBoxPlot", 
+           function(chrTable, 
+                    linkage.contigs,
+                    sex.contigs=NULL) standardGeneric("makeBoxPlot"))
+
+## =========================================================================
 ## Generic for ideogramPlot
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 #' @export ideogramPlot
@@ -75,6 +115,17 @@ setGeneric("ideogramPlot",
                     showPage=NULL,
                     orderFrame=NULL,
                     verbose=NULL) standardGeneric("ideogramPlot"))
+
+## =========================================================================
+## Generic for writeBed
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export writeBed
+setGeneric("writeBed",
+		   function(chrTable, 
+					orientationData, 
+					contigOrder,
+					libWeight=NULL,
+					file=NULL) standardGeneric("writeBed"))
 
 ## =========================================================================
 ## show Methods
@@ -192,6 +243,23 @@ setMethod("show",
 		  }
 )
 
+## show OrientationFrame
+#' @name show,OrientationFrame-method
+#' @export
+#' @docType methods
+#' @title show-methods
+#' @param object a OrientationFrame
+#' @description Shows a OrientationFrame
+setMethod("show",
+		  signature=signature(object="OrientationFrame"),
+		  definition=function(object)
+		  {
+		  	elements <- nrow(object)
+		  	misorientations <- nrow(object[which(object[,2] == '-'),])
+		  	cat('A data.frame of ', elements, ' contigs with ',misorientations,' identified misorientations.\n')
+		  }
+)
+
 
 ## show ChrTable
 #' @name show,ChrTable-method
@@ -208,7 +276,7 @@ setMethod("show",
 		  	{
 			  	cat('A data.frame of', length(object[,1]), 'fragments from a', sum(object[,2])/1000000, 'Mb genome.\n')
 		  	}else{
-		  		cat('A data.frame of', length(object[,1]), 'fragments from a', (sum(object[,3])-sum(object[,2]))/1000000, 'Mb genome.\n')
+		  		cat('A data.frame of', length(object[,1]), 'fragments from a', (sum(as.numeric(object[,3]))-sum(as.numeric(object[,2])))/1000000, 'Mb genome.\n')
 		  	}
 		  	show(head(object))
 			cat('...\n')
