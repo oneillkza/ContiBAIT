@@ -1,6 +1,6 @@
 #####################################################################################
 #' Attempt to order contigs within linkage groups using travelling salesperson algorithm
-#' @useDynLib contiBAIT
+#' @useDynLib ContiBAIT
 #' @import Rcpp TSP
 #' @import TSP
 # 
