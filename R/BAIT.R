@@ -20,6 +20,7 @@
 #' @param plotName character which determines file name to be saved. Default is to open an R plot from the terminal
 #' @param chroms vector of chromosome number to prevent contig plotting. eg for humans use 1:24. Default is 'all'
 #' @param verbose prints messages to the terminal (default is TRUE)
+#' @example inst/examples/BAIT.R
 #' 
 #' @return ideogram plots
 #' @export

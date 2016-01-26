@@ -15,6 +15,9 @@ makeChrTable(bamFile, verbose = TRUE, asBed = FALSE, asRownames = TRUE)
 
 \item{asRownames}{Boolean. If false, rownames will not be returned, otherwise rownames will be equal to chromosome names}
 }
+\value{
+a ChrTable object, containing information on the organism's chromosomes as extracted from the BAM file header.
+}
 \description{
 makeChrTable -- Pulls out chromosome and length data from the header of a bam file
 }

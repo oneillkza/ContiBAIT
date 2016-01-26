@@ -138,6 +138,7 @@ setGeneric("writeBed",
 #' @docType methods
 #' @title show-methods
 #' @param object a StrandStateMatrix
+#' @return nothing
 #' @description Shows a StrandStateMatrix
 setMethod("show",
 		  signature=signature(object="StrandStateMatrix"),
@@ -156,6 +157,7 @@ setMethod("show",
 #' @docType methods
 #' @title show-methods
 #' @param object a StrandFreqMatrix
+#' @return nothing
 #' @description Shows a StrandFreqMatrix
 setMethod("show",
 		  signature=signature(object="StrandFreqMatrix"),
@@ -173,6 +175,7 @@ setMethod("show",
 #' @docType methods
 #' @title show-methods
 #' @param object a StrandReadMatrix
+#' @return nothing
 #' @description Shows a StrandReadMatrix
 setMethod("show",
 		  signature=signature(object="StrandReadMatrix"),
@@ -191,6 +194,7 @@ setMethod("show",
 #' @docType methods
 #' @title show-methods
 #' @param object a LinkageGrouplist
+#' @return nothing
 #' @description Shows a LinkageGroupList
 setMethod("show",
 		  signature=signature(object="LinkageGroupList"),
@@ -210,6 +214,7 @@ setMethod("show",
 #' @docType methods
 #' @title show-methods
 #' @param object a RawReadStrands
+#' @return nothing
 #' @description Shows a RawReadStrands
 setMethod("show",
 		  signature=signature(object="RawReadStrands"),
@@ -226,6 +231,7 @@ setMethod("show",
 #' @docType methods
 #' @title show-methods
 #' @param object a ContigOrdering
+#' @return nothing
 #' @description Shows a ContigOrdering
 setMethod("show",
 		  signature=signature(object="ContigOrdering"),
@@ -250,6 +256,7 @@ setMethod("show",
 #' @docType methods
 #' @title show-methods
 #' @param object a OrientationFrame
+#' @return nothing
 #' @description Shows a OrientationFrame
 setMethod("show",
 		  signature=signature(object="OrientationFrame"),
@@ -268,6 +275,7 @@ setMethod("show",
 #' @docType methods
 #' @title show-methods
 #' @param object a ChrTable
+#' @return nothing
 #' @description Shows a ChrTable
 setMethod("show",
 		  signature=signature(object="ChrTable"),

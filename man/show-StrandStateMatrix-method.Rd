@@ -10,6 +10,9 @@
 \arguments{
 \item{object}{a StrandStateMatrix}
 }
+\value{
+nothing
+}
 \description{
 Shows a StrandStateMatrix
 }

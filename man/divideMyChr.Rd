@@ -12,6 +12,9 @@ generate from makeChrTable}
 
 \item{splitBy}{numeric value dictating the size of each bin in nucleotides. Default is 200000.}
 }
+\value{
+a ChrTable object, containing the newly-divided chromosomes
+}
 \description{
 Creates a data.frame of chromosomes split into user-derived bin sizes
 }

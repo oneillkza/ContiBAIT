@@ -4,7 +4,7 @@
 \name{makeBoxPlot,ChrTable,LinkageGroupList-method}
 \alias{makeBoxPlot}
 \alias{makeBoxPlot,ChrTable,LinkageGroupList-method}
-\alias{makeBoxPlot,LinkageGroupList,LinkageGroupList-method}
+\alias{makeBoxPlot-ChrTable-LinkageGroupList-method}
 \title{makeBoxPlot -- creates boxplot of contigs included in the analysis vs those excluded}
 \usage{
 \S4method{makeBoxPlot}{ChrTable,LinkageGroupList}(chrTable, linkage.contigs,
@@ -18,9 +18,17 @@
 \item{sex.contigs}{vector of contigs that appear to be monosomic (ie belonging to sex chromosomes)}
 }
 \value{
-an box plot of included and excluded contigs
+a box plot of included and excluded contigs
 }
 \description{
 makeBoxPlot -- creates boxplot of contigs included in the analysis vs those excluded
+}
+\examples{
+#make an example barplot of data
+
+data("exampleLGList")
+data("exampleChrTable")
+makeBoxPlot(exampleChrTable, exampleLGList)
+
 }
 

@@ -11,6 +11,9 @@ plotContigOrder(contigOrder, lg)
 
 \item{lg}{Integer specifying the linkage group by which to plot}
 }
+\value{
+A ggplot object (which will be plotted automatically if not assigned).
+}
 \description{
 Plot ordering of contigs within a single linkage group.
 }

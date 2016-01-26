@@ -85,7 +85,9 @@ reorientLinkageGroups.func <- function(object,
 #' @param allStrands Table of type \code{strandStateMatrix} encompassing strand state for all contigs. Product of StrandSeqFreqTable.
 #' @param previousOrient data.frame of type \code{OrientationFrame} of previous orientation states if performed. Default is NULL
 #' @param verbose Outputs information to the terminal. Default is TRUE.
-#' @aliases reorientLinkageGroups reorientLinkageGroups,LinkageGroupList,LinkageGroupList-method, strandStateMatrix, strandStateMatrix-method
+#' @aliases reorientLinkageGroups reorientLinkageGroups-LinkageGroupList-StrandStateMatrix-method
+#' @rdname reorientLinkageGroups
+#' @example inst/examples/reorientLinkageGroups.R
 #' @return a list consisting of a strandStateMatrix (a reoriented version of allStrands), and a data.frame of type OrientationFrame containing contig names and orientations, as '+' or '-'.
 #' 
 #' @export

@@ -10,6 +10,9 @@
 \arguments{
 \item{object}{a ContigOrdering}
 }
+\value{
+nothing
+}
 \description{
 Shows a ContigOrdering
 }
