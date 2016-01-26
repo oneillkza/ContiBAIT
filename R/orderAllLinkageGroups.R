@@ -118,7 +118,7 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
 
 ####################################################################################################
 #' Function to call contig ordering algorithms iteratively across each linkage group element
-#' @useDynLib ContiBAIT
+#' @useDynLib contiBAIT
 #' @param linkageGroupList list of vectors, each specifying which contigs belong in which linkage group (product of clusterContigs)
 #' @param strandStateMatrix table of strand calls for all contigs (product of preprocessStrandTable)
 #' @param strandFreqMatrix table of W:C read proportions (used for QC) (product of strandSeqFreqTable[[1]])

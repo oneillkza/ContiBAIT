@@ -1,7 +1,7 @@
 ####################################################################################################
 #' Function to order contigs within a single linkage group using a greedy algorithms
 #' Attempt to order contigs within 
-#' @useDynLib ContiBAIT
+#' @useDynLib contiBAIT
 #' @import Rcpp TSP
 # 
 #' @param linkageGroupReadTable dataframe of strand calls (product of combineZeroDists or preprocessStrandTable)

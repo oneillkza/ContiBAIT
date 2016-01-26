@@ -1,4 +1,4 @@
-Package: ContiBAIT
+Package: contiBAIT
 Type: Package
 Title: Improves Early Build Genome Assemblies using Strand-Seq Data
 Version: 0.99.0
