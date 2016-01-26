@@ -1,4 +1,4 @@
-makeBoxPlot.func <- function(chrTable, linkage.contigs, sex.contigs=NULL)
+makeBoxPlot.func <- function(chrTable, linkage.contigs)
 {
 	#Save a boxplot
 	if(ncol(chrTable) > 2)
@@ -8,19 +8,8 @@ makeBoxPlot.func <- function(chrTable, linkage.contigs, sex.contigs=NULL)
 
 	includeLength <- chrTable[which(rownames(chrTable) %in% unlist(linkage.contigs)),'length']/10^6
 
-	if(!is.null(sex.contigs))
-	{
-	  sexLength <- chrTable[which(rownames(chrTable) %in% unlist(sex.contigs)),'length']/10^6
-	  includeLength <- c(includeLength, sexLength)
-	}
-
 	excludeLength <- chrTable[!(rownames(chrTable) %in% unlist(linkage.contigs)),'length']/10^6
 
-	if(!is.null(sex.contigs))
-	{
-	  seXclude <- chrTable[!(rownames(chrTable) %in% unlist(sex.contigs)),'length']/10^6
-	  excludeLength <- c(excludeLength, seXclude)
-	}
  	sumInclude <- round(sum(includeLength), digits=1)
 	sumExclude <- round(sum(excludeLength), digits=1)
 	percentInclude <- round(sumInclude / (sumInclude+sumExclude) *100, digits=1)

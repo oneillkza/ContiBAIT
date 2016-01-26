@@ -37,6 +37,7 @@ setGeneric("clusterContigs",
 setGeneric("reorientLinkageGroups", 
 		   function(object, 
 		   			allStrands,
+		   			previousOrient=NULL,
 		   		 	verbose=NULL) standardGeneric("reorientLinkageGroups"))
 
 ## =========================================================================
@@ -100,8 +101,7 @@ setGeneric("plotWCdistribution",
 #' @export makeBoxPlot
 setGeneric("makeBoxPlot", 
            function(chrTable, 
-                    linkage.contigs,
-                    sex.contigs=NULL) standardGeneric("makeBoxPlot"))
+                    linkage.contigs) standardGeneric("makeBoxPlot"))
 
 ## =========================================================================
 ## Generic for ideogramPlot
@@ -114,6 +114,7 @@ setGeneric("ideogramPlot",
                     plotBy=NULL,
                     showPage=NULL,
                     orderFrame=NULL,
+   		            orientationData=NULL,
                     verbose=NULL) standardGeneric("ideogramPlot"))
 
 ## =========================================================================
@@ -142,7 +143,7 @@ setMethod("show",
 		  signature=signature(object="StrandStateMatrix"),
 		  definition=function(object)
 		  {
-        d <- dim(object)
+        	d <- dim(object)
   
 		  	cat('A strand state matrix for ', d[[1]], ' contigs over ',d[[2]],' libraries.\n')
 		  }

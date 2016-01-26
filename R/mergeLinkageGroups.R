@@ -1,9 +1,11 @@
 
 mergeLinkageGroups.func <- function(object, allStrands, clusNum=1, cluster=1, similarityCutoff=0.7)
 {
-  linkageGroups <- object
-  consensusStrands <- data.frame(do.call(rbind, lapply(linkageGroups, computeConsensus, allStrands)))
+
+  consensusStrands <- data.frame(do.call(rbind, lapply(object, computeConsensus, allStrands)))
   consensusStrands <- data.frame(lapply(consensusStrands, function(x){factor(x, levels=c(1,2,3))}))  
+  colnames(consensusStrands) <- colnames(allStrands)
+  rownames(consensusStrands) <- names(object)
 
   consensusStrands <- new('StrandStateMatrix', consensusStrands)
   slaveNum <- makeCluster(clusNum)

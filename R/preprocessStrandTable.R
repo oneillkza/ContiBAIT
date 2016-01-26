@@ -121,46 +121,14 @@ if(ignoreInternalQual == FALSE)
 	strandTable2 <- strandTable2[which(apply(strandTable2, 1, function(x){length(which(!is.na(x)))} >= minLib)),]
 	strandTable <- strandTable[rownames(strandTable2),]
 
-	#Scan for sex chromosomes based on no WC inheritance
-	#First, count non-WC's for each line...
-	if(verbose){message("-> Searching for contigs on sex chromosomes (no WC in libraries)")}
-	
-	#First, count non-WC's for each line and divide by total number of libraries (which aren't NA).Only include if above strandTableThreshold
-	includeSex <- which(apply(strandTable, 1, function(x){length(which(x != 2)) /length(which(x != "NA")) }) >= strandTableThreshold) 
-	
-	if( length(includeSex) > 1)
-	{
-		strandMatrixSex <- strandTable[includeSex,] 
-		if(verbose){message(paste("    -> ", nrow(strandMatrixSex), " found!", sep="") )}
-	} else {
-		if(verbose){message("    -> None found")}
-    #The next two lines should be reviewed
-		strandMatrixSex <- matrix(nrow=2, ncol=ncol(strandTable))
-    	strandMatrixSex <- data.frame(apply(strandMatrixSex, 2, as.factor))
-		strandMatrixSex <- data.frame(lapply(strandMatrixSex, function(x){levels(x) <- c(1,2,3); x}) )
-    	
- 	}
-
 	strandMatrix <- data.frame(lapply(strandTable, function(x){factor(x, levels=c(1,2,3))}))  
 	rownames(strandMatrix) <- rownames(strandTable)
-
-	if (nrow(strandMatrixSex) > 2)
-	{
-		#Ignore contigs present in fewer than 10 libraries
-		strandMatrixSex <- strandMatrixSex[which(apply(strandMatrixSex, 1, function(x){length(which(!is.na(x)))} >= minLib)),]
-		#And ignore libraries that are entirely NA (indicating no cell present)	
-		strandMatrixSex <- strandMatrixSex[,which(apply(strandMatrixSex, 2, function(x){length(which(is.na(x)))} <= nrow(strandMatrixSex)*filterThreshold ))]
-		
-		strandMatrixSex <- data.frame(lapply(strandMatrixSex, function(x){factor(x, levels=c(1,2,3))}))  
-		strandMatrixSex <- new('StrandStateMatrix', strandMatrixSex)
-	}
-	
-	#Filter out contigs that look like allosomes:
-	strandMatrix <- strandMatrix[setdiff(rownames(strandMatrix),rownames(strandMatrixSex)),]
-
 	strandMatrix <- new('StrandStateMatrix', strandMatrix)
 
-	return(list(strandMatrix=strandMatrix, strandMatrixSex=strandMatrixSex, qualList=qualList, lowQualList=lowQualList, AWCcontigs=row.names(strandTableAWC)))
+	return(list(strandMatrix=strandMatrix,
+				qualList=qualList, 
+				lowQualList=lowQualList, 
+				AWCcontigs=row.names(strandTableAWC)))
 }
 
 # Copyright (c) 2015, Mark Hills & Kieran O'Neill

@@ -10,12 +10,14 @@
 \title{reorientLinkageGroups uses a simple dissimilarity to find misoriented fragments within linkage groups.}
 \usage{
 \S4method{reorientLinkageGroups}{LinkageGroupList,StrandStateMatrix}(object,
-  allStrands, verbose = TRUE)
+  allStrands, previousOrient = NULL, verbose = TRUE)
 }
 \arguments{
 \item{object}{List of vectors containing names of contigs belonging to each LG.}
 
-\item{allStrands}{Table of strand state for all contigs. Product of StrandSeqFreqTable.}
+\item{allStrands}{Table of type \code{strandStateMatrix} encompassing strand state for all contigs. Product of StrandSeqFreqTable.}
+
+\item{previousOrient}{data.frame of type \code{OrientationFrame} of previous orientation states if performed. Default is NULL}
 
 \item{verbose}{Outputs information to the terminal. Default is TRUE.}
 }
