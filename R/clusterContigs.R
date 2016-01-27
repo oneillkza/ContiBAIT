@@ -15,7 +15,7 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 		set.seed(randomSeed)
 	
 	
-	runOnce <- function(object, randomise, randomWeight)
+	runOnce <- function(object, randomise, randomWeight, similarityCutoff)
 	{
 		randomOrder <- rownames(object) # by default, no reordering
 		names(randomOrder) <- rownames(object)
@@ -99,14 +99,14 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 
 	if(is.null(recluster))
 	{
-		linkageGroups <- runOnce(object, randomise, randomWeight)
+		linkageGroups <- runOnce(object, randomise, randomWeight, similarityCutoff)
 	}else
 	{
-		runOneForTheEnsemble <- function(dump, object, randomise, randomWeight)
+		runOneForTheEnsemble <- function(dump, object, randomise, randomWeight, similarityCutoff)
 		{
 			clusterVec <- rep(0, nrow(object))
 			names(clusterVec) <- rownames(object)
-			linkageGroups <- runOnce(object, randomise, randomWeight)
+			linkageGroups <- runOnce(object, randomise, randomWeight, similarityCutoff)
 			#linkageGroups <- mergeLinkageGroups(linkageGroups, object)
 			for (lg in 1:length(linkageGroups))
 				clusterVec[linkageGroups[[lg]]] <- lg
@@ -118,10 +118,10 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 		if(!is.null(snowCluster))
 		{
 			if(verbose){message(paste('-> Running ', recluster, ' clusterings in parallel on ', length(snowCluster), ' processors', sep=""))}
-			multiClust <- parLapply(snowCluster, 1:recluster, runOneForTheEnsemble, object, randomise, randomWeight)
+			multiClust <- parLapply(snowCluster, 1:recluster, runOneForTheEnsemble, object, randomise, randomWeight, similarityCutoff)
 		}else
 		{
-			multiClust <- lapply(1:recluster, runOneForTheEnsemble, object, randomise, randomWeight)
+			multiClust <- lapply(1:recluster, runOneForTheEnsemble, object, randomise, randomWeight, similarityCutoff)
 		}
 		
 		

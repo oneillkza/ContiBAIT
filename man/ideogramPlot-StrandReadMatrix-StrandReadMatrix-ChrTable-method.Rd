@@ -12,7 +12,7 @@
 
   \S4method{ideogramPlot}{StrandReadMatrix,StrandReadMatrix,ChrTable}(WatsonFreqList,
   CrickFreqList, chrTable, plotBy = "lib", showPage = FALSE,
-  orderFrame = FALSE, verbose = TRUE)
+  orderFrame = FALSE, orientationData = NULL, verbose = TRUE)
 }
 \arguments{
 \item{WatsonFreqList}{data.frame of Watson calls. Product of strandSeqFreqTable[[3]] when BAITtables=TRUE}
@@ -26,6 +26,8 @@
 \item{showPage}{Integer specifying which page to plot if plotBy='chr' selected. Useful when not plotting to a file. Default is FALSE}
 
 \item{orderFrame}{ordered data.frame of contigs (produced by orderAllLinkageGroups). Default is FALSE, where plots will be made from elements in chrTable.}
+
+\item{orientationData}{data.frame of contig orientations of type OrientationFrame telling which reads to flip Watson and Crick counts}
 
 \item{verbose}{prints messages to the terminal (default is TRUE)}
 }

@@ -121,46 +121,14 @@ if(ignoreInternalQual == FALSE)
 	strandTable2 <- strandTable2[which(apply(strandTable2, 1, function(x){length(which(!is.na(x)))} >= minLib)),]
 	strandTable <- strandTable[rownames(strandTable2),]
 
-	#Scan for sex chromosomes based on no WC inheritance
-	#First, count non-WC's for each line...
-	if(verbose){message("-> Searching for contigs on sex chromosomes (no WC in libraries)")}
-	
-	#First, count non-WC's for each line and divide by total number of libraries (which aren't NA).Only include if above strandTableThreshold
-	includeSex <- which(apply(strandTable, 1, function(x){length(which(x != 2)) /length(which(x != "NA")) }) >= strandTableThreshold) 
-	
-	if( length(includeSex) > 1)
-	{
-		strandMatrixSex <- strandTable[includeSex,] 
-		if(verbose){message(paste("    -> ", nrow(strandMatrixSex), " found!", sep="") )}
-	} else {
-		if(verbose){message("    -> None found")}
-    #The next two lines should be reviewed
-		strandMatrixSex <- matrix(nrow=2, ncol=ncol(strandTable))
-    	strandMatrixSex <- data.frame(apply(strandMatrixSex, 2, as.factor))
-		strandMatrixSex <- data.frame(lapply(strandMatrixSex, function(x){levels(x) <- c(1,2,3); x}) )
-    	
- 	}
-
 	strandMatrix <- data.frame(lapply(strandTable, function(x){factor(x, levels=c(1,2,3))}))  
 	rownames(strandMatrix) <- rownames(strandTable)
-
-	if (nrow(strandMatrixSex) > 2)
-	{
-		#Ignore contigs present in fewer than 10 libraries
-		strandMatrixSex <- strandMatrixSex[which(apply(strandMatrixSex, 1, function(x){length(which(!is.na(x)))} >= minLib)),]
-		#And ignore libraries that are entirely NA (indicating no cell present)	
-		strandMatrixSex <- strandMatrixSex[,which(apply(strandMatrixSex, 2, function(x){length(which(is.na(x)))} <= nrow(strandMatrixSex)*filterThreshold ))]
-		
-		strandMatrixSex <- data.frame(lapply(strandMatrixSex, function(x){factor(x, levels=c(1,2,3))}))  
-		strandMatrixSex <- new('StrandStateMatrix', strandMatrixSex)
-	}
-	
-	#Filter out contigs that look like allosomes:
-	strandMatrix <- strandMatrix[setdiff(rownames(strandMatrix),rownames(strandMatrixSex)),]
-
 	strandMatrix <- new('StrandStateMatrix', strandMatrix)
 
-	return(list(strandMatrix=strandMatrix, strandMatrixSex=strandMatrixSex, qualList=qualList, lowQualList=lowQualList, AWCcontigs=row.names(strandTableAWC)))
+	return(list(strandMatrix=strandMatrix,
+				qualList=qualList, 
+				lowQualList=lowQualList, 
+				AWCcontigs=row.names(strandTableAWC)))
 }
 
 # Copyright (c) 2015, Mark Hills & Kieran O'Neill
@@ -188,7 +156,7 @@ if(ignoreInternalQual == FALSE)
 #' 
 #' @example inst/examples/preprocessStrandTable.R
 #' 
-#' @return A list of two matrices and three quality data.frames -- 1: a matrix of WW/WC/WW calls for autosomes; 2: a matrix of W/C calls for sex chromosomes; 4: the quality of libraries used (based on frequencies outside expected ranges); 5: A data.frame of libraries that are of low quality and therefore excluded from analysis; 6: contigs that are present as WC in more libraries than expected. These are excluded from the strandStateMatrix, but are potentially worth investigating for chimerism.
+#' @return A list of one matrix and three quality data.frames -- 1: a matrix of WW/WC/WW calls for all contigs; 3: the quality of libraries used (based on frequencies outside expected ranges); 4: A data.frame of libraries that are of low quality and therefore excluded from analysis; 5: contigs that are present as WC in more libraries than expected. These are excluded from the strandStateMatrix, but are potentially worth investigating for chimerism.
 #' 
 #' @export
 #

@@ -3,7 +3,8 @@ ideogramPlot.func <- function(WatsonFreqList,
  							  chrTable, 
  							  plotBy='lib', 
  							  showPage=FALSE, 
- 							  orderFrame=FALSE, 
+ 							  orderFrame=FALSE,
+ 							  orientationData=NULL, 
  							  verbose=TRUE)
 {
 
@@ -25,8 +26,24 @@ ideogramPlot.func <- function(WatsonFreqList,
 		return(list(object, pointFrameW, pointFrameC))
 	}
 
+	roorientBAITtables <- function(WatsonFreqList, CrickFreqList, orientationFrame)
+	{
+		toFlip <- orientationFrame$contig[which(orientationFrame$orientation == '-')]
+		tempWatson <- WatsonFreqList
+		WatsonFreqList[which(rownames(WatsonFreqList) %in% toFlip),] <- CrickFreqList[which(rownames(CrickFreqList) %in% toFlip),]
+		CrickFreqList[which(rownames(CrickFreqList) %in% toFlip),] <- tempWatson[which(rownames(tempWatson) %in% toFlip),]
+		return(list(WatsonFreqList, CrickFreqList))
+	}
+
 	WatsonFreqList <- WatsonFreqList[which(rownames(WatsonFreqList) %in% rownames(chrTable)),,drop=FALSE]
 	CrickFreqList <- CrickFreqList[which(rownames(CrickFreqList) %in% rownames(chrTable)),, drop=FALSE]
+
+	if(!(is.null(orientationData)))
+	{
+		flippedBAITtables <- roorientBAITtables(WatsonFreqList, CrickFreqList, orientationData)
+		WatsonFreqList <- flippedBAITtables[[1]]
+		CrickFreqList <- flippedBAITtables[[2]]
+	}
 
 	if(length(orderFrame) != 1)
 	{
@@ -190,6 +207,7 @@ ideogramPlot.func <- function(WatsonFreqList,
 #' @param plotBy Whether to generate a plot for each library ('lib') or a plot for each chromosome ('chr')
 #' @param showPage Integer specifying which page to plot if plotBy='chr' selected. Useful when not plotting to a file. Default is FALSE
 #' @param orderFrame ordered data.frame of contigs (produced by orderAllLinkageGroups). Default is FALSE, where plots will be made from elements in chrTable.
+#' @param orientationData data.frame of contig orientations of type OrientationFrame telling which reads to flip Watson and Crick counts
 #' @param verbose prints messages to the terminal (default is TRUE)
 #' 
 #' @return ordered contigs in bed format. Depending on options, intermediate files and plots will also be generated
