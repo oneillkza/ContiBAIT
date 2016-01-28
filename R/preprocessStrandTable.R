@@ -41,7 +41,9 @@ if(ignoreInternalQual == FALSE)
 	} else if(nrow(lowQualList) == 0) { 
 		if(verbose){message("-> All libraries of good quality" )}
 	} else {
-		if(verbose){message(paste("-> Removed ", nrow(lowQualList), " libraries from a total of ", ncol(strandTable), ". ", ncol(strandTable)-nrow(lowQualList), " remaining (", round((ncol(strandTable)-nrow(lowQualList))/ncol(strandTable)*100, digits=1), "%)", sep="") )}
+		stCol <- ncol(strandTable)
+		lqRow <- nrow(lowQualList)
+		if(verbose){message(paste("-> Removed ", lqRow, " libraries from a total of ", stCol, ". ", stCol-lqRow, " remaining (", round((stCol-lqRow)/stCol*100, digits=1), "%)", sep="") )}
 		strandTable <- strandTable[,!(names(strandTable) %in% lowQualList[,1])]
 	}	
 }

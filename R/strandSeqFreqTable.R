@@ -17,8 +17,8 @@
 #' @param fieldSep  The field seperator of the bam file to use to define the field. Default is '.'
 #' @param qual  Mapping quality threshold. Default is 0
 #' @param rmdup  remove duplicates in output file. Default is TRUE 
-#' @param filter  additional file to split chromosomes based on locations. If this parameter is blank,
-#' a filter table will be automatically generated from the header of the first file in bamFileList
+#' @param filter  additional file of type GRanges (with a meta column titled 'name' determining contig name) to split chromosomes based on locations. If this parameter is blank,
+#' a filter table will be automatically generated from the header of the first file in bamFileList.
 #' @param tileChunk  Number of reads to split bam files into (smaller number requires less RAM). Default is 100000.
 #' @param pairedEnd  Whether the bam files being read are in paired end format. Default is TRUE. Note,
 #' since paired reads will be the same direction, only first mate read of pair is used in output
@@ -29,6 +29,7 @@
 #' @import Rsamtools
 #' @import IRanges
 #' @import GenomicFiles
+#' @import GenomicRanges
 #' @importFrom S4Vectors DataFrame
 #' @example inst/examples/strandSeqFreqTable.R
 #' @export
@@ -42,7 +43,7 @@ strandSeqFreqTable <- function(bamFileList,
 							   qual=0, 
 							   rmdup=TRUE, 
 							   verbose=TRUE, 
-							   filter=FALSE, 
+							   filter=NULL, 
 							   tileChunk=100000, 
 							   pairedEnd=TRUE,
 							   BAITtables=FALSE)
@@ -87,17 +88,14 @@ strandSeqFreqTable <- function(bamFileList,
 	#create empty matrices with the same number of columns as contigs
 
 	if(verbose){message(paste("-> Counting number of fragments", sep=""))}
-	if(length(filter) == 1)
+	if(is.null(filter))
 	{
-		filter <- makeChrTable(bamFileList[1], asBed=TRUE)
-		filter$name <- filter$chr
-		lengthOfContigs <- nrow(filter)
+		filter <- makeChrTable(bamFileList[1])
+		lengthOfContigs <- length(filter)
 		if(verbose){message(paste("-> ", lengthOfContigs," fragments found", sep=""))}
 	}else{
-		if(ncol(filter) == 3){filter$name <- paste(filter[,1], ':', filter[,2], '-', filter[,3], sep='')}
-		lengthOfContigs <- nrow(filter)
+		lengthOfContigs <- length(filter)
 		if(verbose){message(paste("-> ", lengthOfContigs," fragments found", sep=""))}
-		colnames(filter) <- c('chr', 'start', 'end', 'name')
 	}
 
 	strandTable <- matrix(nrow=lengthOfContigs, ncol=bamFileLength)
@@ -110,7 +108,7 @@ strandSeqFreqTable <- function(bamFileList,
 
 	colnames(strandTable) [grep("^[0-9]", colnames(strandTable) )] <- paste('lib', colnames(strandTable) [grep("[0-9]", colnames(strandTable) )], sep='_')
 
-	rownames(strandTable) <- filter[,4]
+	rownames(strandTable) <- filter$name
 	countTable <- strandTable
 	
 	if(BAITtables == TRUE){
@@ -121,19 +119,17 @@ strandSeqFreqTable <- function(bamFileList,
 	for(fileName in bamFileList)
 	{
 		index <- colnames(strandTable)[indexCounter]
-		# Make GRanges object from filter
-		grfilter <- makeGRangesFromDataFrame(filter)
 		# Read bamfile into tileChunk pieces
 		bf = BamFile(fileName, yieldSize=tileChunk)
 		# Count plus strand reads from first read
-		resultPos <- reduceByYield(bf, strandInfo, overlapStrand, DONE=loopedChunk, grfilter=grfilter)
+		resultPos <- reduceByYield(bf, strandInfo, overlapStrand, DONE=loopedChunk, grfilter=filter)
 
 		if(is.list(resultPos)){
 			warning(paste('\n####################\n WARNING! BAM FILE', index, 'APPEARS TO BE SINGLE-END. TRY RERUNNING WITH pairedEnd=FALSE \n####################'))
 			break
 		}
 		# Count minus strand reads from first read
-		resultNeg <- reduceByYield(bf, strandInfo, overlapStrand, DONE=loopedChunk, grfilter=grfilter, strand=FALSE)
+		resultNeg <- reduceByYield(bf, strandInfo, overlapStrand, DONE=loopedChunk, grfilter=filter, strand=FALSE)
 		# Total read number
 		absCount <- resultPos + resultNeg
 		# Calculate strand call
@@ -151,10 +147,11 @@ strandSeqFreqTable <- function(bamFileList,
 		indexCounter <- indexCounter+1
 	}
 
+	#Get rid of contigs that are entirely empty to prevent low quality calls in downstream functions
+	strandTable <- strandTable[which(apply(countTable, 1, sum) > 0),]
+	countTable <- countTable[which(apply(countTable, 1, sum) > 0),]
+
 	if(BAITtables == FALSE){
-		#Get rid of contigs that are entirely empty to prevent low quality calls in downstream functions
-		strandTable <- strandTable[which(apply(countTable, 1, sum) > 0),]
-		countTable <- countTable[which(apply(countTable, 1, sum) > 0),]
   		return(list(strandTable=new('StrandFreqMatrix', strandTable), countTable=new('StrandReadMatrix', countTable)))
   	}else{
   		return(list(strandTable=new('StrandFreqMatrix', strandTable), countTable=new('StrandReadMatrix', countTable), WatsonReads=new('StrandReadMatrix', WatsonTable), CrickReads=new('StrandReadMatrix', CrickTable)))

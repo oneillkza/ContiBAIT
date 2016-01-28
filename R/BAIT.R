@@ -45,18 +45,15 @@ BAIT <- function(path=".",
 
 	bamFileList <- list.files(path=path, pattern=".bam$", full.names=TRUE)
 
-	chrTable <- makeChrTable(bamFileList[1])
+	chrTable <- makeChrTable(bamFileList[1], splitBy=splitBy)
 	if(chroms[1] != 'all')
 	{
 		chrTable <- chrTable[chroms,]
 	}
 
+	strandFrequencyList <- strandSeqFreqTable(bamFileList, filter=chrTable, qual=readQual, pairedEnd=pairedEnd, BAITtables=TRUE)
 
-	dividedChr <- divideMyChr(chrTable, splitBy=splitBy)
-
-	strandFrequencyList <- strandSeqFreqTable(bamFileList, filter=dividedChr, qual=readQual, pairedEnd=pairedEnd, BAITtables=TRUE)
-
-	ideogramPlot(strandFrequencyList[[3]], strandFrequencyList[[4]], dividedChr, plotBy=plotBy, verbose=TRUE)
+	ideogramPlot(strandFrequencyList[[3]], strandFrequencyList[[4]], chrTable, plotBy=plotBy, verbose=TRUE)
 
 	if(!(is.null(plotName))){dev.off()}
 

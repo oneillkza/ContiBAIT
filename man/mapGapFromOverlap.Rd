@@ -12,14 +12,14 @@ mapGapFromOverlap(sceFile, gapFile, chrTable, verbose = TRUE,
 
 \item{gapFile}{GRanges object of assembly gaps in BED format (can be downloaded from UCSC table browser)}
 
-\item{chrTable}{data.frame of chromosome table (product of makeChrTable)}
+\item{chrTable}{GRanges object of chromosome table (product of makeChrTable)}
 
 \item{verbose}{prints messages to the terminal (default is TRUE)}
 
 \item{overlapNum}{Minimal number of strand state changes that overlap with a gap before assembly is cut at that location}
 }
 \value{
-a data,frame in bed format of all contigs split by regions where the sceFile and gapFile GRanges objects overlap.
+a GRanges object of all contigs split by regions where the sceFile and gapFile GRanges objects overlap.
 }
 \description{
 mapGapFromOverlap -- function to co-localize strand state changes with assembly gaps
