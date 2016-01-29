@@ -15,14 +15,16 @@ ideogramPlot.func <- function(WatsonFreqList,
 
 		pointFrameW <- data.frame(bin=1, chr=object$chr[1], max=0)
 		pointFrameC <- pointFrameW
-		if(length(which(object$WatsonPlot == capper)) > 0) {pointFrameW <- data.frame(bin=object$bin[which(object$WatsonPlot == capper)], 
-																					  chr=object$chr[which(object$WatsonPlot == capper)], 
-																					  max=capper, 
-																					  lib=object$lib[which(object$WatsonPlot == capper)])}
-		if(length(which(object$CrickPlot == capper)) > 0) {pointFrameC <- data.frame(bin=object$bin[which(object$CrickPlot == -capper)], 
-																					 chr=object$chr[which(object$CrickPlot == -capper)], 
-																					 max=-capper, 
-																					 lib=object$lib[which(object$CrickPlot == capper)])}
+		if(length(which(object$WatsonPlot == capper)) > 0) {
+			pointFrameW <- data.frame(bin=object$bin[which(object$WatsonPlot == capper)], 
+									  chr=object$chr[which(object$WatsonPlot == capper)], 
+									  max=capper, 
+									  lib=object$lib[which(object$WatsonPlot == capper)])}
+		if(length(which(object$CrickPlot == capper)) > 0) {
+			pointFrameC <- data.frame(bin=object$bin[which(object$CrickPlot == -capper)], 
+									  chr=object$chr[which(object$CrickPlot == -capper)], 
+									  max=-capper, 
+									  lib=object$lib[which(object$CrickPlot == capper)])}
 		return(list(object, pointFrameW, pointFrameC))
 	}
 
@@ -66,7 +68,7 @@ ideogramPlot.func <- function(WatsonFreqList,
 							   lib=vector())
 	}
 
-	for(lib in seq(1,ncol(WatsonFreqList)))
+	for(lib in seq_len(ncol(WatsonFreqList)))
 	{
 		if(verbose){message('-> Generating plotting data [', lib, '/', ncol(WatsonFreqList), ']' )}
 
@@ -147,7 +149,7 @@ ideogramPlot.func <- function(WatsonFreqList,
 		{
 			subsetChr <- allLibraryDataFrame[allLibraryDataFrame$chr == chr,]
 
-			for(page in seq(1, ceiling(length(unique(subsetChr$lib))/25)))
+			for(page in seq_len(ceiling(length(unique(subsetChr$lib))/25)))
 			{
 				if(showPage != FALSE){page <- showPage}
 				elementStart <-	seq(0,(page*30),by=30)[page]+1

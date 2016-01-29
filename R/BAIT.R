@@ -51,9 +51,17 @@ BAIT <- function(path=".",
 		chrTable <- chrTable[chroms,]
 	}
 
-	strandFrequencyList <- strandSeqFreqTable(bamFileList, filter=chrTable, qual=readQual, pairedEnd=pairedEnd, BAITtables=TRUE)
+	strandFrequencyList <- strandSeqFreqTable(bamFileList, 
+											  filter=chrTable, 
+											  qual=readQual, 
+											  pairedEnd=pairedEnd, 
+											  BAITtables=TRUE)
 
-	ideogramPlot(strandFrequencyList[[3]], strandFrequencyList[[4]], chrTable, plotBy=plotBy, verbose=TRUE)
+	ideogramPlot(strandFrequencyList[[3]], 
+				 strandFrequencyList[[4]], 
+				 chrTable, 
+				 plotBy=plotBy, 
+				 verbose=TRUE)
 
 	if(!(is.null(plotName))){dev.off()}
 

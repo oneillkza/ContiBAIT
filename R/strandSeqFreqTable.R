@@ -106,6 +106,7 @@ strandSeqFreqTable <- function(bamFileList,
 		colnames(strandTable) <- bamFileList 
 	}
 
+	#if library names are numeric, add 'lib_' in front to avoid numeric colnames 
 	colnames(strandTable) [grep("^[0-9]", colnames(strandTable) )] <- paste('lib', colnames(strandTable) [grep("[0-9]", colnames(strandTable) )], sep='_')
 
 	rownames(strandTable) <- filter$name
@@ -125,7 +126,7 @@ strandSeqFreqTable <- function(bamFileList,
 		resultPos <- reduceByYield(bf, strandInfo, overlapStrand, DONE=loopedChunk, grfilter=filter)
 
 		if(is.list(resultPos)){
-			warning(paste('\n####################\n WARNING! BAM FILE', index, 'APPEARS TO BE SINGLE-END. TRY RERUNNING WITH pairedEnd=FALSE \n####################'))
+			warning('\n####################\n WARNING! BAM FILE', index, 'APPEARS TO BE SINGLE-END. TRY RERUNNING WITH pairedEnd=FALSE \n####################')
 			break
 		}
 		# Count minus strand reads from first read
