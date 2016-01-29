@@ -1,4 +1,7 @@
-reorientLinkageGroups.func <- function(object, allStrands, verbose=TRUE)
+reorientLinkageGroups.func <- function(object, 
+									   allStrands, 
+									   previousOrient=NULL, 
+									   verbose=TRUE)
 {
 
 		switchAroo <- function(dataFrameToSwitch)
@@ -60,15 +63,27 @@ reorientLinkageGroups.func <- function(object, allStrands, verbose=TRUE)
 
 	toReorientStrands <- switchAroo(allStrands[toReorient,])
 
+	if(!is.null(previousOrient))
+	{
+	  toInvert <- previousOrient$orientation[which(previousOrient$contig %in% toReorient)]
+	  levels(toInvert) <- rev(levels(toInvert))
+	  previousOrient$orientation[which(previousOrient$contig %in% toReorient)] <- toInvert
+	  completeOrientation <- previousOrient
+	}
+
 	allStrands[toReorient,] <- toReorientStrands
 	rownames(completeOrientation) <- completeOrientation$contig
+
+
+
 	return(list(new('StrandStateMatrix', allStrands), new('OrientationFrame', completeOrientation)))
 }
 
 ####################################################################################################
 #' reorientLinkageGroups uses a simple dissimilarity to find misoriented fragments within linkage groups.
 #' @param object List of vectors containing names of contigs belonging to each LG.
-#' @param allStrands Table of strand state for all contigs. Product of StrandSeqFreqTable.
+#' @param allStrands Table of type \code{strandStateMatrix} encompassing strand state for all contigs. Product of StrandSeqFreqTable.
+#' @param previousOrient data.frame of type \code{OrientationFrame} of previous orientation states if performed. Default is NULL
 #' @param verbose Outputs information to the terminal. Default is TRUE.
 #' @aliases reorientLinkageGroups reorientLinkageGroups-LinkageGroupList-StrandStateMatrix-method
 #' @rdname reorientLinkageGroups
