@@ -10,6 +10,8 @@
 #
 #' @export
 #' @rdname StrandReadMatrix
+#' @import methods
+#' @import grDevices
 
 setClass("StrandReadMatrix", 
 		 contains='matrix', 
