@@ -52,10 +52,6 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 			{
 				contigStrand <- object[contig.num,]
 				linkageStrand <- linkageStrands[linkage.num,]
-				#numCommon <- length(which(!is.na(linkageStrand)&!is.na(contigStrand)))
-				#if(numCommon < minimumLibraryOverlap)
-				#	return(NA)
-				#suppressWarnings(1 - daisy(rbind(contigStrand, linkageStrand) )[1] )
 				contigStrand[which(contigStrand==3)] <- 2
 				linkageStrand[which(linkageStrand==3)] <- 2	
 				computeSim(contigStrand, linkageStrand, minimumLibraryOverlap)
@@ -107,21 +103,30 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 			clusterVec <- rep(0, nrow(object))
 			names(clusterVec) <- rownames(object)
 			linkageGroups <- runOnce(object, randomise, randomWeight, similarityCutoff)
-			#linkageGroups <- mergeLinkageGroups(linkageGroups, object)
-			for (lg in 1:length(linkageGroups))
+			for (lg in seq_len(length(linkageGroups)))
 				clusterVec[linkageGroups[[lg]]] <- lg
-			clusterVec
-			#linkageGroups
+				clusterVec
 		}
 		
 		#Then get consensus:
 		if(!is.null(snowCluster))
 		{
 			if(verbose){message(paste('-> Running ', recluster, ' clusterings in parallel on ', length(snowCluster), ' processors', sep=""))}
-			multiClust <- parLapply(snowCluster, 1:recluster, runOneForTheEnsemble, object, randomise, randomWeight, similarityCutoff)
+			multiClust <- parLapply(snowCluster, 
+									seq_len(recluster), 
+						  			runOneForTheEnsemble, 
+									object, 
+									randomise, 
+									randomWeight, 
+									similarityCutoff)
 		}else
 		{
-			multiClust <- lapply(1:recluster, runOneForTheEnsemble, object, randomise, randomWeight, similarityCutoff)
+			multiClust <- lapply(seq_len(recluster), 
+								 runOneForTheEnsemble, 
+								 object, 
+								 randomise, 
+								 randomWeight, 
+								 similarityCutoff)
 		}
 		
 		

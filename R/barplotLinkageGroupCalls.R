@@ -1,37 +1,29 @@
 barplotLinkageGroupCalls.func <- function(object, assemblyBED, by='lg', returnTable=FALSE)
 {
-	computeBarPlotMatrix <- function(linkageGroups, assemblyBED)
+
+	#Calculate length of each chromosome represented for one linkage group:
+	calcOneGroupChr <- function(lg.num, linkage.chr, linkage.lengths, complete.list)
 	{
-
-		linkage.lengths <- lapply(linkageGroups, function(x){ width(assemblyBED[assemblyBED$name %in% x])  }) 
-
-		linkage.chr <- lapply(linkageGroups, function(x){as.character(seqnames(assemblyBED)[assemblyBED$name %in% x])  })
-		
-		complete.list <- unique(unlist(linkage.chr))
-		
-		#Calculate length of each chromosome represented for one linkage group:
-		calcOneGroupChr <- function(lg.num, linkage.chr, linkage.lengths, complete.list)
-		{
-			lg.chr <- linkage.chr[[lg.num]]
-			lg.lengths <- linkage.lengths[[lg.num]]
-			chr.vector <- rep(0, length(complete.list))
-			names(chr.vector) <- complete.list
-			chr.represented <- unique(lg.chr)
-			chr.lengths <- sapply(chr.represented, function(chr.name){sum(lg.lengths[which(lg.chr==chr.name)])})
-			chr.vector[chr.represented] <- chr.lengths
-			chr.vector
-		}
-		
-		chr.table <- sapply(1:length(linkage.chr), calcOneGroupChr, linkage.chr, linkage.lengths, complete.list)
-		chr.table2 <- matrix(unlist(chr.table), nrow=nrow(chr.table))
-		rownames(chr.table2) <- rownames(chr.table)
-		colnames(chr.table2) <- c(paste('LG', 1:ncol(chr.table), sep=""))
-		chr.table2 <- chr.table2[order(rownames(chr.table2)),]
-		chr.table2 <- chr.table2 / 10^6
-		chr.table2
+		lg.chr <- linkage.chr[[lg.num]]
+		lg.lengths <- linkage.lengths[[lg.num]]
+		chr.vector <- rep(0, length(complete.list))
+		names(chr.vector) <- complete.list
+		chr.represented <- unique(lg.chr)
+		chr.lengths <- sapply(chr.represented, function(chr.name){sum(lg.lengths[which(lg.chr==chr.name)])})
+		chr.vector[chr.represented] <- chr.lengths
+		chr.vector
 	}
 
-	chr.table <- suppressWarnings(computeBarPlotMatrix(object, assemblyBED))
+	linkage.lengths <- lapply(object, function(x){ width(assemblyBED[assemblyBED$name %in% x])  }) 
+	linkage.chr <- lapply(object, function(x){as.character(seqnames(assemblyBED)[assemblyBED$name %in% x])  })
+	complete.list <- unique(unlist(linkage.chr))
+	chr.table <- sapply(1:length(linkage.chr), calcOneGroupChr, linkage.chr, linkage.lengths, complete.list)
+	chr.table2 <- matrix(unlist(chr.table), nrow=nrow(chr.table))
+	rownames(chr.table2) <- rownames(chr.table)
+	colnames(chr.table2) <- c(paste('LG', 1:ncol(chr.table), sep=""))
+	chr.table2 <- chr.table2[order(rownames(chr.table2)),]
+	chr.table <- chr.table2 / 10^6
+
 	chr.table <- chr.table[mixedsort(rownames(chr.table)),]
 
 	chromoFrame <- melt(chr.table)

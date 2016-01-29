@@ -17,14 +17,21 @@ plotWCdistribution.func <- function(object, filterThreshold=0.8)
 	nameLabs[round((filterThreshold+((1-filterThreshold)/2))*40, digits=0)] <- filterThreshold
 	nameLabs[round((1-filterThreshold-((1-filterThreshold)/2)) *40, digits=0) ] <- -filterThreshold
 
-	plotList <- boxplot(matrixHistogram, col=colors, xlab="WC frequency per contig (W-C)/(W+C)", ylab="Number of contigs", main=paste("WC distributions from", nrow(matrixHistogram), "libraries\nwith an average of", round(avContNum, digits=0), "fragments", sep=" ") )
+	boxplot(matrixHistogram, 
+			col=colors, 
+			xlab="WC frequency per contig (W-C)/(W+C)", 
+			ylab="Number of contigs", 
+			main=paste("WC distributions from", nrow(matrixHistogram), "libraries\nwith an average of", round(avContNum, digits=0), "fragments", sep=" ") )
 	lines(names(matrixTable), matrixTable, col='mediumblue', lwd=2)
 
-	bob <- apply(matrixHistogram[,which(abs(as.numeric(colnames(matrixHistogram))) >= filterThreshold)], 2, median)
-	lines(c(1,length(bob[which(as.numeric(names(bob)) >= filterThreshold)])), c(sum(bob[which(as.numeric(names(bob)) <= filterThreshold)]),sum(bob[which(as.numeric(names(bob)) <= filterThreshold)])), col='green4', lwd=2)
-	lines(c(41-length(bob[which(as.numeric(names(bob)) >= filterThreshold)]), 40), c(sum(bob[which(as.numeric(names(bob)) >= filterThreshold)]),sum(bob[which(as.numeric(names(bob)) >= filterThreshold)])), col='green4', lwd=2)
-	text(5, sum(bob[which(as.numeric(names(bob)) <= filterThreshold)]), pos=3, 'Av. CC contigs', cex=0.7, col='green4')
-	text(36, sum(bob[which(as.numeric(names(bob)) >= filterThreshold)]), pos=3, 'Av. WW contigs', cex=0.7, col='green4')
+	#find the average height of WW and CC calls to compare to modelled data
+	AvHomoHeight <- apply(matrixHistogram[,which(abs(as.numeric(colnames(matrixHistogram))) >= filterThreshold)], 2, median)
+	WWLoc <- AvHomoHeight[which(as.numeric(names(AvHomoHeight)) >= filterThreshold)]
+	CCLoc <- AvHomoHeight[which(as.numeric(names(AvHomoHeight)) <= filterThreshold)]
+	lines(c(1,length(WWLoc)), c(sum(CCLoc),sum(CCLoc)), col='green4', lwd=2)
+	lines(c(41-length(WWLoc), 40), c(sum(WWLoc),sum(WWLoc)), col='green4', lwd=2)
+	text(5, sum(CCLoc), pos=3, 'Av. CC contigs', cex=0.7, col='green4')
+	text(36, sum(WWLoc), pos=3, 'Av. WW contigs', cex=0.7, col='green4')
 
 }
 

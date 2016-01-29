@@ -4,7 +4,7 @@
 \alias{contiBAIT}
 \title{contiBAIT -- master function to process strand-seq libraries into ordered linkage groups}
 \usage{
-contiBAIT(path = ".", cluster = 1, clusNum = 1, saveName = FALSE,
+contiBAIT(path = ".", cluster = 1, clusNum = NULL, saveName = FALSE,
   filter = FALSE, readQual = 10, readLimit = 10, pairedEnd = TRUE,
   makePlots = FALSE, verbose = TRUE)
 }
@@ -13,7 +13,7 @@ contiBAIT(path = ".", cluster = 1, clusNum = 1, saveName = FALSE,
 
 \item{cluster}{Integer denoting the number of reclusterings to be performed for creating linkage groups (default is 1)}
 
-\item{clusNum}{Number of parallel processors to use when clustering contigs. Default is 1.}
+\item{clusNum}{Number of parallel processors to use when clustering contigs. Default is NULL.}
 
 \item{saveName}{String denoting the file name for saved data. If FALSE, no intermediate files are saved (default is FALSE)}
 

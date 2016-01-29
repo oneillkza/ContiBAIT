@@ -20,9 +20,11 @@ if(ignoreInternalQual == FALSE)
 {
 	if(verbose){message("-> Checking for high quality libraries")}
 
-	for( col in seq(1:ncol(strandTable)) )
+	for( col in seq_len(ncol(strandTable)) )
 	{
-		libraryQual <- round((abs(mean(strandTable[,col][which(strandTable[,col] < -0.6)], na.rm=TRUE) ) + abs(mean(strandTable[,col][which(strandTable[,col] > 0.6)], na.rm=TRUE))) / 2, digits=3)
+		backGroundC <- abs(mean(strandTable[,col][which(strandTable[,col] < -0.6)], na.rm=TRUE)) 
+		backGroundW <- abs(mean(strandTable[,col][which(strandTable[,col] > 0.6)], na.rm=TRUE))
+		libraryQual <- round(backGroundC + backGroundW / 2, digits=3)
 		
 		if(libraryQual < lowQualThreshold || libraryQual == "NaN")
 		{
@@ -60,24 +62,32 @@ if(ignoreInternalQual == FALSE)
 		strandTable <- strandTable[which(apply(strandTable, 1, function(x){length(which(!is.na(x)))} >= minLib)),]
 
 		#Ignore contigs that are entirely WC (likely contain inversions) (NB all <10 contigs have already been excluded)
+		colThresh <- ncol(strandTable)*filterThreshold
+		rowThresh <- nrow(strandTable)*filterThreshold 
 		if(onlyWC)
 		{
-			strandTable <- strandTable[which(apply(strandTable, 1, function(x){length(which(x == 2))} > ncol(strandTable)*filterThreshold )),]
+			strandTable <- strandTable[which(apply(strandTable, 1, function(x){length(which(x == 2))} > colThresh )),]
 		}else{
-			strandTable <- strandTable[which(apply(strandTable, 1, function(x){length(which(x == 2))} <= ncol(strandTable)*filterThreshold )),]
+			strandTable <- strandTable[which(apply(strandTable, 1, function(x){length(which(x == 2))} <= colThresh )),]
 		}
 		##### PRE-FILTER LIBRARIES #####
 		#Ignore libraries that are mostly WC (indicating Strand-Seq failure)
-		strandTable <- strandTable[,which(apply(strandTable, 2, function(x){length(which(x == 2))} <= nrow(strandTable)*filterThreshold ))]
+		strandTable <- strandTable[,which(apply(strandTable, 2, function(x){length(which(x == 2))} <= rowThresh ))]
 		#And ignore libraries that are entirely NA (indicating no cell present)	
-		strandTable <- strandTable[,which(apply(strandTable, 2, function(x){length(which(is.na(x)))} <= nrow(strandTable)*filterThreshold ))]
+		strandTable <- strandTable[,which(apply(strandTable, 2, function(x){length(which(is.na(x)))} <= rowThresh ))]
 		return(strandTable)
 	}
 
 	#Create new data.frame of contigs that are entirely WC to investigate further
-	strandTableAWC <- preFilterData(strandTable, filterThreshold=filterThreshold, onlyWC=TRUE, minLib=minLib)
+	strandTableAWC <- preFilterData(strandTable, 
+									filterThreshold=filterThreshold, 
+									onlyWC=TRUE, 
+									minLib=minLib)
 
-	strandTable <- preFilterData(strandTable, filterThreshold=filterThreshold, minLib=minLib)
+	strandTable <- preFilterData(strandTable, 
+								 filterThreshold=filterThreshold, 
+								 minLib=minLib)
+
 	rawTable <- rawTable[rownames(strandTable),]
 	rawTable <- rawTable[,colnames(strandTable)]
 

@@ -11,7 +11,8 @@
 plotContigOrder <- function(contigOrder, lg)
 {
 
-	contigOrder <- contigOrder[grep(paste(unique(sapply(1:nrow(contigOrder), function(x) strsplit(as.character(contigOrder$LG), "\\.")[[x]][1]))[lg],"\\.", sep="") , contigOrder$LG),]
+	masterGroups <- sapply(1:nrow(contigOrder), function(x) strsplit(as.character(contigOrder$LG), "\\.")[[x]][1])
+	contigOrder <- contigOrder[grep(paste(unique(masterGroups)[lg],"\\.", sep=""), contigOrder$LG),]
 
 	contigChr <- sub(':.*', '', contigOrder[,2])
 	primaryContigChr <- names(sort(table(contigChr), decreasing=TRUE))[1]
@@ -22,7 +23,6 @@ plotContigOrder <- function(contigOrder, lg)
 	orderedLocation <- unlist(sapply(1:length(unique(contigOrder[,1])), function(x) rep(x, length(contigOrder[,1][which(contigOrder[,1] == unique(contigOrder[,1])[x])]))))
 
 	contigOrderFrame <- data.frame(chr=contigChr, start=as.numeric(contigStarts)/10^6, bin=orderedLocation)
-
 
 	rsquareOrient <- summary(lm(bin ~ start, data=contigOrderFrame))$r.squared
 	rsquare <- summary(lm(bin ~ -1+start, data=contigOrderFrame))$r.squared

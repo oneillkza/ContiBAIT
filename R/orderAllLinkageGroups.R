@@ -17,7 +17,9 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
 
     linkageStrands <- data.frame(lapply(linkageStrands, function(x) factor(x, levels=c(1,2,3))))  
     rownames(linkageStrands) <- contigNames
-    linkageStrands <- linkageStrands[apply(linkageStrands, 1, function(x) length(which(is.na(x))) != ncol(linkageStrands)) ,apply(linkageStrands, 2, function(x) length(which(is.na(x))) != nrow(linkageStrands))]
+    linkRows <- apply(linkageStrands, 1, function(x) length(which(is.na(x))) != ncol(linkageStrands))
+    linkCols <- apply(linkageStrands, 2, function(x) length(which(is.na(x))) != nrow(linkageStrands))
+    linkageStrands <- linkageStrands[linkRows , linkCols]
     
     ##Combine zero dist contigs:
     strandDist <- daisy(linkageStrands)
@@ -64,7 +66,7 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
   }
 
   if(is.null(whichLG)){whichLG=c(1:length(linkageGroupList))}
- orderedGroups <- data.frame(LG=vector(), name=vector())
+  orderedGroups <- data.frame(LG=vector(), name=vector())
  
   for(lg in whichLG)
   {
@@ -78,12 +80,15 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
       #Make a contig Weight vector
       zeroGroups[[2]]$weights <- apply(strandReadCount[which(rownames(strandReadCount) %in% zeroGroups[[2]]$contig ),] , 1, median)
       #The make a LG weight by taking the sum of all contigs within that LG, and order the linkageGroupTable based on the deepest LG
-      linkageGroupReadTable <- zeroGroups[[1]][names(sort(sapply(unique(zeroGroups[[2]][,1]), function(x) sum(zeroGroups[[2]]$weights[which(zeroGroups[[2]][,1] == x)])), decreasing=TRUE)),]
+      uniqueZeros <- unique(zeroGroups[[2]][,1])
+      orderZeros <-sapply(uniqueZeros, function(x) sum(zeroGroups[[2]]$weights[which(zeroGroups[[2]][,1] == x)]))
+      orderZeros <- names(sort(orderZeros, decreasing=TRUE))
+      linkageGroupReadTable <- zeroGroups[[1]][orderZeros,]
       
+      #Choose which ordering method to use
       if(orderCall == 'greedy')
       {
         outOfOrder <- orderContigsGreedy(linkageGroupReadTable, randomAttempts=randomAttempts)
-  
       }else if (orderCall == 'TSP')
       {
         outOfOrder <- orderContigsTSP(linkageGroupReadTable)
@@ -93,7 +98,7 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
       }
 
       mergedGroups <- data.frame(LG=vector(), name=vector())
-      for(gp in 1:length(outOfOrder[[1]])){
+      for(gp in seq_len(length(outOfOrder[[1]]))) {
         mergedGroups <- rbind(mergedGroups, zeroGroups[[2]][which(zeroGroups[[2]] == outOfOrder[[1]][gp]),1:2] )
       }
       orderedGroups <- rbind(orderedGroups, mergedGroups)
