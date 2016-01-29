@@ -31,6 +31,8 @@ Imports:
     colorspace,
     reshape2,
     ggplot2,
+    methods,
+    exomeCopy,
     diagram
 Suggests:
     BiocStyle
@@ -45,7 +47,6 @@ Collate:
     'computeConsensus.R'
     'computeSim.R'
     'contiBAIT.R'
-    'divideMyChr.R'
     'ideogramPlot.R'
     'makeBoxPlot.R'
     'makeChrTable.R'
