@@ -1,10 +1,40 @@
+contiBAIT v0.99.2
+==============
+
+MAKECHRTABLE:
+-Now returns GRanges object
+-All subsequent programs edited to take chrTable call as a GRanges
+-Divided chromosome table now included in makeChrTable, so dividedChrTable function removed
+-Ability to include additional split locations
+
+MERGELINKAGEGROUPS:
+-Now if clusNum is NULL, parallel clustering is not performed
+
+PLOTTING FUNCTIONS WITH GGPLOTS:
+-No longer return false positive issues with R CMD check
+
+MAPGAPFROMOVERLAP:
+-Retains data in GRanges, speeding up function
+
+GENERAL:
+-Simplified some longer one-liners.
+-Imported methods
+
+
 contiBAIT v0.99.1
-===============
--fixed orientation issue with ideogramPlot. Now accepts OrientationTable to flip Watson and Crick reads.
+==============
+
+IDEOGRAMPLOT:
+-fixed orientation issue. Now accepts OrientationTable to flip Watson and Crick reads
+
+MERGELINKAGEGROUPS:
 -fixed intermediate issue in mergeLinkageGroups where rownames were sometimes maintained and sometimes not after computeconsensus resulting in melt error.
--preprocessStrandTable no longer looks for sex chromosomes. Was mostly pointless and didn't work well. Better method is to look for linkage groups with computeConsensus where consensus is mostly homozygous.
--fixed reorientLinkageGroups where second iteration after mergeLinkageGroups was overwriting the OrientationTable.  Now accepts a previousOrient argument if performing second reorientation.
-removed sex.contig argument from makeBoxPlot as redundant 
+
+PREPROCESSSTRANDTABLE:
+- no longer looks for sex chromosomes. Was mostly pointless and didn't work well. Better method is to look for linkage groups with computeConsensus where consensus is mostly homozygous.
+
+REORIENTLINKAGEGROUPS
+-fixed bug where second iteration after mergeLinkageGroups was overwriting the OrientationTable.  Now accepts a previousOrient argument if performing second reorientation.
 
 
 contiBAIT v0.99.0 (Submitted for BioC review 2016-01-20)

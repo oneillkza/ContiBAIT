@@ -3,9 +3,9 @@
 \docType{data}
 \name{exampleDividedChr}
 \alias{exampleDividedChr}
-\title{Example of a split ChromosomeTable, containing contigs and their lengths}
+\title{Example of a divided chromosome, containing contigs and their lengths}
 \description{
-Example of a split ChromosomeTable, containing contigs and their lengths
+Example of a divided chromosome, containing contigs and their lengths
 }
 \keyword{data}
 
