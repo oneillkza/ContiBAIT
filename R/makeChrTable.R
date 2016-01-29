@@ -12,29 +12,26 @@
 #' makeChrTable -- Pulls out chromosome and length data from the header of a bam file
 #' 
 #' @param bamFile string of location of a bam file to extract header data from
-#' @param splitFile GRanges object (of type chr, start and end: no strand or meta columns) of locations in which to split
-#' the assembly, such as previously determined locations of contig chimerism
-#' @param splitBy integer determining the average size contigs should be split by
+#' @param asBed if TRUE, a bed format table will be generated (chr, start, end)
 #' @param verbose if FALSE, no messages appear on terminal
+#' @param asRownames Boolean. If false, rownames will not be returned, otherwise rownames will be equal to chromosome names
 #'  
 #' @details makeChrTable creates a table with chromosome name and chromosome length by extracting 
 #' header data from the supplied bam file.
 #' @example inst/examples/makeChrTable.R
-#' @return a GRanges object, containing information on the organism's chromosomes as extracted from the BAM file header.
+#' @return a ChrTable object, containing information on the organism's chromosomes as extracted from the BAM file header.
 #' 
 #' @import Rsamtools
-#' @import GenomicRanges
-#' @importFrom exomeCopy subdivideGRanges
 #' @export
 #
 ####################################################################################################
 
 
 #function to create a chromosome table (chromosome, length) from a user-input bam file.
-makeChrTable <- function(bamFile,
-						 splitFile=NULL,
-						 splitBy=NULL, 
-					     verbose=TRUE) 
+makeChrTable <- function(bamFile, 
+					     verbose=TRUE, 
+					     asBed=FALSE, 
+					     asRownames=TRUE)
 {
 	if(verbose){message(paste("-> Creating chromosome table from", bamFile, sep=""))}
 	lengthOfContigs <- scanBamHeader(bamFile)[[1]][["text"]]
@@ -44,20 +41,15 @@ makeChrTable <- function(bamFile,
 	bamLength <- sapply(lengthOfContigs[grep("LN:", lengthOfContigs)], "[",2)
 	bamLength <-  as.numeric(gsub("LN:", "", bamLength))
 
-
-	chrTable <- GRanges(bamChr, IRanges(start=0, end=bamLength))
-
-	if(!(is.null(splitFile)))
+	if(asBed)
 	{
-		appendedChrTable <- append(chrTable, splitFile)
-		chrTable <- disjoin(appendedChrTable)
+		chrTable <- data.frame(chr=bamChr, start=0, end=bamLength)
+	}else{
+		chrTable <- data.frame(chr=bamChr, length=bamLength)
 	}
+	chrTable$chr <- factor(chrTable$chr, levels=bamChr)
 
-	if(!(is.null(splitBy)))
-	{
-		chrTable <- subdivideGRanges(chrTable, subsize=splitBy)
-	}
+	if(asRownames){rownames(chrTable) <- as.character(chrTable[,1]) }  
 
-	chrTable$name <- paste(seqnames(chrTable), ":", start(chrTable), "-", end(chrTable), sep="")
-	return(chrTable)
+	return(new("ChrTable", chrTable))
 }

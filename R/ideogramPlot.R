@@ -35,8 +35,8 @@ ideogramPlot.func <- function(WatsonFreqList,
 		return(list(WatsonFreqList, CrickFreqList))
 	}
 
-	#WatsonFreqList <- WatsonFreqList[which(rownames(WatsonFreqList) %in% rownames(chrTable)),,drop=FALSE]
-	#CrickFreqList <- CrickFreqList[which(rownames(CrickFreqList) %in% rownames(chrTable)),, drop=FALSE]
+	WatsonFreqList <- WatsonFreqList[which(rownames(WatsonFreqList) %in% rownames(chrTable)),,drop=FALSE]
+	CrickFreqList <- CrickFreqList[which(rownames(CrickFreqList) %in% rownames(chrTable)),, drop=FALSE]
 
 	if(!(is.null(orientationData)))
 	{
@@ -49,12 +49,9 @@ ideogramPlot.func <- function(WatsonFreqList,
 	{
 		WatsonFreqList <- WatsonFreqList[orderFrame[,2],,drop=FALSE]
 		CrickFreqList <- CrickFreqList[orderFrame[,2],,drop=FALSE]
-
-		#Create new GRange in order
-		chrTable <- as.data.frame(chrTable)
-		rownames(chrTable) <- chrTable$name
 		chrTable <- chrTable[orderFrame$contig,]
-		chrTable <- GRanges(sub("\\..*", "", orderFrame$LG), IRanges(start=chrTable$start, end=chrTable$end), name=chrTable$name )
+		chrTable$chr <- sub("\\..*", "", orderFrame$LG)
+
 	}
 
 	if(plotBy == 'chr')
@@ -72,7 +69,7 @@ ideogramPlot.func <- function(WatsonFreqList,
 
 		WFreqs <- as.data.frame(WatsonFreqList[,lib, drop=FALSE])
 		CFreqs <- as.data.frame(CrickFreqList[,lib, drop=FALSE]*-1)
-		binNums <- table(seqnames(chrTable))
+		binNums <- table(chrTable$chr)
 		binNums <- binNums[which(binNums >0)]
 		findMax <- max(binNums)
 		maxCap <- vector()
@@ -83,14 +80,13 @@ ideogramPlot.func <- function(WatsonFreqList,
 							 chr=vector(), 
 							 lib=vector())
 
-		for(i in unique(seqnames(chrTable)))
+		for(i in unique(chrTable$chr))
 		{
-
-			WatsonPlot <- WFreqs[chrTable$name[which(seqnames(chrTable) == i)],]
+			WatsonPlot <- WFreqs[rownames(chrTable[which(chrTable$chr == i),]),]
 			plotOffset <- findMax-length(WatsonPlot)
 			WatsonPlot <- c(rep(0, plotOffset), WatsonPlot)
 
-			CrickPlot <- CFreqs[chrTable$name[which(seqnames(chrTable) == i)],]
+			CrickPlot <- CFreqs[rownames(chrTable[which(chrTable$chr == i),]),]
 			plotOffset <- findMax-length(CrickPlot)
 			CrickPlot <- c(rep(0, plotOffset), CrickPlot)
 
@@ -107,7 +103,7 @@ ideogramPlot.func <- function(WatsonFreqList,
 			maxCap <- c(maxCap, capOff)
 			totalReads <- totalReads+readsPerChr
 		}
-		ideos <- data.frame(a=-1, b=1, c=findMax-binNums, d=findMax, chr=unique(seqnames(chrTable)))
+		ideos <- data.frame(a=-1, b=1, c=findMax-binNums, d=findMax, chr=unique(chrTable$chr))
 
 		if(plotBy == 'chr')
 		{
@@ -120,11 +116,11 @@ ideogramPlot.func <- function(WatsonFreqList,
 			levels(plotList[[1]]$chr) <- mixedsort(levels(plotList[[1]]$chr))
 			levels(ideos) <- levels(plotList[[1]]$chr)
 			print(ggplot()+
-			geom_ribbon(data=plotList[[1]], aes_string(x="bin", ymin=0, ymax="WatsonPlot"), fill='paleturquoise4')+
-			geom_ribbon(data=plotList[[1]], aes_string(x="bin", ymin=0, ymax="CrickPlot"), fill='sandybrown')+
-			geom_point(data=plotList[[2]], aes_string("bin", "max"), colour='paleturquoise4', size=0.5)+
-			geom_point(data=plotList[[3]], aes_string("bin", "max"), colour='sandybrown', size=0.5)+
-			geom_rect(data=ideos, mapping=aes_string(ymin="a", ymax="b", xmin="c", xmax="d"), fill='grey70')+
+			geom_ribbon(data=plotList[[1]], aes(x=bin, ymin=0, ymax=WatsonPlot), fill='paleturquoise4')+
+			geom_ribbon(data=plotList[[1]], aes(x=bin, ymin=0, ymax=CrickPlot), fill='sandybrown')+
+			geom_point(data=plotList[[2]], aes(bin, max), colour='paleturquoise4', size=0.5)+
+			geom_point(data=plotList[[3]], aes(bin, max), colour='sandybrown', size=0.5)+
+			geom_rect(data=ideos, mapping=aes(ymin=a, ymax=b, xmin=c, xmax=d), fill='grey70')+
 
 			coord_flip()+
 			scale_x_reverse()+
@@ -167,10 +163,10 @@ ideogramPlot.func <- function(WatsonFreqList,
 
 				plotList <- capOffPlots(subsetLib, maxCap)
 				print(ggplot()+
-				geom_ribbon(data=plotList[[1]], aes_string(x="bin", ymin=0, ymax="WatsonPlot"), fill='paleturquoise4')+
-				geom_ribbon(data=plotList[[1]], aes_string(x="bin", ymin=0, ymax="CrickPlot"), fill='sandybrown')+
-				geom_point(data=plotList[[2]], aes_string("bin", "max"), colour='paleturquoise4', size=0.5)+
-				geom_point(data=plotList[[3]], aes_string("bin", "max"), colour='sandybrown', size=0.5)+
+				geom_ribbon(data=plotList[[1]], aes(x=bin, ymin=0, ymax=WatsonPlot), fill='paleturquoise4')+
+				geom_ribbon(data=plotList[[1]], aes(x=bin, ymin=0, ymax=CrickPlot), fill='sandybrown')+
+				geom_point(data=plotList[[2]], aes(bin, max), colour='paleturquoise4', size=0.5)+
+				geom_point(data=plotList[[3]], aes(bin, max), colour='sandybrown', size=0.5)+
 				#geom_rect(data=bob, mapping=aes(ymin=a, ymax=b, xmin=c, xmax=d), fill='grey70')+
 
 				coord_flip()+
@@ -218,13 +214,13 @@ ideogramPlot.func <- function(WatsonFreqList,
 #' @import ggplot2
 #' @importFrom gtools mixedsort chr
 #' @importFrom S4Vectors DataFrame
-#' @aliases ideogramPlot ideogramPlot,StrandReadMatrix,StrandReadMatrix-method
+#' @aliases ideogramPlot ideogramPlot,StrandReadMatrix,StrandReadMatrix-method, ChrTable, ChrTable-method 
 #' @export
 #' @example inst/examples/ideogramPlot.R
 #' @include AllClasses.R
 ####################################################################################################
 
 setMethod('ideogramPlot',
-          signature = signature(WatsonFreqList='StrandReadMatrix', CrickFreqList='StrandReadMatrix'),
+          signature = signature(WatsonFreqList='StrandReadMatrix', CrickFreqList='StrandReadMatrix', chrTable='ChrTable'),
           definition = ideogramPlot.func
 )

@@ -1,6 +1,6 @@
 \dontrun{
 
-data("exampleDividedChr")
+data(exampleDividedChr)
 
 writeBed(exampleDividedChr,
 		 reorientedMatrix[[2]],

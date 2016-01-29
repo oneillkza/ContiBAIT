@@ -5,7 +5,3 @@ example.bam <- list.files(file.path(system.file(package='contiBAIT'), 'extdata')
 chrTable <- makeChrTable(example.bam) 
 
 show(chrTable)
-
-dividedChr <- makeChrTable(example.bam, splitBy=1000000)
-
-show(dividedChr)

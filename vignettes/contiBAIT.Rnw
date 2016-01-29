@@ -51,7 +51,7 @@ The example data provided by contiBAIT is from a human blood sample and has been
 
 \subsection{\textit{Creating a chromosome table instance}}
 
-The example data provided with the contiBAIT package is derived from GRCh38/hg38 data (only aligned to all autosomes and allosomes; no alternative locations or contigs were included). To subset these data, and for further downstream analysis, a GRanges chromosome table instance can be made, representing the contig name and length. This is generated with makeChrTable, where the resulting object is similar to the header portion of a BAM file. Note a meta column with a name formed of the contig and start and end locations is generated for downstream workflows.
+The example data provided with the contiBAIT package is derived from GRCh38/hg38 data (only aligned to all autosomes and allosomes; no alternative locations or contigs were included). To subset these data, and for further downstream analysis, a chromosome table instance can be made, representing the contig name and length. This is generated with makeChrTable, where the resulting data.frame is similar to the header portion of a BAM file.  Using the addBED option will output a bed-format version of the same data.frame, with columns for chromosome name, start and end locations. 
 
 <<makeChrTableExample, fig=FALSE>>=
 # build chr table from BAM file in bamFileList
@@ -63,11 +63,12 @@ exampleChrTable
 
 \subsection{\textit{Splitting a chromosome table instance}}
 
-We can also split the above chromosome table instance into 1 Mb fragments. This subdivision isn't just for testing purposes. For chromosome- and contig-stage assemblies with very large fragments, subdividing the data into bins can help identify chimeric fragments and misorientations. Some assemblies have a large degree of misorientations or chimerism in the data, and subdividing them aids in clustering these fragments.  For example, if a region is misoriented within a contig, the strand state will change in this region, skewing this contig toward a WC call in every library. However, while fragmenting can improve the overall number of contigs included in analysis and improve clustering, as the fragments get further subdivided, the number of reads used to make strand state calls decreases, and the probability of there being insufficient reads to make an accurate call increases.  Note the following divided chromosome table can be used with the filter argument in strandSeqFreqTable to generate a sub-divided table.
+Now we can split the above chromosome table instance into 1 Mb fragments. This subdivision isn't just for testing purposes. For chromosome- and contig-stage assemblies with very large fragments, subdividing the data into smaller fragments can help identify chimeric fragments and misorientations. Some assemblies have a large degree of misorientations or chimerism in the data, and subdividing them aids in clustering these fragments.  For example, if a region is misoriented within a contig, the strand state will change in this region, skewing this contig toward a WC call in every library. However, while fragmenting can improve the overall number of contigs included in analysis and improve clustering, as the fragments get further subdivided, the number of reads used to make strand state calls decreases, and the probability of there being insufficient reads to make an accurate call increases.  Note the following divided chromosome table can be used with the filter argument in strandSeqFreqTable
+to generate a sub-divided table.
 
 <<makeChrTableExampleb, fig=FALSE>>=
 
-exampleDividedChr <- makeChrTable(bamFileList[1], splitBy=1000000)
+exampleDividedChr <- divideMyChr(exampleChrTable, splitBy=1000000)
 exampleDividedChr
 @
 
@@ -78,7 +79,7 @@ A change in strand state within a contig can represent a number of things. At it
 
 library(rtracklayer)
 # Download GRCh38/hg38 gap track from UCSC
-gapFile <- import.bed("http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=465319523_SLOtFPExny48YZFaXBh4sSTzuMcA&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_gap&hgta_ctDesc=table+browser+query+on+gap&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED")
+gapFile <- import.bed("http://genome.ucsc.edu/cgi-bin/hgTables?hgsid=465319523_SLOtFPExny48YZFaXBh4sSTzuMcA&boolshad.hgta_printCustomTrackHeaders=0&hgta_ctName=tb_gap&hgta_ctDesc=table+browser+query+on+gap&hgta_ctVis=pack&hgta_ctUrl=&fbQual=whole&fbUpBases=200&fbDownBases=200&hgta_doGetBed=get+BED", genome="hg38")
 # Create fake SCE file with four regions that overlap a gap
 sceFile <- GRanges(rep('chr4',4), 
 IRanges(c(1410000, 1415000, 1420000, 1425000), 
@@ -90,11 +91,11 @@ overlappingFragments <- mapGapFromOverlap(sceFile,
 show(overlappingFragments)
 @
 
-What is returned is a GRanges chromosome table instance where the gap that is coincident with the recurrent strand state change has split that contig into two smaller fragments. Note the example table now has 25 fragments as chr4 has been split.
+What is returned is a chromosome table instance where the gap that is coincident with the recurrent strand state change has split that contig into two smaller fragments. Note the example table now has 25 fragments as chr4 has been split.
 
 \subsection{\textit{Creating a strandFreqMatrix instance}}
 
-To read in BAM files into ContiBAIT, create a strandFreMatrix instance by calling strandSeqFreqTable().  This program will read each BAM file, calculate the ratio of W and C reads, and return this value along with the total number of reads used to make the call. Note, we will use the GRanges divided chromosome table to simultaneously cut the assembly into 1 Mb fragments.  By default duplicate reads are removed, a minimal mapping quality of 0 is used and the function expects to see paired end data. Because of the way BAM files store strand information, it is important to ensure that the pairedEnd parameter is correctly set. A warning will be issued if single-end data is run as if it is paired-end.
+To read in BAM files into ContiBAIT, create a strandFreMatrix instance by calling strandSeqFreqTable().  This program will read each BAM file, calculate the ratio of W and C reads, and return this value along with the total number of reads used to make the call. Note, we will use the divided chromosome table to simultaneously cut the assembly into 1 Mb fragments.  By default duplicate reads are removed, a minimal mapping quality of 0 is used and the function expects to see paired end data. Because of the way BAM files store strand information, it is important to ensure that the pairedEnd parameter is correctly set. A warning will be issued if single-end data is run as if it is paired-end.
 
 <<strandSeqFreqTableExamplea, fig=FALSE>>=
 # Create a strandFreqTable instance 
@@ -106,7 +107,7 @@ pairedEnd=FALSE,
 BAITtables=TRUE)
 @
 
-This returns a list of two data.frames if the BAITtables argument is set to FALSE, or four if it is set to TRUE.  The first data.frame consists of a strand state frequency, calculated by taking the number of Watson (- strand) reads, subtracting the number of Crick (+ strand) reads, and dividing by the total number of reads.  These values range from -1 (entirely Watson reads) through to 1 (entirely Crick reads).  The second data.frame consists of the absolute number of reads covering the contig. This is used in thresholding the data, and in weighting the accuracy of calls in subsequent orderings. Note that the fewer reads used to make a strand call, the less accurate that call will be. In the absence of background reads, WC regions will follow a binomial distribution. If we assume any contigs with <-0.8 are WW, and >0.8 are CC (this is the default strandTableThreshold parameter used in preprocessStrandTable), then there is a probability of 0.044 that the strand state call is incorrect. As such we exclude calls that are made with fewer than 10 reads. Increasing this number will make calls more accurate, but will reduce the number of contigs included in analysis. Since the contigs are weighted based on read density during clustering, a minimum of 10 reads to support a strand call provides a good balance between accuracy and inclusion.
+This returns a list of two data.frames.  The first data.frame consists of a strand state frequency, calculated by taking the number of Watson (- strand) reads, subtracting the number of Crick (+ strand) reads, and dividing by the total number of reads.  These values range from -1 (entirely Watson reads) through to 1 (entirely Crick reads).  The second data.frame consists of the absolute number of reads covering the contig. This is used in thresholding the data, and in weighting the accuracy of calls in subsequent orderings. Note that the fewer reads used to make a strand call, the less accurate that call will be. In the absence of background reads, WC regions will follow a binomial distribution. If we assume any contigs with <-0.8 are WW, and >0.8 are CC (this is the default strandTableThreshold parameter used in preprocessStrandTable), then there is a probability of 0.044 that the strand state call is incorrect. As such we exclude calls that are made with fewer than 10 reads. Increasing this number will make calls more accurate, but will reduce the number of contigs included in analysis. Since the contigs are weighted based on read density during clustering, a minimum of 10 reads to support a strand call provides a good balance between accuracy and inclusion.
 
 <<strandSeqFreqTableExampleb, fig=FALSE>>=
 # Returned list consisting of two data.frames

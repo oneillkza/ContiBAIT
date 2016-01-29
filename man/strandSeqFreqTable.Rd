@@ -5,7 +5,7 @@
 \title{strandSeqFreqTable -- function to process bam files for contiBAIT}
 \usage{
 strandSeqFreqTable(bamFileList, fieldSep = ".", field = 1, qual = 0,
-  rmdup = TRUE, verbose = TRUE, filter = NULL, tileChunk = 1e+05,
+  rmdup = TRUE, verbose = TRUE, filter = FALSE, tileChunk = 1e+05,
   pairedEnd = TRUE, BAITtables = FALSE)
 }
 \arguments{
@@ -21,8 +21,8 @@ strandSeqFreqTable(bamFileList, fieldSep = ".", field = 1, qual = 0,
 
 \item{verbose}{prints messages to the terminal (default is TRUE)}
 
-\item{filter}{additional file of type GRanges (with a meta column titled 'name' determining contig name) to split chromosomes based on locations. If this parameter is blank,
-a filter table will be automatically generated from the header of the first file in bamFileList.}
+\item{filter}{additional file to split chromosomes based on locations. If this parameter is blank,
+a filter table will be automatically generated from the header of the first file in bamFileList}
 
 \item{tileChunk}{Number of reads to split bam files into (smaller number requires less RAM). Default is 100000.}
 

@@ -129,6 +129,21 @@ setClass("ContigOrdering",
 setClass("OrientationFrame",
 		 contains='data.frame')
 
+# =========================================================================
+#' A class for storing chromosome/fragment lengths
+#'
+#' \describe{
+#'  This class is data.frame of two or three vectors. The first is a character vector representing the chromosome name, the second is an integer of either 
+#'  length of the molecule or the start of the molecule, and the (optional) third is a integer of the end of the molecule.
+#'  Note the rowname represents the fragment name.
+#' }
+#
+#' @export
+#' @rdname ChrTable
+
+setClass("ChrTable",
+		 contains='data.frame')
+
 
 # ========================================================================
 # Data sets
@@ -183,7 +198,7 @@ NULL
 #' @keywords data
 NULL
 
-#' Example of a divided chromosome, containing contigs and their lengths
+#' Example of a split ChromosomeTable, containing contigs and their lengths
 #' @name exampleDividedChr
 #' @docType data
 #' @keywords data

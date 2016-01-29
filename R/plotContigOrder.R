@@ -33,8 +33,8 @@ plotContigOrder <- function(contigOrder, lg)
 	}
 
 	rsquare <- round(rsquare, digits=2)
-	ggplot(contigOrderFrame, aes_string("bin", "start") )+
-	geom_point(aes_string(x="bin", y="start" , colour="chr"), size=2)+
+	ggplot(contigOrderFrame, aes(bin, start) )+
+	geom_point(aes(x=bin, y=start , colour=chr), size=2)+
 	labs(x="contiBAIT predicted location of contigs", y="Assembly ordered location of contigs (Mb)")+
 	geom_smooth(method="lm", se=FALSE, formula=y~x-1)+
 	ggtitle(paste("Plot of ", length(contigChr), " fragments (", length(unique(contigOrderFrame$bin)), " sub-linkage groups)\nR-squared = ", rsquare,  sep=""))

@@ -1,5 +1,5 @@
 
-mergeLinkageGroups.func <- function(object, allStrands, clusNum=NULL, cluster=1, similarityCutoff=0.7)
+mergeLinkageGroups.func <- function(object, allStrands, clusNum=1, cluster=1, similarityCutoff=0.7)
 {
 
   consensusStrands <- data.frame(do.call(rbind, lapply(object, computeConsensus, allStrands)))
@@ -8,16 +8,10 @@ mergeLinkageGroups.func <- function(object, allStrands, clusNum=NULL, cluster=1,
   rownames(consensusStrands) <- names(object)
 
   consensusStrands <- new('StrandStateMatrix', consensusStrands)
+  slaveNum <- makeCluster(clusNum)
 
-  if(!(is.null(clusNum)))
-  {
-    slaveNum <- makeCluster(clusNum)
-    consensus.groups <- clusterContigs(consensusStrands, snowCluster=slaveNum, recluster=cluster, randomise=TRUE, similarityCutoff=similarityCutoff, verbose=FALSE)
-    stopCluster(slaveNum)
-  }else{
-    consensus.groups <- clusterContigs(consensusStrands, recluster=cluster, randomise=TRUE, similarityCutoff=similarityCutoff, verbose=FALSE)
-  }
-
+  consensus.groups <- clusterContigs(consensusStrands, snowCluster=slaveNum, recluster=cluster, randomise=TRUE, similarityCutoff=similarityCutoff, verbose=FALSE)
+  stopCluster(slaveNum)
  
   mergeThoseGroups <- lapply(consensus.groups, function(x) as.character(melt(object[x])[,1]))
 
@@ -31,7 +25,7 @@ mergeLinkageGroups.func <- function(object, allStrands, clusNum=NULL, cluster=1,
 #' mergeLinkageGroups -- merge very similar linkage groups, including those in reverse orientation
 #' @param object LinkageGroupList 
 #' @param allStrands StrandStateMatrix for all linkageGroups (usually reoriented by reorientStrandTable)
-#' @param clusNum  Number of parallel processors to use when clustering contigs. Default is NULL. 
+#' @param clusNum  Number of parallel processors to use when clustering contigs. Default is 1. 
 #' @param cluster  Integer denoting the number of reclusterings to be performed for creating linkage groups (default is 1)
 #' @param similarityCutoff merge contigs that are more similar this this
 #' @return list of indices within the allStrands matrix indicating linkage group membership,  
