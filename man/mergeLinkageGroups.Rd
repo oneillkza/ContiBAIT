@@ -8,14 +8,15 @@
 \title{mergeLinkageGroups -- merge very similar linkage groups, including those in reverse orientation}
 \usage{
 \S4method{mergeLinkageGroups}{LinkageGroupList,StrandStateMatrix}(object,
-  allStrands, clusNum = NULL, cluster = 1, similarityCutoff = 0.7)
+  allStrands, clusterParam = NULL, cluster = 1, similarityCutoff = 0.7)
 }
 \arguments{
 \item{object}{LinkageGroupList}
 
 \item{allStrands}{StrandStateMatrix for all linkageGroups (usually reoriented by reorientStrandTable)}
 
-\item{clusNum}{Number of parallel processors to use when clustering contigs. Default is NULL.}
+\item{clusterParam}{optional \code{BiocParallelParam} specifying cluster to use for parallel execution.
+When \code{NULL}, execution will be serial.}
 
 \item{cluster}{Integer denoting the number of reclusterings to be performed for creating linkage groups (default is 1)}
 

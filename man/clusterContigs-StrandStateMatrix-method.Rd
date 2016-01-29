@@ -9,7 +9,7 @@
 \usage{
 \S4method{clusterContigs}{StrandStateMatrix}(object, similarityCutoff = 0.7,
   recluster = NULL, minimumLibraryOverlap = 5, randomise = TRUE,
-  randomSeed = NULL, randomWeight = NULL, snowCluster = NULL,
+  randomSeed = NULL, randomWeight = NULL, clusterParam = NULL,
   clusterBy = "hetero", verbose = TRUE)
 }
 \arguments{
@@ -18,7 +18,7 @@ in every library (columns). This should be the product of strandSeqFreqTable}
 
 \item{similarityCutoff}{place contigs in a cluster when their strand state is at least this similar}
 
-\item{recluster}{=NULL Number of times to recluster and take the consensus of. If NULL, clustering is 
+\item{recluster}{Number of times to recluster and take the consensus of. If NULL, clustering is 
 run only once.}
 
 \item{minimumLibraryOverlap}{for two contigs to be clustered together, the strand inheritance must 
@@ -29,15 +29,17 @@ similarityCutoff)}
 
 \item{randomSeed}{random seed to initialize clustering}
 
-\item{randomWeight}{vector of weights for contigs for resampling. If NULL, uniform resampling is used.}
-
-\item{snowCluster}{optional snowCluster for parallel execution}
-
-\item{clusterBy}{Method for performing clustering. Default is 'hetero' (for comparing heterozygous calls to homozygous). Alternative is 'homo' (for compairson between the two homozygous calls)
+\item{randomWeight}{vector of weights for contigs for resampling. If NULL, uniform resampling is used.
 Typically this should be a measure of contig quality, such as library coverage, so that clustering tends to
 start from the better quality contigs.}
 
-\item{verbose}{= TRUE prints function progress}
+\item{clusterParam}{optional \code{BiocParallelParam} specifying cluster to use for parallel execution.
+When \code{NULL}, execution will be serial.}
+
+\item{clusterBy}{Method for performing clustering. Default is 'hetero' (for comparing heterozygous calls to homozygous). 
+Alternative is 'homo' (for compairson between the two homozygous calls)}
+
+\item{verbose}{prints function progress}
 }
 \value{
 \code{LinkageGroupList} of vectors containing labels of contigs belonging to each linkage
@@ -50,6 +52,8 @@ clusterContigs -- agglomeratively clusters contigs into linkage groups based on 
 Note that a more stringent similarity cutoff will result in more clusters, and a longer run time,
 since at every iteration a distance is computed to the existing clusters. However, in lower-quality data, a
 more stringent cutoff may be necessary to reduce the number of contigs that are erroneously grouped.
+
+Note that \code{clusterParam}
 }
 \examples{
 data("exampleWCMatrix")
