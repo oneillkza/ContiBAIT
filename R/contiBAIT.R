@@ -28,6 +28,7 @@
 #' @return ordered contigs in bed format. Depending on options, intermediate files and plots will also be generated
 #' @import snow
 #' @import diagram
+#' @import methods
 #' @importFrom S4Vectors DataFrame
 #' @example inst/examples/contiBAIT.R
 #' @export
