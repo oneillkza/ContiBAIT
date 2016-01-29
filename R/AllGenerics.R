@@ -10,7 +10,8 @@ setGeneric("preprocessStrandTable",
 		   			lowQualThreshold=NULL, 
 		   			verbose=NULL, 
 		   			minLib=NULL, 
-		   			ignoreInternalQual=NULL) standardGeneric("preprocessStrandTable"))
+		   			ignoreInternalQual=NULL) standardGeneric("preprocessStrandTable"),
+		   signature='strandTable')
 
 
 ## =========================================================================
@@ -27,7 +28,8 @@ setGeneric("clusterContigs",
 		   		 randomWeight=NULL,
 		   		 snowCluster=NULL,
 		   		 clusterBy=NULL,
-		   		 verbose=NULL) standardGeneric("clusterContigs"))
+		   		 verbose=NULL) standardGeneric("clusterContigs"),
+		   signature='object')
 
 
 ## =========================================================================
@@ -38,7 +40,8 @@ setGeneric("reorientLinkageGroups",
 		   function(object, 
 		   			allStrands,
 		   			previousOrient=NULL,
-		   		 	verbose=NULL) standardGeneric("reorientLinkageGroups"))
+		   		 	verbose=NULL) standardGeneric("reorientLinkageGroups"),
+		   signature=c('object', 'allStrands'))
 
 ## =========================================================================
 ## Generic for mergeLinkageGroups.R
@@ -49,7 +52,8 @@ setGeneric("mergeLinkageGroups",
                     allStrands,
                     clusNum=NULL, 
                     cluster=NULL,
-                    similarityCutoff=NULL) standardGeneric("mergeLinkageGroups"))
+                    similarityCutoff=NULL) standardGeneric("mergeLinkageGroups"),
+		   signature=c('object', 'allStrands'))
 
 ## =========================================================================
 ## Generic for orderAllLinkageGroups.R
@@ -64,7 +68,8 @@ setGeneric("orderAllLinkageGroups",
             		saveOrdered=NULL, 
             		orderCall=NULL, 
             		randomAttempts=NULL, 
-            		verbose=NULL) standardGeneric("orderAllLinkageGroups"))
+            		verbose=NULL) standardGeneric("orderAllLinkageGroups"),
+		   signature=c('linkageGroupList', 'strandStateMatrix','strandFreqMatrix', 'strandReadCount' ))
 
 ## =========================================================================
 ## Generic for plotLGDistances.R
@@ -74,7 +79,8 @@ setGeneric("plotLGDistances",
            function(object, 
                     allStrands,
                     lg=NULL,
-                    labels=NULL) standardGeneric("plotLGDistances"))
+                    labels=NULL) standardGeneric("plotLGDistances"),
+		   signature=c('object', 'allStrands'))
 
 ## =========================================================================
 ## Generic for barplotLinkageGroupCalls
@@ -84,7 +90,8 @@ setGeneric("barplotLinkageGroupCalls",
            function(object, 
                     assemblyBED, 
                     by=NULL, 
-                    returnTable=NULL) standardGeneric("barplotLinkageGroupCalls"))
+                    returnTable=NULL) standardGeneric("barplotLinkageGroupCalls"),
+		   signature=c('object', 'assemblyBED'))
 
 ## =========================================================================
 ## Generic for plotWCdistribution
@@ -93,7 +100,8 @@ setGeneric("barplotLinkageGroupCalls",
 setGeneric("plotWCdistribution", 
            function(object, 
                     allStrands,
-                    filterThreshold=NULL) standardGeneric("plotWCdistribution"))
+                    filterThreshold=NULL) standardGeneric("plotWCdistribution"),
+		   signature=c('object', 'allStrands'))
 
 ## =========================================================================
 ## Generic for makeBoxPlot
@@ -101,7 +109,8 @@ setGeneric("plotWCdistribution",
 #' @export makeBoxPlot
 setGeneric("makeBoxPlot", 
            function(chrTable, 
-                    linkage.contigs) standardGeneric("makeBoxPlot"))
+                    linkage.contigs) standardGeneric("makeBoxPlot"),
+		   signature=c('chrTable', 'linkage.contigs'))
 
 ## =========================================================================
 ## Generic for ideogramPlot
@@ -115,7 +124,8 @@ setGeneric("ideogramPlot",
                     showPage=NULL,
                     orderFrame=NULL,
    		            orientationData=NULL,
-                    verbose=NULL) standardGeneric("ideogramPlot"))
+                    verbose=NULL) standardGeneric("ideogramPlot"),
+		   signature=c('WatsonFreqList', 'CrickFreqList', 'chrTable'))
 
 ## =========================================================================
 ## Generic for writeBed
@@ -126,7 +136,8 @@ setGeneric("writeBed",
 					orientationData, 
 					contigOrder,
 					libWeight=NULL,
-					file=NULL) standardGeneric("writeBed"))
+					file=NULL) standardGeneric("writeBed"),
+		   signature=c('chrTable', 'orientationData', 'contigOrder'))
 
 ## =========================================================================
 ## show Methods
