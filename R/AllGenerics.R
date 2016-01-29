@@ -238,7 +238,11 @@ setMethod("show",
 		  definition=function(object)
 		  {
 
-		  	cat('A data.frame of', length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object$LG), "\\.")[[x]][1]))), 'LGs split into', length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object$LG), "\\.")[[x]][2]))), 'sub-groups from', nrow(object), 'ordered fragments.\n')
+    		lg <- strsplit(as.character(object$LG), "\\.") # why not character() already?
+    		len1 <- length(unique(sapply(lg, '[', 1)))     # first element of object$LG
+    		len2 <- length(unique(sapply(lg, '[', 2)))   # second element of object$LG
+ 
+		  	cat('A data.frame of', len1, 'LGs split into', len2, 'sub-groups from', nrow(object), 'ordered fragments.\n')
 		  	if(length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object$LG), "\\.")[[x]][2]))) > 25)
 		  	{
 			  	show(head(table(object[,1])))
@@ -265,30 +269,5 @@ setMethod("show",
 		  	elements <- nrow(object)
 		  	misorientations <- nrow(object[which(object[,2] == '-'),])
 		  	cat('A data.frame of ', elements, ' contigs with ',misorientations,' identified misorientations.\n')
-		  }
-)
-
-
-## show ChrTable
-#' @name show,ChrTable-method
-#' @export
-#' @docType methods
-#' @title show-methods
-#' @param object a ChrTable
-#' @return nothing
-#' @description Shows a ChrTable
-setMethod("show",
-		  signature=signature(object="ChrTable"),
-		  definition=function(object)
-		  {
-		  	if(ncol(object) == 2)
-		  	{
-			  	cat('A data.frame of', length(object[,1]), 'fragments from a', sum(object[,2])/1000000, 'Mb genome.\n')
-		  	}else{
-		  		cat('A data.frame of', length(object[,1]), 'fragments from a', (sum(as.numeric(object[,3]))-sum(as.numeric(object[,2])))/1000000, 'Mb genome.\n')
-		  	}
-		  	show(head(object))
-			cat('...\n')
-			show(tail(object))
 		  }
 )
