@@ -5,7 +5,7 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
                            randomise=TRUE,
 						   randomSeed=NULL,
 						   randomWeight=NULL,
-						   snowCluster=NULL,
+						   clusterParam=NULL,
 						   clusterBy='hetero',
 						   verbose=TRUE)
 {
@@ -109,16 +109,16 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 		}
 		
 		#Then get consensus:
-		if(!is.null(snowCluster))
+		if(!is.null(clusterParam))
 		{
-			if(verbose){message(paste('-> Running ', recluster, ' clusterings in parallel on ', length(snowCluster), ' processors', sep=""))}
-			multiClust <- parLapply(snowCluster, 
-									seq_len(recluster), 
+			if(verbose){message(paste('-> Running ', recluster, ' clusterings in parallel on ', clusterParam$workers, ' processors', sep=""))}
+			multiClust <-bplapply(  seq_len(recluster), 
 						  			runOneForTheEnsemble, 
 									object, 
 									randomise, 
 									randomWeight, 
-									similarityCutoff)
+									similarityCutoff,
+									BPPARAM=clusterParam)
 		}else
 		{
 			multiClust <- lapply(seq_len(recluster), 
@@ -161,7 +161,7 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 #' @param object \code{data.frame} containing strand inheritance information for every contig (rows)
 #' in every library (columns). This should be the product of strandSeqFreqTable
 #' @param similarityCutoff place contigs in a cluster when their strand state is at least this similar
-#' @param recluster =NULL Number of times to recluster and take the consensus of. If NULL, clustering is 
+#' @param recluster Number of times to recluster and take the consensus of. If NULL, clustering is 
 #' run only once.
 #' @param minimumLibraryOverlap for two contigs to be clustered together, the strand inheritance must 
 #' be present for both contigs in at least this many libraries (in addition to their similarity being at least 
@@ -169,16 +169,20 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 #' @param randomise whether to reorder contigs before clustering
 #' @param randomSeed random seed to initialize clustering
 #' @param randomWeight vector of weights for contigs for resampling. If NULL, uniform resampling is used.
-#' @param clusterBy Method for performing clustering. Default is 'hetero' (for comparing heterozygous calls to homozygous). Alternative is 'homo' (for compairson between the two homozygous calls)
 #' Typically this should be a measure of contig quality, such as library coverage, so that clustering tends to
 #' start from the better quality contigs.
-#' @param snowCluster optional snowCluster for parallel execution
-#' @param verbose = TRUE prints function progress
+#' @param clusterBy Method for performing clustering. Default is 'hetero' (for comparing heterozygous calls to homozygous). 
+#' Alternative is 'homo' (for compairson between the two homozygous calls)
+#' @param clusterParam optional \code{BiocParallelParam} specifying cluster to use for parallel execution.
+#' When \code{NULL}, execution will be serial.
+#' @param verbose prints function progress
 #' @details Note that a more stringent similarity cutoff will result in more clusters, and a longer run time,
 #' since at every iteration a distance is computed to the existing clusters. However, in lower-quality data, a
 #' more stringent cutoff may be necessary to reduce the number of contigs that are erroneously grouped.
 #' @return \code{LinkageGroupList} of vectors containing labels of contigs belonging to each linkage
 #' group
+#' 
+#' @details Note that \code{clusterParam} 
 #' 
 #' @aliases clusterContigs clusterContigs,StrandStateMatrix,StrandStateMatrix-method
 #' 
@@ -186,6 +190,7 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 #' 
 #' @importFrom cluster daisy
 #' @import clue
+#' @import BiocParallel
 #' @export
 #' @include AllClasses.R
 #
