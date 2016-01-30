@@ -13,8 +13,8 @@ preprocessStrandTable.func <- function(strandTable,
 			strandTable <- data.frame(strandTable)
 	
 	# Filter low quality libraries.  Scan "WW" and "CC" background regions.
-	lowQualList <- matrix(ncol=2, nrow=0)
-	qualList <- matrix(ncol=2, nrow=0)
+	lowQualList <- data.frame(library=vector(), quality=vector())
+	qualList <- lowQualList
 
 if(ignoreInternalQual == FALSE)
 {
@@ -25,14 +25,15 @@ if(ignoreInternalQual == FALSE)
 		backGroundC <- abs(mean(strandTable[,col][which(strandTable[,col] < -0.6)], na.rm=TRUE)) 
 		backGroundW <- abs(mean(strandTable[,col][which(strandTable[,col] > 0.6)], na.rm=TRUE))
 		libraryQual <- round(backGroundC + backGroundW / 2, digits=3)
+		colQual <- data.frame(library=colnames(strandTable[col], do.NULL=FALSE), quality=libraryQual)
 		
 		if(libraryQual < lowQualThreshold || libraryQual == "NaN")
 		{
 			if(libraryQual == "NaN" & verbose){message(paste("    -> ", colnames(strandTable[col], do.NULL=FALSE), " has insufficient reads. Removing", sep=""))}else{
 			if(verbose){message(paste("    -> ", colnames(strandTable[col], do.NULL=FALSE), " has high background (", (1-libraryQual)*100, " %). Removing", sep=""))}}
-			lowQualList <- rbind(lowQualList, cbind(colnames(strandTable[col], do.NULL=FALSE), libraryQual))
+			lowQualList <- rbind(lowQualList, colQual)
 		} else {
-			qualList <- rbind(qualList, cbind(colnames(strandTable[col], do.NULL=FALSE), libraryQual))
+			qualList <- rbind(qualList, colQual)
 		}
 	}
 

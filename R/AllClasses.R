@@ -130,6 +130,22 @@ setClass("OrientationFrame",
 		 contains='data.frame')
 
 
+# =========================================================================
+#' A class for storing chromosome/fragment lengths
+#'
+#' \describe{
+#'  This class is a GRanges object with a meta column called name, which represents the fragment name.
+#' }
+#
+#' @export
+#' @rdname ChrTable
+
+setClass("ChrTable",
+		 contains='GRanges',
+		 validity=function(object){length(object$name) > 0})
+
+
+
 # ========================================================================
 # Data sets
 #

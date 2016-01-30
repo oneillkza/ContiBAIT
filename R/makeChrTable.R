@@ -20,11 +20,12 @@
 #' @details makeChrTable creates a table with chromosome name and chromosome length by extracting 
 #' header data from the supplied bam file.
 #' @example inst/examples/makeChrTable.R
-#' @return a GRanges object, containing information on the organism's chromosomes as extracted from the BAM file header.
+#' @return a GRanges object of class ChrTable, containing information on the organism's chromosomes as extracted from the BAM file header.
 #' 
 #' @import Rsamtools
 #' @import GenomicRanges
 #' @importFrom exomeCopy subdivideGRanges
+#' @include AllClasses.R
 #' @export
 #
 ####################################################################################################
@@ -59,5 +60,6 @@ makeChrTable <- function(bamFile,
 	}
 
 	chrTable$name <- paste(seqnames(chrTable), ":", start(chrTable), "-", end(chrTable), sep="")
+	chrTable <- new('ChrTable', chrTable)
 	return(chrTable)
 }

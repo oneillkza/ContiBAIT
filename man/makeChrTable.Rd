@@ -17,7 +17,7 @@ the assembly, such as previously determined locations of contig chimerism}
 \item{verbose}{if FALSE, no messages appear on terminal}
 }
 \value{
-a GRanges object, containing information on the organism's chromosomes as extracted from the BAM file header.
+a GRanges object of class ChrTable, containing information on the organism's chromosomes as extracted from the BAM file header.
 }
 \description{
 makeChrTable -- Pulls out chromosome and length data from the header of a bam file

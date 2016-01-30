@@ -75,8 +75,9 @@ ideogramPlot.func <- function(WatsonFreqList,
 		WFreqs <- as.data.frame(WatsonFreqList[,lib, drop=FALSE])
 		CFreqs <- as.data.frame(CrickFreqList[,lib, drop=FALSE]*-1)
 		binNums <- table(seqnames(chrTable))
-		binNums <- binNums[which(binNums >0)]
-		findMax <- max(binNums)
+#		binNums <- binNums[which(binNums >0)]
+		#find longest chromosome. use only first element in instance where two chromosomes are the same size
+		findMax <- max(binNums)[1]
 		maxCap <- vector()
 		totalReads <- 0
 		allChrDataFrame <- data.frame(WatsonPlot=vector(), 
@@ -109,7 +110,7 @@ ideogramPlot.func <- function(WatsonFreqList,
 			maxCap <- c(maxCap, capOff)
 			totalReads <- totalReads+readsPerChr
 		}
-		ideos <- data.frame(a=-1, b=1, c=findMax-binNums, d=findMax, chr=unique(seqnames(chrTable)))
+		ideos <- data.frame(a=-1, b=1, c=as.vector(findMax-binNums), d=as.vector(findMax), chr=unique(seqnames(chrTable)))
 
 		if(plotBy == 'chr')
 		{
@@ -220,13 +221,13 @@ ideogramPlot.func <- function(WatsonFreqList,
 #' @import ggplot2
 #' @importFrom gtools mixedsort chr
 #' @importFrom S4Vectors DataFrame
-#' @aliases ideogramPlot ideogramPlot,StrandReadMatrix,StrandReadMatrix-method
+#' @aliases ideogramPlot ideogramPlot,StrandReadMatrix,StrandReadMatrix-method,ChrTable,ChrTable-method
 #' @export
 #' @example inst/examples/ideogramPlot.R
 #' @include AllClasses.R
 ####################################################################################################
 
 setMethod('ideogramPlot',
-          signature = signature(WatsonFreqList='StrandReadMatrix', CrickFreqList='StrandReadMatrix'),
+          signature = signature(WatsonFreqList='StrandReadMatrix', CrickFreqList='StrandReadMatrix', chrTable='ChrTable'),
           definition = ideogramPlot.func
 )

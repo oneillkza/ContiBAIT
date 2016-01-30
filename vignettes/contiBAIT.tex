@@ -64,7 +64,7 @@ The example data provided with the contiBAIT package is derived from GRCh38/hg38
 > exampleChrTable
 \end{Sinput}
 \begin{Soutput}
-GRanges object with 24 ranges and 1 metadata column:
+ChrTable object with 24 ranges and 1 metadata column:
        seqnames         ranges strand   |             name
           <Rle>      <IRanges>  <Rle>   |      <character>
    [1]     chr1 [0, 249250621]      *   | chr1:0-249250621
@@ -93,7 +93,7 @@ We can also split the above chromosome table instance into 1 Mb fragments. This 
 > exampleDividedChr
 \end{Sinput}
 \begin{Soutput}
-GRanges object with 3089 ranges and 1 metadata column:
+ChrTable object with 3089 ranges and 1 metadata column:
          seqnames               ranges strand   |                   name
             <Rle>            <IRanges>  <Rle>   |            <character>
      [1]     chr1   [      0, 1001006]      *   |         chr1:0-1001006
@@ -131,7 +131,7 @@ A change in strand state within a contig can represent a number of things. At it
 > show(overlappingFragments)
 \end{Sinput}
 \begin{Soutput}
-GRanges object with 26 ranges and 1 metadata column:
+ChrTable object with 26 ranges and 1 metadata column:
        seqnames               ranges strand   |                 name
           <Rle>            <IRanges>  <Rle>   |          <character>
    [1]     chr1 [      0, 249250621]      *   |     chr1:0-249250621

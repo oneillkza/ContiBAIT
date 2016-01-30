@@ -88,10 +88,10 @@ setGeneric("plotLGDistances",
 #' @export barplotLinkageGroupCalls
 setGeneric("barplotLinkageGroupCalls", 
            function(object, 
-                    assemblyBED, 
+                    chrTable, 
                     by=NULL, 
                     returnTable=NULL) standardGeneric("barplotLinkageGroupCalls"),
-		   signature=c('object', 'assemblyBED'))
+		   signature=c('object', 'chrTable'))
 
 ## =========================================================================
 ## Generic for plotWCdistribution
