@@ -17,6 +17,20 @@ setClass("StrandReadMatrix",
 		 contains='matrix', 
 		 validity=function(object){is.integer(object)})
 
+#' Constructor for StrandReadMatrix
+#' @aliases StrandReadMatrix
+#' @rdname StrandReadMatrix
+#' @param counts an integer matrix of read counts
+#' @return a \code{StrandReadMatrix}
+#' @export
+#' @examples
+#' data("exampleWatsonFreq")
+#' StrandReadMatrix(exampleWatsonFreq[,2, drop=FALSE])
+
+StrandReadMatrix <- function(counts = matrix(integer()))
+{
+	new('StrandReadMatrix', counts)	
+}
 
 
 # =========================================================================
@@ -46,6 +60,7 @@ StrandStateMatrixValidity <- function(object)
     }))
   areFactors && haveCorrectLevels
 }
+
 
 # =========================================================================
 #' A class for storing a data frame of discrete strand states 
