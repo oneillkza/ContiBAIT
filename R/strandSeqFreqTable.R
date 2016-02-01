@@ -153,10 +153,10 @@ strandSeqFreqTable <- function(bamFileList,
 	countTable <- countTable[which(apply(countTable, 1, sum) > 0),]
 
 	if(BAITtables == FALSE){
-  		return(list(strandTable=new('StrandFreqMatrix', strandTable), 
+  		return(list(strandTable=StrandFreqMatrix(strandTable), 
   					countTable=StrandReadMatrix(countTable)))
   	}else{
-  		return(list(strandTable=new('StrandFreqMatrix', strandTable), 
+  		return(list(strandTable=StrandFreqMatrix(strandTable), 
   					countTable=StrandReadMatrix(countTable), 
   					WatsonReads=StrandReadMatrix(WatsonTable), 
   					CrickReads=StrandReadMatrix(CrickTable)))

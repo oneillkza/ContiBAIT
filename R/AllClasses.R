@@ -51,6 +51,27 @@ setClass("StrandFreqMatrix",
 		 validity=function(object){is.double(object)})
 
 
+#' Constructor for StrandFreqMatrix
+#' @aliases StrandFreqMatrix
+#' @rdname StrandFreqMatrix
+#' @param counts a double matrix of read count ratios
+#' @return a \code{StrandFreqMatrix}
+#' @export
+#' @examples
+#' data("exampleWatsonFreq")
+#' data("exampleCrickFreq")
+#' frequencyMatrix <- sapply(1:ncol(exampleCrickFreq), 
+#' function(colNum){exampleCrickFreq[,colNum] / exampleWatsonFreq[,colNum]})
+#' 
+#' StrandFreqMatrix(frequencyMatrix)
+
+StrandFreqMatrix <- function(counts = matrix(double()))
+{
+	new('StrandFreqMatrix', counts)	
+}
+
+
+
 
 StrandStateMatrixValidity <- function(object)
 {
