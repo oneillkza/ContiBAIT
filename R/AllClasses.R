@@ -71,8 +71,6 @@ StrandFreqMatrix <- function(counts = matrix(double()))
 }
 
 
-
-
 StrandStateMatrixValidity <- function(object)
 {
 	areFactors <- all(sapply(object, function(x){is.factor(x)}))
@@ -133,6 +131,20 @@ setClass("RawReadStrands",
 setClass("LinkageGroupList", 
 		 representation('list', names='character')
 		 )
+
+#' Constructor forLinkageGroupList
+#' @aliases LinkageGroupList
+#' @rdname LinkageGroupList
+#' @param counts a double matrix of read count ratios
+#' @return a \code{LinkageGroupList}
+#' @export
+#' @examples
+#' lgList <- LinkageGroupList(list(lg1=c('contig1', 'contig2'), lg2=c('contig3')))
+
+LinkageGroupList <- function(linkageGroups = list())
+{
+	new('LinkageGroupList', linkageGroups)	
+}
 
 
 

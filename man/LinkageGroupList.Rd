@@ -2,11 +2,26 @@
 % Please edit documentation in R/AllClasses.R
 \docType{class}
 \name{LinkageGroupList-class}
+\alias{LinkageGroupList}
 \alias{LinkageGroupList-class}
 \title{A class for storing linkage group calls for contigs}
+\usage{
+LinkageGroupList(linkageGroups = list())
+}
+\arguments{
+\item{counts}{a double matrix of read count ratios}
+}
+\value{
+a \code{LinkageGroupList}
+}
 \description{
 \describe{
  This class is simply a list of character strings containing the names of linkage groups. 
 }
+
+Constructor forLinkageGroupList
+}
+\examples{
+lgList <- LinkageGroupList(list(lg1=c('contig1', 'contig2'), lg2=c('contig3')))
 }
 
