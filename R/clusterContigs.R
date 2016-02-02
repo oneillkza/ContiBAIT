@@ -10,7 +10,6 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 						   verbose=TRUE)
 {
 	
-	#similarityCutoff <- 0.7
 	if(!is.null(randomSeed))
 		set.seed(randomSeed)
 	

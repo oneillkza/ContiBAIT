@@ -3,7 +3,7 @@ ideogramPlot.func <- function(WatsonFreqList,
  							  chrTable, 
  							  plotBy='lib', 
  							  showPage=FALSE, 
- 							  orderFrame=FALSE,
+ 							  orderFrame=NULL,
  							  orientationData=NULL, 
  							  verbose=TRUE)
 {
@@ -30,7 +30,7 @@ ideogramPlot.func <- function(WatsonFreqList,
 
 	roorientBAITtables <- function(WatsonFreqList, CrickFreqList, orientationFrame)
 	{
-		toFlip <- orientationFrame$contig[which(orientationFrame$orientation == '-')]
+		toFlip <- orientationFrame[which(orientationFrame[,2] == '-'),1]
 		tempWatson <- WatsonFreqList
 		WatsonFreqList[which(rownames(WatsonFreqList) %in% toFlip),] <- CrickFreqList[which(rownames(CrickFreqList) %in% toFlip),]
 		CrickFreqList[which(rownames(CrickFreqList) %in% toFlip),] <- tempWatson[which(rownames(tempWatson) %in% toFlip),]
@@ -47,7 +47,7 @@ ideogramPlot.func <- function(WatsonFreqList,
 		CrickFreqList <- flippedBAITtables[[2]]
 	}
 
-	if(length(orderFrame) != 1)
+	if(!is.null(orderFrame))
 	{
 		WatsonFreqList <- WatsonFreqList[orderFrame[,2],,drop=FALSE]
 		CrickFreqList <- CrickFreqList[orderFrame[,2],,drop=FALSE]
@@ -55,8 +55,8 @@ ideogramPlot.func <- function(WatsonFreqList,
 		#Create new GRange in order
 		chrTable <- as.data.frame(chrTable)
 		rownames(chrTable) <- chrTable$name
-		chrTable <- chrTable[orderFrame$contig,]
-		chrTable <- GRanges(sub("\\..*", "", orderFrame$LG), IRanges(start=chrTable$start, end=chrTable$end), name=chrTable$name )
+		chrTable <- chrTable[orderFrame[,2],]
+		chrTable <- GRanges(sub("\\..*", "", orderFrame[,1]), IRanges(start=chrTable$start, end=chrTable$end), name=chrTable$name )
 	}
 
 	if(plotBy == 'chr')

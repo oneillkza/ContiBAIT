@@ -7,27 +7,24 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
     
     contigNames <- rownames(linkageStrands)
     
-    linkageMat <- as.matrix(linkageStrands)
-    linkageMat <- apply(linkageMat, 2, as.numeric)
-    
-    rawStrandTable <- rawStrandTable[rownames(linkageStrands), ]
-    linkageMat[which(abs(rawStrandTable) > 0.2 & abs(rawStrandTable) < 0.1 ) ] <- NA
-    
-    linkageStrands <- data.frame(linkageMat)
+    rawStrandTable <- rawStrandTable[contigNames, ]
+    linkageStrands[which(abs(rawStrandTable) > 0.2 & abs(rawStrandTable) < 0.1 ) ] <- NA
 
+    linkageMat <- linkageStrands
+    linkageStrands <- data.frame(linkageStrands)
     linkageStrands <- data.frame(lapply(linkageStrands, function(x) factor(x, levels=c(1,2,3))))  
-    rownames(linkageStrands) <- contigNames
+    rownames(linkageStrands) <-  contigNames
+ 
     linkRows <- apply(linkageStrands, 1, function(x) length(which(is.na(x))) != ncol(linkageStrands))
     linkCols <- apply(linkageStrands, 2, function(x) length(which(is.na(x))) != nrow(linkageStrands))
     linkageStrands <- linkageStrands[linkRows , linkCols]
     
     ##Combine zero dist contigs:
-    strandDist <- daisy(linkageStrands)
-    strandDist <- as.matrix(strandDist)
+    strandDist <- as.matrix(daisy(linkageStrands))
     
     mergedContigs <- list()
     beenMerged <- vector()
-    mergedStrands <- matrix(nrow=0, ncol=ncol(linkageStrands))
+    mergedStrands <- matrix(nrow=ncol(linkageStrands), ncol=ncol(linkageStrands))
     groupCount <- 1
     
     for(contig in rownames(linkageStrands))
@@ -40,33 +37,33 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
         toMerge <- toMerge[!names(toMerge) %in% beenMerged]
         beenMerged <- append(beenMerged, names(toMerge))
         mergedContigs[[paste('LG', lg, '.', groupCount, sep='')]] <- names(toMerge)
-        mergedStrands <- rbind(mergedStrands, linkageStrands[contig,])
+        mergedStrands[groupCount,] <- linkageMat[contig,]
         groupCount <- groupCount +1
       }
     }
-    
-    orderedContigMatrix <- data.frame(LG=unlist(lapply(1:length(mergedContigs), 
+    mergedStrands <- mergedStrands[rowSums(is.na(mergedStrands)) != ncol(mergedStrands),]
+    colnames(mergedStrands) <- colnames(linkageMat)
+  
+    orderedContigMatrix <- matrix(c(unlist(lapply(1:length(mergedContigs), 
                                       function(x) rep(names(mergedContigs[x]), 
                                       length(mergedContigs[[x]]) ))), 
-                                      contig=unlist(mergedContigs), 
-                                      row.names=NULL, 
-                                      stringsAsFactors=FALSE )
+                                      unlist(mergedContigs)), ncol=2)
 
-    contigsByLG <- sapply(orderedContigMatrix$LG, function(x){strsplit(x, '[.]')[[1]]})
-    contigStarts <- sub('-.*', '', sub('.*:', '', orderedContigMatrix$contig))
+
+    contigsByLG <- sapply(orderedContigMatrix[,1], function(x){strsplit(x, '[.]')[[1]]})
+    contigStarts <- sub('-.*', '', sub('.*:', '', orderedContigMatrix[,2]))
     orderedContigMatrix <- orderedContigMatrix[order(contigsByLG[1,], as.numeric(contigsByLG[2,] ), as.numeric(contigStarts)),]
 
     orderedContigMatrix <- new("ContigOrdering", orderedContigMatrix)
 
-    mergedStrands <- data.frame(lapply(mergedStrands, function(x){factor(x, levels=c(1,2,3))}))  
     rownames(mergedStrands) <- names(mergedContigs)
     mergedStrands <- new("StrandStateMatrix", mergedStrands)
 
     return(list(mergedStrands=mergedStrands, contigKey=orderedContigMatrix))
   }
 
-  if(is.null(whichLG)){whichLG=c(1:length(linkageGroupList))}
-  orderedGroups <- data.frame(LG=vector(), name=vector())
+  if(is.null(whichLG)){whichLG=c(seq_len(length(linkageGroupList)))}
+  orderedGroups <- matrix(nrow=0, ncol=2)
  
   for(lg in whichLG)
   {
@@ -78,10 +75,10 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
       linkageGroupReadTable <- strandStateMatrix[linkageGroup,]
       zeroGroups <- combineZeroDistContigs(linkageGroupReadTable, strandFreqMatrix, lg)
       #Make a contig Weight vector
-      zeroGroups[[2]]$weights <- apply(strandReadCount[which(rownames(strandReadCount) %in% zeroGroups[[2]]$contig ),] , 1, median)
+      ordMat <- cbind(zeroGroups[[2]], apply(strandReadCount[which(rownames(strandReadCount) %in% zeroGroups[[2]][,2] ),] , 1, median))
       #The make a LG weight by taking the sum of all contigs within that LG, and order the linkageGroupTable based on the deepest LG
-      uniqueZeros <- unique(zeroGroups[[2]][,1])
-      orderZeros <-sapply(uniqueZeros, function(x) sum(zeroGroups[[2]]$weights[which(zeroGroups[[2]][,1] == x)]))
+      uniqueZeros <- unique(ordMat[,1])
+      orderZeros <-sapply(uniqueZeros, function(x) sum(as.numeric(ordMat[which(ordMat[,1] == x),3])))
       orderZeros <- names(sort(orderZeros, decreasing=TRUE))
       linkageGroupReadTable <- zeroGroups[[1]][orderZeros,]
       
@@ -97,16 +94,20 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
         break
       }
 
-      mergedGroups <- data.frame(LG=vector(), name=vector())
+      mergedGroups <- matrix(nrow=0, ncol=2)
       for(gp in seq_len(length(outOfOrder[[1]]))) {
-        mergedGroups <- rbind(mergedGroups, zeroGroups[[2]][which(zeroGroups[[2]] == outOfOrder[[1]][gp]),1:2] )
+        mergedGroups <- rbind(mergedGroups, ordMat[which(ordMat[,1] == outOfOrder[[1]][gp]),1:2] )
       }
       orderedGroups <- rbind(orderedGroups, mergedGroups)
 
       chromosome <- strsplit(linkageGroupList[[lg]][1],':')[[1]][1]
       if(saveOrdered != FALSE)
       {
-        similarLinkageStrands <- as.matrix(1-daisy(outOfOrder[[2]]))
+        plotFrame <- data.frame(outOfOrder[[2]])
+        plotFrame <- data.frame(lapply(plotFrame, function(x) factor(x, levels=c(1,2,3))))
+        rownames(plotFrame) <- rownames(outOfOrder[[2]])
+        
+        similarLinkageStrands <- as.matrix(1-daisy(plotFrame))
         diag(similarLinkageStrands) <- 1
         if(nrow(similarLinkageStrands) > 1)
         {
@@ -117,6 +118,8 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
       }
     }
   }  
+  rownames(orderedGroups) <- NULL
+  colnames(orderedGroups) <- c('LG', 'contig')
   orderedGroups <- new("ContigOrdering", orderedGroups)
   return(orderedGroups)
 }

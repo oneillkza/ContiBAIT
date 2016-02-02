@@ -17,10 +17,16 @@ reorientLinkageGroups.func <- function(object,
 			 ))
 		}
 
-	completeOrientation <- data.frame(contig=vector(), orientation=vector())
-
+	completeOrientation <- matrix(nrow=0, ncol=2)
+	colnames(completeOrientation) <- c('contig', 'orientation')
+	rememberRows <- rownames(allStrands)
+	
+	allStrands <-  data.frame(lapply(data.frame(allStrands), function(x){factor(x, levels=c(1,2,3))})) 
+	rownames(allStrands) <- rememberRows
+  
 	#find consensus
 	linkageStrands <- data.frame(do.call(rbind, lapply(object, computeConsensus, allStrands)))
+	#find the 'opposite' of consensus to append to each LG for downstream cutree
 	linkageStrands <- switchAroo(linkageStrands)
 	colnames(linkageStrands) <- colnames(allStrands) 
 	counter=1
@@ -36,12 +42,11 @@ reorientLinkageGroups.func <- function(object,
 
 			#add dummy opposite line to subsetStrands
 			subsetStrands <- rbind(subsetStrands, linkageStrands[which(rownames(linkageStrands) == lg),])
-
 			subsetStrands <- replace(subsetStrands, subsetStrands == 2, NA)
+      
 			sim <- suppressWarnings(1-as.matrix(daisy(data.frame(subsetStrands))))
 			sim[is.na(sim)] <- 0
 
-			rownames(sim) <- rownames(subsetStrands)
 			findGroups <- cutree(hclust(dist(sim)), k=2)
 	  		getMax <- names(sort(table(findGroups), decreasing=TRUE))
 	  		forwardStrands <- names(findGroups)[which(findGroups == getMax[1])]
@@ -51,29 +56,29 @@ reorientLinkageGroups.func <- function(object,
 			orientVec[which(orientVec %in% forwardStrands)] <- '+'
 			orientVec[which(orientVec %in% reverseStrands)] <- '-'
 			orientVec[which(!((orientVec == '+') | (orientVec == '-')))] <- '*'
-			orientationFrame <- data.frame(contig=linkageGroup, orientation=orientVec)
+			orientationFrame <- matrix(c(linkageGroup, orientVec), ncol=2)
 		}else{
-			orientationFrame <-  data.frame(contig=linkageGroup, orientation='+')
+			orientationFrame <-  matrix(c(linkageGroup, '+'), ncol=2)
 		}
 		completeOrientation <- rbind(completeOrientation, orientationFrame)
 		counter <- counter+1
 	}
 
-	toReorient <- as.character(completeOrientation$contig[which(completeOrientation$orientation == '-')])
+	toReorient <- as.character(completeOrientation[which(completeOrientation[,2] == '-'),1])
 
 	toReorientStrands <- switchAroo(allStrands[toReorient,])
 
 	if(!is.null(previousOrient))
 	{
-	  toInvert <- previousOrient$orientation[which(previousOrient$contig %in% toReorient)]
+	  toInvert <- previousOrient[which(previousOrient[,1] %in% toReorient),2]
 	  levels(toInvert) <- rev(levels(toInvert))
-	  previousOrient$orientation[which(previousOrient$contig %in% toReorient)] <- toInvert
+	  previousOrient[which(previousOrient[,1] %in% toReorient),2] <- toInvert
 	  completeOrientation <- previousOrient
 	}
 
 	allStrands[toReorient,] <- toReorientStrands
-	rownames(completeOrientation) <- completeOrientation$contig
-
+	rownames(completeOrientation) <- completeOrientation[,1]
+	allStrands <- data.matrix(allStrands)
 
 
 	return(list(new('StrandStateMatrix', allStrands), new('OrientationFrame', completeOrientation)))

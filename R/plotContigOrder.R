@@ -1,6 +1,6 @@
 ####################################################################################################
 #' Plot ordering of contigs within a single linkage group.
-#' @param contigOrder data.frame from orderAllContigs with the subdivided linkage groups and the names of the contigs to plot
+#' @param contigOrder matrix from orderAllContigs with the subdivided linkage groups and the names of the contigs to plot
 #' @param lg Integer specifying the linkage group by which to plot
 #' @import ggplot2
 #' @example inst/examples/plotContigOrder.R
@@ -11,8 +11,8 @@
 plotContigOrder <- function(contigOrder, lg)
 {
 
-	masterGroups <- sapply(1:nrow(contigOrder), function(x) strsplit(as.character(contigOrder$LG), "\\.")[[x]][1])
-	contigOrder <- contigOrder[grep(paste(unique(masterGroups)[lg],"\\.", sep=""), contigOrder$LG),]
+	masterGroups <- sapply(1:nrow(contigOrder), function(x) strsplit(as.character(contigOrder[,1]), "\\.")[[x]][1])
+	contigOrder <- contigOrder[grep(paste(unique(masterGroups)[lg],"\\.", sep=""), contigOrder[,1]),]
 
 	contigChr <- sub(':.*', '', contigOrder[,2])
 	primaryContigChr <- names(sort(table(contigChr), decreasing=TRUE))[1]

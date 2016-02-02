@@ -6,8 +6,8 @@
 \title{A class for storing contig ordering of a linkage group}
 \description{
 \describe{
- This class is data.frame of two character vectors that represent the calculated ordering of a linkage group. 
- The first element of this data.frame is the Linkage Group sub-setted by contigs with equal strand states across all libraries
+ This class is a matrix of two character vectors that represent the calculated ordering of a linkage group. 
+ The first element of this matrix is the Linkage Group sub-setted by contigs with equal strand states across all libraries
  in the calculated order. 
  The second element is the names of names of each contig in the calculated order.
 }

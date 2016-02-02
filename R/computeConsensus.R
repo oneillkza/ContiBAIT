@@ -14,22 +14,15 @@
 computeConsensus <- function(groupMembers, allStrands, minSupport=0.05)
 {
 	#counter <- 1
-	if(!is.data.frame(allStrands))
-		stop('the allStrands variable passed to computeConsensus function must be a data frame.')
+#	if(!is.data.frame(allStrands))
+#		stop('the allStrands variable passed to computeConsensus function must be a data frame.')
 	
 	
 	if(length(groupMembers) > 1)
 	{
 		groupStrands <- allStrands[groupMembers,]
-		tables <- table(groupStrands[,1])
-		
-		for (i in 2:ncol(groupStrands))
-		{
-			newTable <- table(groupStrands[,i])
-			if(length(newTable) == 0) newTable <- c(0)
-			tables <- cbind(tables, table(groupStrands[,i]))
-		}
-		
+		tables <- sapply(1:ncol(groupStrands), function(y) sapply(1:3, function(x) length(grep(x, groupStrands[,y]))))
+		rownames(tables) <- seq_len(3)
 		strandVec <- apply(tables, 2, function(x){names(which.max(x))})
 		qcScores <- apply(groupStrands, 2, function(x){length(which(!is.na(x)))}) / nrow(groupStrands)
 		strandVec[which(qcScores<minSupport)] <- NA

@@ -77,6 +77,7 @@ contiBAIT <- function(path=".",
                        '\n     -> creating analysis plots=', 
                        makePlots, 
                        '\n----------------------------------')
+    message(this.message)
 	}
 
   if(verbose){message('-> Creating read table from bam files [1/7]')}
@@ -182,7 +183,7 @@ contiBAIT <- function(path=".",
     dev.off()
   }
 
- if(saveName != FALSE){save(strandFrequencyList,strandStateMatrixList,linkage.groups,linkage.merged, reorientedTable, contigOrder, file=paste(saveName, '_', cluster, 'clusters_linkgeData.Rd', sep=""))}
+ if(saveName != FALSE){save(this.message, strandFrequencyList,strandStateMatrixList,linkage.groups,linkage.merged, reorientedTable, contigOrder, file=paste(saveName, '_', cluster, 'clusters_linkgeData.Rd', sep=""))}
 
   return(contigOrder)
 

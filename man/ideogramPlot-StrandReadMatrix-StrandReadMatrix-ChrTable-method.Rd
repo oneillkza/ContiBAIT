@@ -10,7 +10,7 @@
 
   \S4method{ideogramPlot}{StrandReadMatrix,StrandReadMatrix,ChrTable}(WatsonFreqList,
   CrickFreqList, chrTable, plotBy = "lib", showPage = FALSE,
-  orderFrame = FALSE, orientationData = NULL, verbose = TRUE)
+  orderFrame = NULL, orientationData = NULL, verbose = TRUE)
 }
 \arguments{
 \item{WatsonFreqList}{data.frame of Watson calls. Product of strandSeqFreqTable[[3]] when BAITtables=TRUE}
