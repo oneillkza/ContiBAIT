@@ -135,15 +135,17 @@ setClass("LinkageGroupList",
 #' Constructor forLinkageGroupList
 #' @aliases LinkageGroupList
 #' @rdname LinkageGroupList
-#' @param counts a double matrix of read count ratios
+#' @param linkageGroups a list of character vectors of names of contigs in each LG
+#' @param names a vector of names of linkage groups
 #' @return a \code{LinkageGroupList}
 #' @export
 #' @examples
-#' lgList <- LinkageGroupList(list(lg1=c('contig1', 'contig2'), lg2=c('contig3')))
+#' lgList <- LinkageGroupList(list(lg1=c('contig1', 'contig2'), lg2=c('contig3')),
+#' 								names=c('lg1', 'lg20'))
 
-LinkageGroupList <- function(linkageGroups = list())
+LinkageGroupList <- function(linkageGroups = list(), names=character())
 {
-	new('LinkageGroupList', linkageGroups)	
+	new('LinkageGroupList', linkageGroups, names=names)	
 }
 
 

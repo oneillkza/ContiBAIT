@@ -6,10 +6,12 @@
 \alias{LinkageGroupList-class}
 \title{A class for storing linkage group calls for contigs}
 \usage{
-LinkageGroupList(linkageGroups = list())
+LinkageGroupList(linkageGroups = list(), names = character())
 }
 \arguments{
-\item{counts}{a double matrix of read count ratios}
+\item{linkageGroups}{a list of character vectors of names of contigs in each LG}
+
+\item{names}{a vector of names of linkage groups}
 }
 \value{
 a \code{LinkageGroupList}
@@ -22,6 +24,7 @@ a \code{LinkageGroupList}
 Constructor forLinkageGroupList
 }
 \examples{
-lgList <- LinkageGroupList(list(lg1=c('contig1', 'contig2'), lg2=c('contig3')))
+lgList <- LinkageGroupList(list(lg1=c('contig1', 'contig2'), lg2=c('contig3')),
+								names=c('lg1', 'lg20'))
 }
 
