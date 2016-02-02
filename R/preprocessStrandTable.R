@@ -128,7 +128,7 @@ if(ignoreInternalQual == FALSE)
 		
 #	strandMatrix <- data.frame(lapply(strandTable, function(x){factor(x, levels=c(1,2,3))}))  
 #	rownames(strandMatrix) <- rownames(strandTable)
-	strandTable <- new('StrandStateMatrix', strandTable)
+	strandTable <- StrandStateMatrix(strandTable)
 
 	return(list(strandMatrix=strandTable,
 				qualList=qualList, 

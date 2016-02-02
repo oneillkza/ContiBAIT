@@ -101,6 +101,22 @@ setClass("StrandStateMatrix",
 		 )
 
 
+#' Constructor for StrandStateMatrix
+#' @aliases StrandStateMatrix
+#' @rdname StrandStateMatrix
+#' @param counts a double matrix of read count ratios
+#' @return a \code{StrandStateMatrix}
+#' @export
+#' @examples
+#' StrandStateMatrix(matrix(ncol=2, c(1,3,1,2)))
+
+StrandStateMatrix <- function(states = matrix(integer()))
+{
+	new('StrandStateMatrix', states)	
+}
+
+
+
 # =========================================================================
 #' A class for storing linkage group calls for contigs
 #' 

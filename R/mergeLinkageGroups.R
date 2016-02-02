@@ -4,7 +4,7 @@ mergeLinkageGroups.func <- function(object, allStrands, clusterParam=NULL, clust
 
   consensusStrands <- data.matrix(do.call(rbind, lapply(object, computeConsensus, allStrands)))
 
-  consensusStrands <- new('StrandStateMatrix', consensusStrands)
+  consensusStrands <- StrandStateMatrix(consensusStrands)
 
   consensus.groups <- clusterContigs(consensusStrands, 
   								   clusterParam=clusterParam, 
