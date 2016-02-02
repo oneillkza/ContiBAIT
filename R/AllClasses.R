@@ -200,6 +200,22 @@ ContigOrdering <- function(ordering=character())
 setClass("OrientationFrame",
 		 contains='matrix')
 
+#' Constructor for OrientationFrame
+#' @aliases OrientationFrame
+#' @rdname OrientationFrame
+#' @param orientation  a matrix of two character vectors that represent the orientation of contigs. 
+#'  The first element of thismatrix is the contigs name
+#'  The second element is the orinetation (as either + or -).
+#' @return a \code{OrientationFrame}
+#' @export
+#' @examples
+#' OrientationFrame(matrix(ncol=2, c("chr4:3002423-4003230", "+", 
+#' 		"chr4:140113083-141113889", "+")))
+
+OrientationFrame <- function(orientation=character())
+{
+	new('OrientationFrame', orientation)	
+}
 
 # =========================================================================
 #' A class for storing chromosome/fragment lengths
@@ -215,6 +231,18 @@ setClass("ChrTable",
 		 contains='GRanges',
 		 validity=function(object){length(object$name) > 0})
 
+#' Constructor for ChrTable
+#' @aliases ChrTable
+#' @rdname ChrTable
+#' @param chrRanges  a GRanges object with a meta column 
+#' called name, which represents the fragment name
+#' @return a \code{ChrTable}
+#' @export
+
+ChrTable <- function(chrRanges=GRanges())
+{
+	new('ChrTable', chrRanges)	
+}
 
 
 # ========================================================================

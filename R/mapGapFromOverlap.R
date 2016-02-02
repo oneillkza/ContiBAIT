@@ -69,6 +69,6 @@ mapGapFromOverlap <- function(sceFile,  gapFile, chrTable, verbose=TRUE, overlap
 	chrTable <- disjoin(chrTable)
 
 	chrTable$name <- paste(seqnames(chrTable), ":", start(chrTable), "-", end(chrTable), sep="")
-	chrTable <- new("ChrTable", chrTable)
+	chrTable <- ChrTable(chrTable)
 	return(chrTable)
 }

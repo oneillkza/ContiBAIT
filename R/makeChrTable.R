@@ -60,6 +60,6 @@ makeChrTable <- function(bamFile,
 	}
 
 	chrTable$name <- paste(seqnames(chrTable), ":", start(chrTable), "-", end(chrTable), sep="")
-	chrTable <- new('ChrTable', chrTable)
+	chrTable <- ChrTable(chrTable)
 	return(chrTable)
 }

@@ -81,7 +81,7 @@ reorientLinkageGroups.func <- function(object,
 	allStrands <- data.matrix(allStrands)
 
 
-	return(list(StrandStateMatrix(allStrands), new('OrientationFrame', completeOrientation)))
+	return(list(StrandStateMatrix(allStrands), OrientationFrame(completeOrientation)))
 }
 
 ####################################################################################################
