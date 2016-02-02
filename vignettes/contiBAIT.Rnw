@@ -227,8 +227,8 @@ WatsonFreqList <- strandFrequencyList[[3]]
 CrickFreqList <- strandFrequencyList[[4]]
 
 # subset elements to only analyze one library
-singleWatsonLibrary <- new('StrandReadMatrix', WatsonFreqList[,2, drop=FALSE])
-singleCrickLibrary <- new('StrandReadMatrix',CrickFreqList[,2, drop=FALSE]) 
+singleWatsonLibrary <- StrandReadMatrix(WatsonFreqList[,2, drop=FALSE])
+singleCrickLibrary <- StrandReadMatrix(CrickFreqList[,2, drop=FALSE]) 
 
 # Run ideogram plotter
 ideogramPlot(singleWatsonLibrary,
