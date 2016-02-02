@@ -10,7 +10,7 @@ of a set of contigs over several libraries}
 StrandStateMatrix(states = matrix(integer()))
 }
 \arguments{
-\item{counts}{a double matrix of read count ratios}
+\item{states}{an integer matrix of strand states by library}
 }
 \value{
 a \code{StrandStateMatrix}

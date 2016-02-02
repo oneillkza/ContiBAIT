@@ -54,7 +54,7 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
     contigStarts <- sub('-.*', '', sub('.*:', '', orderedContigMatrix[,2]))
     orderedContigMatrix <- orderedContigMatrix[order(contigsByLG[1,], as.numeric(contigsByLG[2,] ), as.numeric(contigStarts)),]
 
-    orderedContigMatrix <- new("ContigOrdering", orderedContigMatrix)
+    orderedContigMatrix <- ContigOrdering(orderedContigMatrix)
 
     rownames(mergedStrands) <- names(mergedContigs)
     mergedStrands <- StrandStateMatrix(mergedStrands)
@@ -120,7 +120,7 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
   }  
   rownames(orderedGroups) <- NULL
   colnames(orderedGroups) <- c('LG', 'contig')
-  orderedGroups <- new("ContigOrdering", orderedGroups)
+  orderedGroups <- ContigOrdering(orderedGroups)
   return(orderedGroups)
 }
 

@@ -104,7 +104,7 @@ setClass("StrandStateMatrix",
 #' Constructor for StrandStateMatrix
 #' @aliases StrandStateMatrix
 #' @rdname StrandStateMatrix
-#' @param counts a double matrix of read count ratios
+#' @param states an integer matrix of strand states by library
 #' @return a \code{StrandStateMatrix}
 #' @export
 #' @examples
@@ -164,6 +164,26 @@ LinkageGroupList <- function(linkageGroups = list(), names=character())
 
 setClass("ContigOrdering",
 		 contains='matrix')
+
+
+#' Constructor for ContigOrdering
+#' @aliases ContigOrdering
+#' @rdname ContigOrdering
+#' @param ordering a matrix of two character vectors that represent the calculated ordering of a linkage group. 
+#'  The first element of this matrix is the Linkage Group sub-setted by contigs with equal strand states across all libraries
+#'  in the calculated order. 
+#'  The second element is the names of names of each contig in the calculated order.
+#' @return a \code{ContigOrdering}
+#' @export
+#' @examples
+#' thisOrdering <- ContigOrdering(matrix(ncol=2, c( "LG1.11", "chr2:1000820-2001640", 
+#' 			"LG1.1", "chr2:3002461-4003281")))
+
+ContigOrdering <- function(ordering=character())
+{
+	new('ContigOrdering', ordering)	
+}
+
 
 # =========================================================================
 #' A class for storing contig orientations
