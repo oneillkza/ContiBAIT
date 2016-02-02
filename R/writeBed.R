@@ -8,16 +8,16 @@ writeBed.func <- function(chrTable,
 
 	if(is.null(libWeight))
 	{
-		libWeight <- rep(0, length(contigOrder$contig))
-		names(libWeight) <- contigOrder$contig
+		libWeight <- rep(0, length(contigOrder[,2]))
+		names(libWeight) <- contigOrder[,2]
 	}
 
 	chrTable <- as.data.frame(chrTable)
 	rownames(chrTable) <- chrTable$name
 	chrTable <- chrTable[,1:3]
-	toBed <- data.frame(chrTable[contigOrder$contig,], strand=orientationData[contigOrder$contig,2] )
-	bedNames <- paste(contigOrder$LG,contigOrder$contig, sep="_")
-	bedRange <- GRanges(toBed[,1:3], strand=toBed$strand, score=libWeight[contigOrder$contig], name=bedNames)
+	toBed <- data.frame(chrTable[contigOrder[,2],], strand=orientationData[contigOrder[,2],2] )
+	bedNames <- paste(contigOrder[,1],contigOrder[,2], sep="_")
+	bedRange <- GRanges(toBed[,1:3], strand=toBed$strand, score=libWeight[contigOrder[,2]], name=bedNames)
 	export.bed(con =file,bedRange)
 
 }

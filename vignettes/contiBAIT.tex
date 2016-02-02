@@ -64,7 +64,7 @@ The example data provided with the contiBAIT package is derived from GRCh38/hg38
 > exampleChrTable
 \end{Sinput}
 \begin{Soutput}
-GRanges object with 24 ranges and 1 metadata column:
+ChrTable object with 24 ranges and 1 metadata column:
        seqnames         ranges strand   |             name
           <Rle>      <IRanges>  <Rle>   |      <character>
    [1]     chr1 [0, 249250621]      *   | chr1:0-249250621
@@ -93,7 +93,7 @@ We can also split the above chromosome table instance into 1 Mb fragments. This 
 > exampleDividedChr
 \end{Sinput}
 \begin{Soutput}
-GRanges object with 3089 ranges and 1 metadata column:
+ChrTable object with 3089 ranges and 1 metadata column:
          seqnames               ranges strand   |                   name
             <Rle>            <IRanges>  <Rle>   |            <character>
      [1]     chr1   [      0, 1001006]      *   |         chr1:0-1001006
@@ -131,7 +131,7 @@ A change in strand state within a contig can represent a number of things. At it
 > show(overlappingFragments)
 \end{Sinput}
 \begin{Soutput}
-GRanges object with 26 ranges and 1 metadata column:
+ChrTable object with 26 ranges and 1 metadata column:
        seqnames               ranges strand   |                 name
           <Rle>            <IRanges>  <Rle>   |          <character>
    [1]     chr1 [      0, 249250621]      *   |     chr1:0-249250621
@@ -225,7 +225,7 @@ The returned list of strandSeqFreqTable can be converted to a strand state matri
 > exampleStrandStateMatrix[[1]]
 \end{Sinput}
 \begin{Soutput}
-A strand state matrix for  75  contigs over  35  libraries.
+A strand state matrix for  76  contigs over  35  libraries.
 \end{Soutput}
 \end{Schunk}
 
@@ -252,22 +252,22 @@ A linkage group list containing  4  linkage groups.
 1              19
 2              19
 3              19
-4              18
+4              19
 \end{Soutput}
 \begin{Sinput}
 > exampleLGList[[1]]
 \end{Sinput}
 \begin{Soutput}
- [1] "chr2:3002461-4003281"     "chr2:170139480-171140299"
- [3] "chr2:20016409-21017229"   "chr2:6004923-7005742"    
- [5] "chr2:190155889-191156709" "chr2:60049228-61050048"  
- [7] "chr2:80065638-81066457"   "chr2:240196913-241197732"
- [9] "chr2:40032819-41033638"   "chr2:50041023-51041843"  
-[11] "chr2:200164094-201164913" "chr2:230188708-231189527"
-[13] "chr2:10008205-11009024"   "chr2:220180503-221181323"
-[15] "chr2:30024614-31025434"   "chr2:1000820-2001640"    
-[17] "chr2:150123070-151123890" "chr2:70057433-71058252"  
-[19] "chr2:130106661-131107480"
+ [1] "chr1:20020130-21021136"   "chr1:60060391-61061396"  
+ [3] "chr1:10010065-11011071"   "chr1:40040261-41041266"  
+ [5] "chr1:30030195-31031201"   "chr1:180181173-181182178"
+ [7] "chr1:50050326-51051331"   "chr1:220221433-221222439"
+ [9] "chr1:70070456-71071461"   "chr1:1001007-2002012"    
+[11] "chr1:90090586-91091592"   "chr1:240241563-241242569"
+[13] "chr1:110110717-111111722" "chr1:160161042-161162048"
+[15] "chr1:100100651-101101657" "chr1:150150977-151151983"
+[17] "chr1:200201303-201202308" "chr1:80080521-81081527"  
+[19] "chr1:120120782-121121787"
 \end{Soutput}
 \end{Schunk}
 
@@ -307,12 +307,12 @@ With contigs clustered to chromosomes, we can then order them within chromosomes
 > contigOrder
 \end{Sinput}
 \begin{Soutput}
-A data.frame of 1 LGs split into 14 sub-groups from 19 ordered fragments.
+A matrix of 1 LGs split into 12 sub-groups from 19 ordered fragments.
 
- LG1.1 LG1.10 LG1.11 LG1.12 LG1.13 LG1.14  LG1.2  LG1.3  LG1.4  LG1.5  LG1.6 
-     2      1      1      1      1      1      3      1      2      2      1 
- LG1.7  LG1.8  LG1.9 
-     1      1      1 
+ LG1.1 LG1.10 LG1.11 LG1.12  LG1.2  LG1.3  LG1.4  LG1.5  LG1.6  LG1.7  LG1.8 
+     2      2      1      1      2      1      2      1      1      3      1 
+ LG1.9 
+     2 
 \end{Soutput}
 \end{Schunk}
 \includegraphics{contiBAIT-orderAllLinkageGroupsExample}
@@ -337,18 +337,18 @@ Alternatively, all contigs can be ordered simultaneously by omitting the whichLG
 > contigOrderAll
 \end{Sinput}
 \begin{Soutput}
-A data.frame of 4 LGs split into 14 sub-groups from 75 ordered fragments.
+A matrix of 4 LGs split into 14 sub-groups from 76 ordered fragments.
 
- LG1.1 LG1.10 LG1.11 LG1.12 LG1.13 LG1.14  LG1.2  LG1.3  LG1.4  LG1.5  LG1.6 
-     2      1      1      1      1      1      3      1      2      2      1 
- LG1.7  LG1.8  LG1.9  LG2.1 LG2.10 LG2.11 LG2.12  LG2.2  LG2.3  LG2.4  LG2.5 
-     1      1      1      3      2      1      1      3      1      1      3 
+ LG1.1 LG1.10 LG1.11 LG1.12  LG1.2  LG1.3  LG1.4  LG1.5  LG1.6  LG1.7  LG1.8 
+     2      2      1      1      2      1      2      1      1      3      1 
+ LG1.9  LG2.1 LG2.10 LG2.11 LG2.12 LG2.13 LG2.14  LG2.2  LG2.3  LG2.4  LG2.5 
+     2      2      1      1      1      1      1      3      1      2      2 
  LG2.6  LG2.7  LG2.8  LG2.9  LG3.1 LG3.10 LG3.11 LG3.12  LG3.2  LG3.3  LG3.4 
-     1      1      1      1      1      1      2      1      2      3      2 
- LG3.5  LG3.6  LG3.7  LG3.8  LG3.9  LG4.1 LG4.10 LG4.11  LG4.2  LG4.3  LG4.4 
-     1      3      1      1      1      2      2      1      2      1      2 
- LG4.5  LG4.6  LG4.7  LG4.8  LG4.9 
-     1      1      3      1      2 
+     1      1      1      1      3      2      1      1      3      1      1 
+ LG3.5  LG3.6  LG3.7  LG3.8  LG3.9  LG4.1 LG4.10 LG4.11 LG4.12  LG4.2  LG4.3 
+     3      1      1      1      1      1      1      2      1      2      3 
+ LG4.4  LG4.5  LG4.6  LG4.7  LG4.8  LG4.9 
+     2      1      3      1      1      1 
 \end{Soutput}
 \end{Schunk}
 

@@ -3,7 +3,7 @@ ideogramPlot.func <- function(WatsonFreqList,
  							  chrTable, 
  							  plotBy='lib', 
  							  showPage=FALSE, 
- 							  orderFrame=FALSE,
+ 							  orderFrame=NULL,
  							  orientationData=NULL, 
  							  verbose=TRUE)
 {
@@ -30,7 +30,7 @@ ideogramPlot.func <- function(WatsonFreqList,
 
 	roorientBAITtables <- function(WatsonFreqList, CrickFreqList, orientationFrame)
 	{
-		toFlip <- orientationFrame$contig[which(orientationFrame$orientation == '-')]
+		toFlip <- orientationFrame[which(orientationFrame[,2] == '-'),1]
 		tempWatson <- WatsonFreqList
 		WatsonFreqList[which(rownames(WatsonFreqList) %in% toFlip),] <- CrickFreqList[which(rownames(CrickFreqList) %in% toFlip),]
 		CrickFreqList[which(rownames(CrickFreqList) %in% toFlip),] <- tempWatson[which(rownames(tempWatson) %in% toFlip),]
@@ -47,7 +47,7 @@ ideogramPlot.func <- function(WatsonFreqList,
 		CrickFreqList <- flippedBAITtables[[2]]
 	}
 
-	if(length(orderFrame) != 1)
+	if(!is.null(orderFrame))
 	{
 		WatsonFreqList <- WatsonFreqList[orderFrame[,2],,drop=FALSE]
 		CrickFreqList <- CrickFreqList[orderFrame[,2],,drop=FALSE]
@@ -55,8 +55,8 @@ ideogramPlot.func <- function(WatsonFreqList,
 		#Create new GRange in order
 		chrTable <- as.data.frame(chrTable)
 		rownames(chrTable) <- chrTable$name
-		chrTable <- chrTable[orderFrame$contig,]
-		chrTable <- GRanges(sub("\\..*", "", orderFrame$LG), IRanges(start=chrTable$start, end=chrTable$end), name=chrTable$name )
+		chrTable <- chrTable[orderFrame[,2],]
+		chrTable <- GRanges(sub("\\..*", "", orderFrame[,1]), IRanges(start=chrTable$start, end=chrTable$end), name=chrTable$name )
 	}
 
 	if(plotBy == 'chr')
@@ -75,8 +75,9 @@ ideogramPlot.func <- function(WatsonFreqList,
 		WFreqs <- as.data.frame(WatsonFreqList[,lib, drop=FALSE])
 		CFreqs <- as.data.frame(CrickFreqList[,lib, drop=FALSE]*-1)
 		binNums <- table(seqnames(chrTable))
-		binNums <- binNums[which(binNums >0)]
-		findMax <- max(binNums)
+#		binNums <- binNums[which(binNums >0)]
+		#find longest chromosome. use only first element in instance where two chromosomes are the same size
+		findMax <- max(binNums)[1]
 		maxCap <- vector()
 		totalReads <- 0
 		allChrDataFrame <- data.frame(WatsonPlot=vector(), 
@@ -109,7 +110,7 @@ ideogramPlot.func <- function(WatsonFreqList,
 			maxCap <- c(maxCap, capOff)
 			totalReads <- totalReads+readsPerChr
 		}
-		ideos <- data.frame(a=-1, b=1, c=findMax-binNums, d=findMax, chr=unique(seqnames(chrTable)))
+		ideos <- data.frame(a=-1, b=1, c=as.vector(findMax-binNums), d=as.vector(findMax), chr=unique(seqnames(chrTable)))
 
 		if(plotBy == 'chr')
 		{
@@ -220,13 +221,13 @@ ideogramPlot.func <- function(WatsonFreqList,
 #' @import ggplot2
 #' @importFrom gtools mixedsort chr
 #' @importFrom S4Vectors DataFrame
-#' @aliases ideogramPlot ideogramPlot,StrandReadMatrix,StrandReadMatrix-method
+#' @aliases ideogramPlot ideogramPlot,StrandReadMatrix,StrandReadMatrix-method,ChrTable,ChrTable-method
 #' @export
 #' @example inst/examples/ideogramPlot.R
 #' @include AllClasses.R
 ####################################################################################################
 
 setMethod('ideogramPlot',
-          signature = signature(WatsonFreqList='StrandReadMatrix', CrickFreqList='StrandReadMatrix'),
+          signature = signature(WatsonFreqList='StrandReadMatrix', CrickFreqList='StrandReadMatrix', chrTable='ChrTable'),
           definition = ideogramPlot.func
 )

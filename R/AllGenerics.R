@@ -88,10 +88,10 @@ setGeneric("plotLGDistances",
 #' @export barplotLinkageGroupCalls
 setGeneric("barplotLinkageGroupCalls", 
            function(object, 
-                    assemblyBED, 
+                    chrTable, 
                     by=NULL, 
                     returnTable=NULL) standardGeneric("barplotLinkageGroupCalls"),
-		   signature=c('object', 'assemblyBED'))
+		   signature=c('object', 'chrTable'))
 
 ## =========================================================================
 ## Generic for plotWCdistribution
@@ -219,22 +219,6 @@ setMethod("show",
 		  }
 )
 
-## show RawReadStrands
-#' @name show,RawReadStrands-method
-#' @export
-#' @docType methods
-#' @title show-methods
-#' @param object a RawReadStrands
-#' @return nothing
-#' @description Shows a RawReadStrands
-setMethod("show",
-		  signature=signature(object="RawReadStrands"),
-		  definition=function(object)
-		  {
-		  	cat('A data.frame containing ', nrow(object), ' reads.\n\n')
-		  	#show(data.frame(NumberOfContigs=sapply(object, length)))
-		  }
-)
 
 ## show ContigOrdering
 #' @name show,ContigOrdering-method
@@ -249,12 +233,12 @@ setMethod("show",
 		  definition=function(object)
 		  {
 
-    		lg <- strsplit(as.character(object$LG), "\\.") # why not character() already?
+    		lg <- strsplit(as.character(object[,1]), "\\.") # why not character() already?
     		len1 <- length(unique(sapply(lg, '[', 1)))     # first element of object$LG
     		len2 <- length(unique(sapply(lg, '[', 2)))   # second element of object$LG
  
-		  	cat('A data.frame of', len1, 'LGs split into', len2, 'sub-groups from', nrow(object), 'ordered fragments.\n')
-		  	if(length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object$LG), "\\.")[[x]][2]))) > 25)
+		  	cat('A matrix of', len1, 'LGs split into', len2, 'sub-groups from', nrow(object), 'ordered fragments.\n')
+		  	if(length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object[,1]), "\\.")[[x]][2]))) > 25)
 		  	{
 			  	show(head(table(object[,1])))
 			  	cat('...')
@@ -279,6 +263,6 @@ setMethod("show",
 		  {
 		  	elements <- nrow(object)
 		  	misorientations <- nrow(object[which(object[,2] == '-'),])
-		  	cat('A data.frame of ', elements, ' contigs with ',misorientations,' identified misorientations.\n')
+		  	cat('A matrix of ', elements, ' contigs with ',misorientations,' identified misorientations.\n')
 		  }
 )

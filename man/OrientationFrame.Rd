@@ -6,9 +6,9 @@
 \title{A class for storing contig orientations}
 \description{
 \describe{
- This class is data.frame of two character vectors that represent the orientation of contigs. 
- The first element of this data.frame is the contigs name
- The second element is the orinetation (as either + or -.
+ This class is a matrix of two character vectors that represent the orientation of contigs. 
+ The first element of thismatrix is the contigs name
+ The second element is the orinetation (as either + or -).
 }
 }
 

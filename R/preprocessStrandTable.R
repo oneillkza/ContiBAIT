@@ -8,13 +8,10 @@ preprocessStrandTable.func <- function(strandTable,
 									   ignoreInternalQual=FALSE)
 {
 	strandTableLength <- nrow(strandTable)
-	
-	if(!is.data.frame(strandTable))
-			strandTable <- data.frame(strandTable)
-	
+
 	# Filter low quality libraries.  Scan "WW" and "CC" background regions.
-	lowQualList <- matrix(ncol=2, nrow=0)
-	qualList <- matrix(ncol=2, nrow=0)
+	lowQualList <- data.frame(library=vector(), quality=vector())
+	qualList <- lowQualList
 
 if(ignoreInternalQual == FALSE)
 {
@@ -22,17 +19,19 @@ if(ignoreInternalQual == FALSE)
 
 	for( col in seq_len(ncol(strandTable)) )
 	{
+		libName <- colnames(strandTable, do.NULL=FALSE)[col]
 		backGroundC <- abs(mean(strandTable[,col][which(strandTable[,col] < -0.6)], na.rm=TRUE)) 
 		backGroundW <- abs(mean(strandTable[,col][which(strandTable[,col] > 0.6)], na.rm=TRUE))
 		libraryQual <- round(backGroundC + backGroundW / 2, digits=3)
+		colQual <- data.frame(library=libName, quality=libraryQual)
 		
 		if(libraryQual < lowQualThreshold || libraryQual == "NaN")
 		{
-			if(libraryQual == "NaN" & verbose){message(paste("    -> ", colnames(strandTable[col], do.NULL=FALSE), " has insufficient reads. Removing", sep=""))}else{
-			if(verbose){message(paste("    -> ", colnames(strandTable[col], do.NULL=FALSE), " has high background (", (1-libraryQual)*100, " %). Removing", sep=""))}}
-			lowQualList <- rbind(lowQualList, cbind(colnames(strandTable[col], do.NULL=FALSE), libraryQual))
+			if(libraryQual == "NaN" & verbose){message(paste("    -> ", libName, " has insufficient reads. Removing", sep=""))}else{
+			if(verbose){message(paste("    -> ",libName, " has high background (", (1-libraryQual)*100, " %). Removing", sep=""))}}
+			lowQualList <- rbind(lowQualList, colQual)
 		} else {
-			qualList <- rbind(qualList, cbind(colnames(strandTable[col], do.NULL=FALSE), libraryQual))
+			qualList <- rbind(qualList, colQual)
 		}
 	}
 
@@ -127,17 +126,11 @@ if(ignoreInternalQual == FALSE)
 	# Convert NaNs to NAs
 	strandTable[is.na(strandTable)] <- NA
 		
-	#Create new table where WC reads are converted to NA, so only WW and CC relationships are considered
-	strandTable2 <- replace(strandTable, strandTable == 2, NA)
-	#Filter this table to exclude contigs that are now only present in fewer than 10 libraries
-	strandTable2 <- strandTable2[which(apply(strandTable2, 1, function(x){length(which(!is.na(x)))} >= minLib)),]
-	strandTable <- strandTable[rownames(strandTable2),]
+#	strandMatrix <- data.frame(lapply(strandTable, function(x){factor(x, levels=c(1,2,3))}))  
+#	rownames(strandMatrix) <- rownames(strandTable)
+	strandTable <- new('StrandStateMatrix', strandTable)
 
-	strandMatrix <- data.frame(lapply(strandTable, function(x){factor(x, levels=c(1,2,3))}))  
-	rownames(strandMatrix) <- rownames(strandTable)
-	strandMatrix <- new('StrandStateMatrix', strandMatrix)
-
-	return(list(strandMatrix=strandMatrix,
+	return(list(strandMatrix=strandTable,
 				qualList=qualList, 
 				lowQualList=lowQualList, 
 				AWCcontigs=row.names(strandTableAWC)))

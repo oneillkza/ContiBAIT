@@ -227,8 +227,8 @@ WatsonFreqList <- strandFrequencyList[[3]]
 CrickFreqList <- strandFrequencyList[[4]]
 
 # subset elements to only analyze one library
-singleWatsonLibrary <- StrandReadMatrix(WatsonFreqList[,2, drop=FALSE])
-singleCrickLibrary <- StrandReadMatrix(CrickFreqList[,2, drop=FALSE]) 
+singleWatsonLibrary <- new('StrandReadMatrix', WatsonFreqList[,2, drop=FALSE])
+singleCrickLibrary <- new('StrandReadMatrix',CrickFreqList[,2, drop=FALSE]) 
 
 # Run ideogram plotter
 ideogramPlot(singleWatsonLibrary,
@@ -295,58 +295,61 @@ Here is the basic functionality of the contiBAIT package.  The input BAM file(s)
 library(diagram)
 
 par(mar = c(1, 1, 1, 1))
-openplotmat()
-elpos <- coordinates (rep(4,8))
+ openplotmat()
+# elpos <- coordinates (c(5, 5, 5, 5, 5, 5, 5, 5))
+ elpos <- coordinates (rep(4,7))
 
 fromto <- matrix(ncol = 2, byrow = TRUE, data = c(
-	    2, 6,
- 	    2, 3,
-	    3, 7,
-	    7, 11,
-	    6, 5, 
-	    6, 10, 
-	    10, 14, 
-	    14, 18, 
-	    18, 22, 
-	    22, 26, 
-	    26, 30, 
-	    6, 9, 
-	    9, 21, 
-	    21, 26, 
-	    7, 6, 
-	    10, 11, 
-	    10, 15, 
-	    22, 15, 
-	    18, 19, 
-	    19, 27, 
-	    27, 26, 
-	    14, 17, 
-	    17, 21, 
-	    21, 26,
-	    7, 8,
-	    8, 24,
-	    22, 24))
+	    3, 6,
+ 	    3, 8,
+ 	    6, 5,
+ 	    6, 7,
+ 	    6,9,
+ 	    6,10,
+ 	    8,7,
+ 	    8,11,
+ 	    8,20,
+ 	    10,14,
+ 	    14,18,
+ 	    18,19,
+ 	    10,11,
+ 	    10,15,
+ 	    19,15,
+ 	    19,20,
+ 	    19,23,
+ 	    23,27,
+ 	    9,17,
+ 	    14,13,
+ 	    17,22,
+ 	    22,23,
+ 	    18,23,
+ 	    23,24
+
+
+))
 
  nr <- nrow(fromto)
  arrpos <- matrix(ncol = 2, nrow = nr)
  for (i in 1:nr)
-arrpos[i, ] <- straightarrow (to = elpos[fromto[i, 2], ], from = elpos[fromto[i, 1], ], lwd = 2, arr.pos = 0.6, arr.width=0.1, arr.length = 0.5)
+arrpos[i, ] <- straightarrow (to = elpos[fromto[i, 2], ], from = elpos[fromto[i, 1], ], lwd = 2, arr.pos = 0.6, arr.width=0.15, arr.length = 0.5)
 
-textround(elpos[2,], 0.04, lab = "BAMFILE", box.col = "grey70", shadow.col = "grey10", shadow.size = 0.005, cex = 0.8)
-textrect(elpos[3,], 0.09, 0.04,lab = "makeChr\nTable", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
-textrect(elpos[7,], 0.09, 0.04,lab = "divide\nMyChr", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
+textround(elpos[3,], 0.04, lab = "BAMFILE", box.col = "grey70", shadow.col = "grey10", shadow.size = 0.005, cex = 0.8)
+textrect(elpos[8,], 0.09, 0.04,lab = "make\nChrTable", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
 textrect(elpos[6,], 0.09, 0.04,lab = "strandSeq\nFreqTable", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
 textrect(elpos[10,], 0.09, 0.04,lab = "preprocess\nStrandTable", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
 textrect(elpos[14,], 0.09, 0.04,lab = "cluster\nContigs", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
 textrect(elpos[18,], 0.09, 0.04,lab = "reorient\nLinkageGroups", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
-textrect(elpos[22,], 0.09, 0.04,lab = "merge\nLinkageGroup", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
-textrect(elpos[26,], 0.09, 0.04,lab = "orderAll\nLinkageGroups", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
-textround(elpos[30,], 0.04, lab = "writeBed", box.col = "grey70", shadow.col = "grey10", shadow.size = 0.005, cex = 0.8)
+textrect(elpos[19,], 0.09, 0.04,lab = "merge\nLinkageGroup", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
+textrect(elpos[23,], 0.09, 0.04,lab = "orderAll\nLinkageGroups", box.col = "white", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
+textround(elpos[27,], 0.04, lab = "writeBed", box.col = "grey70", shadow.col = "grey10", shadow.size = 0.005, cex = 0.8)
 
+texthexa(elpos[7,], 0.09, 0.04,lab = "ideogram\nPlot", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
 texthexa(elpos[11,], 0.09, 0.04,lab = "make\nBoxPlot", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
-texthexa(elpos[5,], 0.09, 0.04,lab = "plotWC\nDistribution", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
-texthexa(elpos[15,], 0.09, 0.04,lab = "plotLG\nDistances", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
-texthexa(elpos[24,], 0.09, 0.04,lab = "barplotLinkage\nGroupCalls", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
+texthexa(elpos[5,], 0.09, 0.04,lab = "plotWC\ndistribution", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
+texthexa(elpos[15,], 0.09, 0.04,lab = "plotLG\ndistances", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
+texthexa(elpos[20,], 0.09, 0.04,lab = "barplot\nLGCalls", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
+texthexa(elpos[24,], 0.09, 0.04,lab = "plotContig\nOrder", box.col = "lightblue", shadow.col = "grey10", shadow.size = 0.005, cex = 0.7)
+
 
 @
 
