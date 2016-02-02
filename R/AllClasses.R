@@ -17,6 +17,20 @@ setClass("StrandReadMatrix",
 		 contains='matrix', 
 		 validity=function(object){is.integer(object)})
 
+#' Constructor for StrandReadMatrix
+#' @aliases StrandReadMatrix
+#' @rdname StrandReadMatrix
+#' @param counts an integer matrix of read counts
+#' @return a \code{StrandReadMatrix}
+#' @export
+#' @examples
+#' data("exampleWatsonFreq")
+#' StrandReadMatrix(exampleWatsonFreq[,2, drop=FALSE])
+
+StrandReadMatrix <- function(counts = matrix(integer()))
+{
+	new('StrandReadMatrix', counts)	
+}
 
 
 # =========================================================================
@@ -37,6 +51,25 @@ setClass("StrandFreqMatrix",
 		 validity=function(object){is.double(object)})
 
 
+#' Constructor for StrandFreqMatrix
+#' @aliases StrandFreqMatrix
+#' @rdname StrandFreqMatrix
+#' @param counts a double matrix of read count ratios
+#' @return a \code{StrandFreqMatrix}
+#' @export
+#' @examples
+#' data("exampleWatsonFreq")
+#' data("exampleCrickFreq")
+#' frequencyMatrix <- sapply(1:ncol(exampleCrickFreq), 
+#' function(colNum){exampleCrickFreq[,colNum] / exampleWatsonFreq[,colNum]})
+#' 
+#' StrandFreqMatrix(frequencyMatrix)
+
+StrandFreqMatrix <- function(counts = matrix(double()))
+{
+	new('StrandFreqMatrix', counts)	
+}
+
 
 StrandStateMatrixValidity <- function(object)
 {
@@ -46,6 +79,7 @@ StrandStateMatrixValidity <- function(object)
     }))
   areFactors && haveCorrectLevels
 }
+
 
 # =========================================================================
 #' A class for storing a data frame of discrete strand states 
@@ -97,6 +131,22 @@ setClass("RawReadStrands",
 setClass("LinkageGroupList", 
 		 representation('list', names='character')
 		 )
+
+#' Constructor forLinkageGroupList
+#' @aliases LinkageGroupList
+#' @rdname LinkageGroupList
+#' @param linkageGroups a list of character vectors of names of contigs in each LG
+#' @param names a vector of names of linkage groups
+#' @return a \code{LinkageGroupList}
+#' @export
+#' @examples
+#' lgList <- LinkageGroupList(list(lg1=c('contig1', 'contig2'), lg2=c('contig3')),
+#' 								names=c('lg1', 'lg20'))
+
+LinkageGroupList <- function(linkageGroups = list(), names=character())
+{
+	new('LinkageGroupList', linkageGroups, names=names)	
+}
 
 
 

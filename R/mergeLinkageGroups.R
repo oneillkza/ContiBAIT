@@ -19,7 +19,7 @@ mergeLinkageGroups.func <- function(object, allStrands, clusterParam=NULL, clust
  
   mergeThoseGroups <- lapply(consensus.groups, function(x) as.character(melt(object[x])[,1]))
 
-  mergeThoseGroups <- new('LinkageGroupList', 
+  mergeThoseGroups <- LinkageGroupList(
                           mergeThoseGroups[order(sapply(mergeThoseGroups, length), decreasing=TRUE)], 
                           names= sapply(1:length(mergeThoseGroups), 
                           			  function(x)

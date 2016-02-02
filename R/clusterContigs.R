@@ -43,7 +43,7 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 		linkageGroups[[1]] <- c(1)
 		
 		#Function to assign a new contig to an existing linkage group, or create a new one:
-		if(verbose){message(paste('Inicializing contig ', contigs[1], ' [1/', nrow(object), '] as LG1', sep=""))}		
+		if(verbose){message(paste('Initializing contig ', contigs[1], ' [1/', nrow(object), '] as LG1', sep=""))}		
 
 		for (contig.num in 2:nrow(object))
 		{
@@ -74,7 +74,7 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 		}
 		linkageGroups <- lapply(linkageGroups, function(lg){names(randomOrder)[lg]})
 
-		return(new('LinkageGroupList',linkageGroups))
+		return(linkageGroups)
 	}	
 	
         
@@ -147,9 +147,10 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 
 	#order linkage groups by biggest first
 	#names(linkageGroups) <- sapply(1:length(linkageGroups), function(x){paste('LG', x, ' (', length(linkageGroups[[x]]), ')', sep='') })
-  	linkageGroups <- new('LinkageGroupList',
+  	linkageGroups <- LinkageGroupList(
   						 linkageGroups[order(sapply(linkageGroups, length), decreasing=TRUE)], 
-  						  names= sapply(1:length(linkageGroups), function(x){paste('LG', x, ' (', length(linkageGroups[[x]]), ')', sep='') }))
+  						  names= sapply(1:length(linkageGroups), 
+  						  			  function(x){paste('LG', x, ' (', length(linkageGroups[[x]]), ')', sep='') }))
 
 
 	return(linkageGroups)
