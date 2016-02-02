@@ -35,11 +35,14 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 		
 	
 		#Set up a list for storing linkage groups (clusters):
-		linkageGroups <- list()
+		#Pre-filled to the maximum possible size, though it's expected to rarely 
+		#go beyond a fraction of that:
+		linkageGroups = vector("list", nrow(object))
 		linkageStrands <- object[1,]
 		
 		contigs <- rownames(object)
 		linkageGroups[[1]] <- c(1)
+		lg.num <- 1 #index to keep track of location in list
 		
 		#Function to assign a new contig to an existing linkage group, or create a new one:
 		if(verbose){message(paste('Initializing contig ', contigs[1], ' [1/', nrow(object), '] as LG1', sep=""))}		
@@ -60,7 +63,8 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 			#If no good match, make this contig the founder of a new linkage group:
 			if (length(best.match) ==0 || similarities[best.match] < similarityCutoff)
 			{
-				linkageGroups[[length(linkageGroups)+1]] <- c(contig.num)
+				lg.num <- lg.num + 1
+				linkageGroups[[lg.num]] <- c(contig.num)
 				linkageStrands <- rbind(linkageStrands, object[contig.num,])
 			}else
 				#Otherwise, add this to the best matched group, and recompute the strand state for that group:
@@ -71,6 +75,8 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 				linkageStrands[best.match,] <- strandVec
 			}
 		}
+		linkageGroups <- linkageGroups[1:lg.num]
+		
 		linkageGroups <- lapply(linkageGroups, function(lg){names(randomOrder)[lg]})
 
 		return(linkageGroups)
