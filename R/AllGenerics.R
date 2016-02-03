@@ -10,7 +10,8 @@ setGeneric("preprocessStrandTable",
 		   			lowQualThreshold=NULL, 
 		   			verbose=NULL, 
 		   			minLib=NULL, 
-		   			ignoreInternalQual=NULL) standardGeneric("preprocessStrandTable"))
+		   			ignoreInternalQual=NULL) standardGeneric("preprocessStrandTable"),
+		   signature='strandTable')
 
 
 ## =========================================================================
@@ -25,9 +26,10 @@ setGeneric("clusterContigs",
 		   		 randomise=NULL,
 		   		 randomSeed=NULL,
 		   		 randomWeight=NULL,
-		   		 snowCluster=NULL,
+		   		 clusterParam=NULL,
 		   		 clusterBy=NULL,
-		   		 verbose=NULL) standardGeneric("clusterContigs"))
+		   		 verbose=NULL) standardGeneric("clusterContigs"),
+		   signature='object')
 
 
 ## =========================================================================
@@ -38,7 +40,8 @@ setGeneric("reorientLinkageGroups",
 		   function(object, 
 		   			allStrands,
 		   			previousOrient=NULL,
-		   		 	verbose=NULL) standardGeneric("reorientLinkageGroups"))
+		   		 	verbose=NULL) standardGeneric("reorientLinkageGroups"),
+		   signature=c('object', 'allStrands'))
 
 ## =========================================================================
 ## Generic for mergeLinkageGroups.R
@@ -47,9 +50,10 @@ setGeneric("reorientLinkageGroups",
 setGeneric("mergeLinkageGroups", 
            function(object, 
                     allStrands,
-                    clusNum=NULL, 
+                    clusterParam=NULL, 
                     cluster=NULL,
-                    similarityCutoff=NULL) standardGeneric("mergeLinkageGroups"))
+                    similarityCutoff=NULL) standardGeneric("mergeLinkageGroups"),
+		   signature=c('object', 'allStrands'))
 
 ## =========================================================================
 ## Generic for orderAllLinkageGroups.R
@@ -64,7 +68,8 @@ setGeneric("orderAllLinkageGroups",
             		saveOrdered=NULL, 
             		orderCall=NULL, 
             		randomAttempts=NULL, 
-            		verbose=NULL) standardGeneric("orderAllLinkageGroups"))
+            		verbose=NULL) standardGeneric("orderAllLinkageGroups"),
+		   signature=c('linkageGroupList', 'strandStateMatrix','strandFreqMatrix', 'strandReadCount' ))
 
 ## =========================================================================
 ## Generic for plotLGDistances.R
@@ -74,7 +79,8 @@ setGeneric("plotLGDistances",
            function(object, 
                     allStrands,
                     lg=NULL,
-                    labels=NULL) standardGeneric("plotLGDistances"))
+                    labels=NULL) standardGeneric("plotLGDistances"),
+		   signature=c('object', 'allStrands'))
 
 ## =========================================================================
 ## Generic for barplotLinkageGroupCalls
@@ -82,9 +88,10 @@ setGeneric("plotLGDistances",
 #' @export barplotLinkageGroupCalls
 setGeneric("barplotLinkageGroupCalls", 
            function(object, 
-                    assemblyBED, 
+                    chrTable, 
                     by=NULL, 
-                    returnTable=NULL) standardGeneric("barplotLinkageGroupCalls"))
+                    returnTable=NULL) standardGeneric("barplotLinkageGroupCalls"),
+		   signature=c('object', 'chrTable'))
 
 ## =========================================================================
 ## Generic for plotWCdistribution
@@ -93,7 +100,8 @@ setGeneric("barplotLinkageGroupCalls",
 setGeneric("plotWCdistribution", 
            function(object, 
                     allStrands,
-                    filterThreshold=NULL) standardGeneric("plotWCdistribution"))
+                    filterThreshold=NULL) standardGeneric("plotWCdistribution"),
+		   signature=c('object', 'allStrands'))
 
 ## =========================================================================
 ## Generic for makeBoxPlot
@@ -101,7 +109,8 @@ setGeneric("plotWCdistribution",
 #' @export makeBoxPlot
 setGeneric("makeBoxPlot", 
            function(chrTable, 
-                    linkage.contigs) standardGeneric("makeBoxPlot"))
+                    linkage.contigs) standardGeneric("makeBoxPlot"),
+		   signature=c('chrTable', 'linkage.contigs'))
 
 ## =========================================================================
 ## Generic for ideogramPlot
@@ -115,7 +124,8 @@ setGeneric("ideogramPlot",
                     showPage=NULL,
                     orderFrame=NULL,
    		            orientationData=NULL,
-                    verbose=NULL) standardGeneric("ideogramPlot"))
+                    verbose=NULL) standardGeneric("ideogramPlot"),
+		   signature=c('WatsonFreqList', 'CrickFreqList', 'chrTable'))
 
 ## =========================================================================
 ## Generic for writeBed
@@ -126,7 +136,8 @@ setGeneric("writeBed",
 					orientationData, 
 					contigOrder,
 					libWeight=NULL,
-					file=NULL) standardGeneric("writeBed"))
+					file=NULL) standardGeneric("writeBed"),
+		   signature=c('chrTable', 'orientationData', 'contigOrder'))
 
 ## =========================================================================
 ## show Methods
@@ -208,22 +219,6 @@ setMethod("show",
 		  }
 )
 
-## show RawReadStrands
-#' @name show,RawReadStrands-method
-#' @export
-#' @docType methods
-#' @title show-methods
-#' @param object a RawReadStrands
-#' @return nothing
-#' @description Shows a RawReadStrands
-setMethod("show",
-		  signature=signature(object="RawReadStrands"),
-		  definition=function(object)
-		  {
-		  	cat('A data.frame containing ', nrow(object), ' reads.\n\n')
-		  	#show(data.frame(NumberOfContigs=sapply(object, length)))
-		  }
-)
 
 ## show ContigOrdering
 #' @name show,ContigOrdering-method
@@ -238,8 +233,12 @@ setMethod("show",
 		  definition=function(object)
 		  {
 
-		  	cat('A data.frame of', length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object$LG), "\\.")[[x]][1]))), 'LGs split into', length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object$LG), "\\.")[[x]][2]))), 'sub-groups from', nrow(object), 'ordered fragments.\n')
-		  	if(length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object$LG), "\\.")[[x]][2]))) > 25)
+    		lg <- strsplit(as.character(object[,1]), "\\.") # why not character() already?
+    		len1 <- length(unique(sapply(lg, '[', 1)))     # first element of object$LG
+    		len2 <- length(unique(sapply(lg, '[', 2)))   # second element of object$LG
+ 
+		  	cat('A matrix of', len1, 'LGs split into', len2, 'sub-groups from', nrow(object), 'ordered fragments.\n')
+		  	if(length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object[,1]), "\\.")[[x]][2]))) > 25)
 		  	{
 			  	show(head(table(object[,1])))
 			  	cat('...')
@@ -264,31 +263,6 @@ setMethod("show",
 		  {
 		  	elements <- nrow(object)
 		  	misorientations <- nrow(object[which(object[,2] == '-'),])
-		  	cat('A data.frame of ', elements, ' contigs with ',misorientations,' identified misorientations.\n')
-		  }
-)
-
-
-## show ChrTable
-#' @name show,ChrTable-method
-#' @export
-#' @docType methods
-#' @title show-methods
-#' @param object a ChrTable
-#' @return nothing
-#' @description Shows a ChrTable
-setMethod("show",
-		  signature=signature(object="ChrTable"),
-		  definition=function(object)
-		  {
-		  	if(ncol(object) == 2)
-		  	{
-			  	cat('A data.frame of', length(object[,1]), 'fragments from a', sum(object[,2])/1000000, 'Mb genome.\n')
-		  	}else{
-		  		cat('A data.frame of', length(object[,1]), 'fragments from a', (sum(as.numeric(object[,3]))-sum(as.numeric(object[,2])))/1000000, 'Mb genome.\n')
-		  	}
-		  	show(head(object))
-			cat('...\n')
-			show(tail(object))
+		  	cat('A matrix of ', elements, ' contigs with ',misorientations,' identified misorientations.\n')
 		  }
 )

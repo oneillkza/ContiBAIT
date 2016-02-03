@@ -2,17 +2,15 @@
 % Please edit documentation in R/ideogramPlot.R
 \docType{methods}
 \name{ideogramPlot,StrandReadMatrix,StrandReadMatrix,ChrTable-method}
-\alias{ChrTable,}
-\alias{ChrTable-method}
 \alias{ideogramPlot}
 \alias{ideogramPlot,StrandReadMatrix,StrandReadMatrix,ChrTable-method}
-\alias{ideogramPlot,StrandReadMatrix,StrandReadMatrix-method,}
+\alias{ideogramPlot,StrandReadMatrix,StrandReadMatrix-method,ChrTable,ChrTable-method}
 \title{ideogramPlot -- plots BAIT-like ideograms}
 \usage{
 
   \S4method{ideogramPlot}{StrandReadMatrix,StrandReadMatrix,ChrTable}(WatsonFreqList,
   CrickFreqList, chrTable, plotBy = "lib", showPage = FALSE,
-  orderFrame = FALSE, orientationData = NULL, verbose = TRUE)
+  orderFrame = NULL, orientationData = NULL, verbose = TRUE)
 }
 \arguments{
 \item{WatsonFreqList}{data.frame of Watson calls. Product of strandSeqFreqTable[[3]] when BAITtables=TRUE}
@@ -42,8 +40,8 @@ data("exampleWatsonFreq")
 data("exampleCrickFreq")
 data('exampleDividedChr')
 
-singleWatsonLibrary <- new('StrandReadMatrix', exampleWatsonFreq[,2, drop=FALSE])
-singleCrickLibrary <- new('StrandReadMatrix', exampleCrickFreq[,2, drop=FALSE]) 
+singleWatsonLibrary <- StrandReadMatrix(exampleWatsonFreq[,2, drop=FALSE])
+singleCrickLibrary <- StrandReadMatrix(exampleCrickFreq[,2, drop=FALSE])
 
 ideogramPlot(singleWatsonLibrary, singleCrickLibrary, exampleDividedChr)
 }

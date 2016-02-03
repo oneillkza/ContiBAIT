@@ -15,7 +15,7 @@ orderContigsGreedy <- function(linkageGroupReadTable, randomAttempts=75, verbose
 {  
   factorizedLinkageGroupReadTable <- linkageGroupReadTable
 
-  for (i in 1:ncol(linkageGroupReadTable)){
+  for (i in seq_len(ncol(linkageGroupReadTable))) {
     linkageGroupReadTable[,i] <- as.numeric(as.character( linkageGroupReadTable[,i]))
   }
   linkageGroupReadTable[is.na(linkageGroupReadTable)] <- 0
@@ -25,7 +25,7 @@ orderContigsGreedy <- function(linkageGroupReadTable, randomAttempts=75, verbose
     best_order <- .Call('orderContigsGreedy', as.matrix(linkageGroupReadTable))
     best_table <- linkageGroupReadTable
 
-    for (i in 1:randomAttempts){
+    for (i in seq_len(randomAttempts)) {
       #temp_order <- list(order = 1:length(linkageGroup),score = 0)
       temp_table <- as.matrix(linkageGroupReadTable[sample(nrow(linkageGroupReadTable)),])
       temp_order <- .Call('orderContigsGreedy', temp_table)

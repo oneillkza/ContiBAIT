@@ -8,7 +8,12 @@ if(lg[1] == 'all')
 }else{
   linkageStrands <- allStrands[unlist(object[lg]),]
   #For brevity, only report chromosome name, not split locations.
-  rownames(linkageStrands) <- paste(as.character(matrix(unlist(strsplit(rownames(linkageStrands), ':')), ncol=2, byrow=TRUE)[,1]), '_', seq(1,nrow(linkageStrands)), sep='')
+  chrName <- as.character(matrix(unlist(strsplit(rownames(linkageStrands), ':')), ncol=2, byrow=TRUE)[,1])
+  chrName <- paste(chrName, '_', seq(1,nrow(linkageStrands)), sep='')
+  linkageStrands <- data.frame(linkageStrands)
+  linkageStrands <-  data.frame(lapply(linkageStrands, function(x) factor(x, levels=c(1,2,3))))
+  rownames(linkageStrands) <- chrName
+
 }
 
   sim <- 1-as.matrix(daisy(data.frame(linkageStrands)))

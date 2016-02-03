@@ -1,6 +1,6 @@
 ####################################################################################################
 #' Plot ordering of contigs within a single linkage group.
-#' @param contigOrder data.frame from orderAllContigs with the subdivided linkage groups and the names of the contigs to plot
+#' @param contigOrder matrix from orderAllContigs with the subdivided linkage groups and the names of the contigs to plot
 #' @param lg Integer specifying the linkage group by which to plot
 #' @import ggplot2
 #' @example inst/examples/plotContigOrder.R
@@ -11,7 +11,8 @@
 plotContigOrder <- function(contigOrder, lg)
 {
 
-	contigOrder <- contigOrder[grep(paste(unique(sapply(1:nrow(contigOrder), function(x) strsplit(as.character(contigOrder$LG), "\\.")[[x]][1]))[lg],"\\.", sep="") , contigOrder$LG),]
+	masterGroups <- sapply(1:nrow(contigOrder), function(x) strsplit(as.character(contigOrder[,1]), "\\.")[[x]][1])
+	contigOrder <- contigOrder[grep(paste(unique(masterGroups)[lg],"\\.", sep=""), contigOrder[,1]),]
 
 	contigChr <- sub(':.*', '', contigOrder[,2])
 	primaryContigChr <- names(sort(table(contigChr), decreasing=TRUE))[1]
@@ -23,7 +24,6 @@ plotContigOrder <- function(contigOrder, lg)
 
 	contigOrderFrame <- data.frame(chr=contigChr, start=as.numeric(contigStarts)/10^6, bin=orderedLocation)
 
-
 	rsquareOrient <- summary(lm(bin ~ start, data=contigOrderFrame))$r.squared
 	rsquare <- summary(lm(bin ~ -1+start, data=contigOrderFrame))$r.squared
 	if(rsquare < rsquareOrient)
@@ -33,8 +33,8 @@ plotContigOrder <- function(contigOrder, lg)
 	}
 
 	rsquare <- round(rsquare, digits=2)
-	ggplot(contigOrderFrame, aes(bin, start) )+
-	geom_point(aes(x=bin, y=start , colour=chr), size=2)+
+	ggplot(contigOrderFrame, aes_string("bin", "start") )+
+	geom_point(aes_string(x="bin", y="start" , colour="chr"), size=2)+
 	labs(x="contiBAIT predicted location of contigs", y="Assembly ordered location of contigs (Mb)")+
 	geom_smooth(method="lm", se=FALSE, formula=y~x-1)+
 	ggtitle(paste("Plot of ", length(contigChr), " fragments (", length(unique(contigOrderFrame$bin)), " sub-linkage groups)\nR-squared = ", rsquare,  sep=""))

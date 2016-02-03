@@ -2,13 +2,24 @@
 % Please edit documentation in R/AllClasses.R
 \docType{class}
 \name{ChrTable-class}
+\alias{ChrTable}
 \alias{ChrTable-class}
 \title{A class for storing chromosome/fragment lengths}
+\usage{
+ChrTable(chrRanges = GRanges())
+}
+\arguments{
+\item{chrRanges}{a GRanges object with a meta column 
+called name, which represents the fragment name}
+}
+\value{
+a \code{ChrTable}
+}
 \description{
 \describe{
- This class is data.frame of two or three vectors. The first is a character vector representing the chromosome name, the second is an integer of either 
- length of the molecule or the start of the molecule, and the (optional) third is a integer of the end of the molecule.
- Note the rowname represents the fragment name.
+ This class is a GRanges object with a meta column called name, which represents the fragment name.
 }
+
+Constructor for ChrTable
 }
 

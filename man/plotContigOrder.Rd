@@ -7,7 +7,7 @@
 plotContigOrder(contigOrder, lg)
 }
 \arguments{
-\item{contigOrder}{data.frame from orderAllContigs with the subdivided linkage groups and the names of the contigs to plot}
+\item{contigOrder}{matrix from orderAllContigs with the subdivided linkage groups and the names of the contigs to plot}
 
 \item{lg}{Integer specifying the linkage group by which to plot}
 }

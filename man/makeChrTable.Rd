@@ -4,19 +4,20 @@
 \alias{makeChrTable}
 \title{makeChrTable -- Pulls out chromosome and length data from the header of a bam file}
 \usage{
-makeChrTable(bamFile, verbose = TRUE, asBed = FALSE, asRownames = TRUE)
+makeChrTable(bamFile, splitFile = NULL, splitBy = NULL, verbose = TRUE)
 }
 \arguments{
 \item{bamFile}{string of location of a bam file to extract header data from}
 
+\item{splitFile}{GRanges object (of type chr, start and end: no strand or meta columns) of locations in which to split
+the assembly, such as previously determined locations of contig chimerism}
+
+\item{splitBy}{integer determining the average size contigs should be split by}
+
 \item{verbose}{if FALSE, no messages appear on terminal}
-
-\item{asBed}{if TRUE, a bed format table will be generated (chr, start, end)}
-
-\item{asRownames}{Boolean. If false, rownames will not be returned, otherwise rownames will be equal to chromosome names}
 }
 \value{
-a ChrTable object, containing information on the organism's chromosomes as extracted from the BAM file header.
+a GRanges object of class ChrTable, containing information on the organism's chromosomes as extracted from the BAM file header.
 }
 \description{
 makeChrTable -- Pulls out chromosome and length data from the header of a bam file
@@ -33,5 +34,9 @@ example.bam <- list.files(file.path(system.file(package='contiBAIT'), 'extdata')
 chrTable <- makeChrTable(example.bam) 
 
 show(chrTable)
+
+dividedChr <- makeChrTable(example.bam, splitBy=1000000)
+
+show(dividedChr)
 }
 

@@ -5,12 +5,11 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
                            randomise=TRUE,
 						   randomSeed=NULL,
 						   randomWeight=NULL,
-						   snowCluster=NULL,
+						   clusterParam=NULL,
 						   clusterBy='hetero',
 						   verbose=TRUE)
 {
 	
-	#similarityCutoff <- 0.7
 	if(!is.null(randomSeed))
 		set.seed(randomSeed)
 	
@@ -36,14 +35,17 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 		
 	
 		#Set up a list for storing linkage groups (clusters):
-		linkageGroups <- list()
+		#Pre-filled to the maximum possible size, though it's expected to rarely 
+		#go beyond a fraction of that:
+		linkageGroups = vector("list", nrow(object))
 		linkageStrands <- object[1,]
 		
 		contigs <- rownames(object)
 		linkageGroups[[1]] <- c(1)
+		lg.num <- 1 #index to keep track of location in list
 		
 		#Function to assign a new contig to an existing linkage group, or create a new one:
-		if(verbose){message(paste('Inicializing contig ', contigs[1], ' [1/', nrow(object), '] as LG1', sep=""))}		
+		if(verbose){message(paste('Initializing contig ', contigs[1], ' [1/', nrow(object), '] as LG1', sep=""))}		
 
 		for (contig.num in 2:nrow(object))
 		{
@@ -52,10 +54,6 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 			{
 				contigStrand <- object[contig.num,]
 				linkageStrand <- linkageStrands[linkage.num,]
-				#numCommon <- length(which(!is.na(linkageStrand)&!is.na(contigStrand)))
-				#if(numCommon < minimumLibraryOverlap)
-				#	return(NA)
-				#suppressWarnings(1 - daisy(rbind(contigStrand, linkageStrand) )[1] )
 				contigStrand[which(contigStrand==3)] <- 2
 				linkageStrand[which(linkageStrand==3)] <- 2	
 				computeSim(contigStrand, linkageStrand, minimumLibraryOverlap)
@@ -65,7 +63,8 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 			#If no good match, make this contig the founder of a new linkage group:
 			if (length(best.match) ==0 || similarities[best.match] < similarityCutoff)
 			{
-				linkageGroups[[length(linkageGroups)+1]] <- c(contig.num)
+				lg.num <- lg.num + 1
+				linkageGroups[[lg.num]] <- c(contig.num)
 				linkageStrands <- rbind(linkageStrands, object[contig.num,])
 			}else
 				#Otherwise, add this to the best matched group, and recompute the strand state for that group:
@@ -76,9 +75,11 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 				linkageStrands[best.match,] <- strandVec
 			}
 		}
+		linkageGroups <- linkageGroups[1:lg.num]
+		
 		linkageGroups <- lapply(linkageGroups, function(lg){names(randomOrder)[lg]})
 
-		return(new('LinkageGroupList',linkageGroups))
+		return(linkageGroups)
 	}	
 	
         
@@ -107,21 +108,30 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 			clusterVec <- rep(0, nrow(object))
 			names(clusterVec) <- rownames(object)
 			linkageGroups <- runOnce(object, randomise, randomWeight, similarityCutoff)
-			#linkageGroups <- mergeLinkageGroups(linkageGroups, object)
-			for (lg in 1:length(linkageGroups))
+			for (lg in seq_len(length(linkageGroups)))
 				clusterVec[linkageGroups[[lg]]] <- lg
-			clusterVec
-			#linkageGroups
+				clusterVec
 		}
 		
 		#Then get consensus:
-		if(!is.null(snowCluster))
+		if(!is.null(clusterParam))
 		{
-			if(verbose){message(paste('-> Running ', recluster, ' clusterings in parallel on ', length(snowCluster), ' processors', sep=""))}
-			multiClust <- parLapply(snowCluster, 1:recluster, runOneForTheEnsemble, object, randomise, randomWeight, similarityCutoff)
+			if(verbose){message(paste('-> Running ', recluster, ' clusterings in parallel on ', clusterParam$workers, ' processors', sep=""))}
+			multiClust <-bplapply(  seq_len(recluster), 
+						  			runOneForTheEnsemble, 
+									object, 
+									randomise, 
+									randomWeight, 
+									similarityCutoff,
+									BPPARAM=clusterParam)
 		}else
 		{
-			multiClust <- lapply(1:recluster, runOneForTheEnsemble, object, randomise, randomWeight, similarityCutoff)
+			multiClust <- lapply(seq_len(recluster), 
+								 runOneForTheEnsemble, 
+								 object, 
+								 randomise, 
+								 randomWeight, 
+								 similarityCutoff)
 		}
 		
 		
@@ -142,9 +152,10 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 
 	#order linkage groups by biggest first
 	#names(linkageGroups) <- sapply(1:length(linkageGroups), function(x){paste('LG', x, ' (', length(linkageGroups[[x]]), ')', sep='') })
-  	linkageGroups <- new('LinkageGroupList',
+  	linkageGroups <- LinkageGroupList(
   						 linkageGroups[order(sapply(linkageGroups, length), decreasing=TRUE)], 
-  						  names= sapply(1:length(linkageGroups), function(x){paste('LG', x, ' (', length(linkageGroups[[x]]), ')', sep='') }))
+  						  names= sapply(1:length(linkageGroups), 
+  						  			  function(x){paste('LG', x, ' (', length(linkageGroups[[x]]), ')', sep='') }))
 
 
 	return(linkageGroups)
@@ -156,7 +167,7 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 #' @param object \code{data.frame} containing strand inheritance information for every contig (rows)
 #' in every library (columns). This should be the product of strandSeqFreqTable
 #' @param similarityCutoff place contigs in a cluster when their strand state is at least this similar
-#' @param recluster =NULL Number of times to recluster and take the consensus of. If NULL, clustering is 
+#' @param recluster Number of times to recluster and take the consensus of. If NULL, clustering is 
 #' run only once.
 #' @param minimumLibraryOverlap for two contigs to be clustered together, the strand inheritance must 
 #' be present for both contigs in at least this many libraries (in addition to their similarity being at least 
@@ -164,16 +175,20 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 #' @param randomise whether to reorder contigs before clustering
 #' @param randomSeed random seed to initialize clustering
 #' @param randomWeight vector of weights for contigs for resampling. If NULL, uniform resampling is used.
-#' @param clusterBy Method for performing clustering. Default is 'hetero' (for comparing heterozygous calls to homozygous). Alternative is 'homo' (for compairson between the two homozygous calls)
 #' Typically this should be a measure of contig quality, such as library coverage, so that clustering tends to
 #' start from the better quality contigs.
-#' @param snowCluster optional snowCluster for parallel execution
-#' @param verbose = TRUE prints function progress
+#' @param clusterBy Method for performing clustering. Default is 'hetero' (for comparing heterozygous calls to homozygous). 
+#' Alternative is 'homo' (for compairson between the two homozygous calls)
+#' @param clusterParam optional \code{BiocParallelParam} specifying cluster to use for parallel execution.
+#' When \code{NULL}, execution will be serial.
+#' @param verbose prints function progress
 #' @details Note that a more stringent similarity cutoff will result in more clusters, and a longer run time,
 #' since at every iteration a distance is computed to the existing clusters. However, in lower-quality data, a
 #' more stringent cutoff may be necessary to reduce the number of contigs that are erroneously grouped.
 #' @return \code{LinkageGroupList} of vectors containing labels of contigs belonging to each linkage
 #' group
+#' 
+#' @details Note that \code{clusterParam} 
 #' 
 #' @aliases clusterContigs clusterContigs,StrandStateMatrix,StrandStateMatrix-method
 #' 
@@ -181,6 +196,7 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 #' 
 #' @importFrom cluster daisy
 #' @import clue
+#' @import BiocParallel
 #' @export
 #' @include AllClasses.R
 #

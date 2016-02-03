@@ -10,11 +10,27 @@
 #
 #' @export
 #' @rdname StrandReadMatrix
+#' @import methods
+#' @import grDevices
 
 setClass("StrandReadMatrix", 
 		 contains='matrix', 
 		 validity=function(object){is.integer(object)})
 
+#' Constructor for StrandReadMatrix
+#' @aliases StrandReadMatrix
+#' @rdname StrandReadMatrix
+#' @param counts an integer matrix of read counts
+#' @return a \code{StrandReadMatrix}
+#' @export
+#' @examples
+#' data("exampleWatsonFreq")
+#' StrandReadMatrix(exampleWatsonFreq[,2, drop=FALSE])
+
+StrandReadMatrix <- function(counts = matrix(integer()))
+{
+	new('StrandReadMatrix', counts)	
+}
 
 
 # =========================================================================
@@ -35,15 +51,34 @@ setClass("StrandFreqMatrix",
 		 validity=function(object){is.double(object)})
 
 
+#' Constructor for StrandFreqMatrix
+#' @aliases StrandFreqMatrix
+#' @rdname StrandFreqMatrix
+#' @param counts a double matrix of read count ratios
+#' @return a \code{StrandFreqMatrix}
+#' @export
+#' @examples
+#' data("exampleWatsonFreq")
+#' data("exampleCrickFreq")
+#' frequencyMatrix <- sapply(1:ncol(exampleCrickFreq), 
+#' function(colNum){exampleCrickFreq[,colNum] / exampleWatsonFreq[,colNum]})
+#' 
+#' StrandFreqMatrix(frequencyMatrix)
+
+StrandFreqMatrix <- function(counts = matrix(double()))
+{
+	new('StrandFreqMatrix', counts)	
+}
+
 
 StrandStateMatrixValidity <- function(object)
 {
-	areFactors <- all(sapply(object, function(x){is.factor(x)}))
-  haveCorrectLevels <- all(sapply(object, function(this.col) {
-     setequal(levels(this.col),as.factor(c('1','2','3')))
-    }))
-  areFactors && haveCorrectLevels
+	obVec <- as.vector(object)
+	dataCount <- length(grep("[123]", obVec))
+	naCount <- length(which(is.na(obVec)))
+	dataCount+naCount == length(obVec)
 }
+
 
 # =========================================================================
 #' A class for storing a data frame of discrete strand states 
@@ -61,25 +96,25 @@ StrandStateMatrixValidity <- function(object)
 
 
 setClass("StrandStateMatrix", 
-		 contains='data.frame', 
-		 validity=StrandStateMatrixValidity)
-
-# =========================================================================
-#' A class for storing a data frame of directional reads from a single contig
-#' of a single library
-#' 
-#' \describe{
-#'  The strand information stored in this object represent every read meeting the threshold 
-#'  critera from the specified contig for a given library.
-#' }
-#
-#' @export
-#' @rdname RawReadStrands
-
-
-setClass("RawReadStrands", 
-		 contains='data.frame', 
+		 contains='matrix', 
+		 validity=StrandStateMatrixValidity
 		 )
+
+
+#' Constructor for StrandStateMatrix
+#' @aliases StrandStateMatrix
+#' @rdname StrandStateMatrix
+#' @param states an integer matrix of strand states by library
+#' @return a \code{StrandStateMatrix}
+#' @export
+#' @examples
+#' StrandStateMatrix(matrix(ncol=2, c(1,3,1,2)))
+
+StrandStateMatrix <- function(states = matrix(integer()))
+{
+	new('StrandStateMatrix', states)	
+}
+
 
 
 # =========================================================================
@@ -96,14 +131,30 @@ setClass("LinkageGroupList",
 		 representation('list', names='character')
 		 )
 
+#' Constructor forLinkageGroupList
+#' @aliases LinkageGroupList
+#' @rdname LinkageGroupList
+#' @param linkageGroups a list of character vectors of names of contigs in each LG
+#' @param names a vector of names of linkage groups
+#' @return a \code{LinkageGroupList}
+#' @export
+#' @examples
+#' lgList <- LinkageGroupList(list(lg1=c('contig1', 'contig2'), lg2=c('contig3')),
+#' 								names=c('lg1', 'lg20'))
+
+LinkageGroupList <- function(linkageGroups = list(), names=character())
+{
+	new('LinkageGroupList', linkageGroups, names=names)	
+}
+
 
 
 # =========================================================================
 #' A class for storing contig ordering of a linkage group
 #'
 #' \describe{
-#'  This class is data.frame of two character vectors that represent the calculated ordering of a linkage group. 
-#'  The first element of this data.frame is the Linkage Group sub-setted by contigs with equal strand states across all libraries
+#'  This class is a matrix of two character vectors that represent the calculated ordering of a linkage group. 
+#'  The first element of this matrix is the Linkage Group sub-setted by contigs with equal strand states across all libraries
 #'  in the calculated order. 
 #'  The second element is the names of names of each contig in the calculated order.
 #' }
@@ -112,37 +163,86 @@ setClass("LinkageGroupList",
 #' @rdname ContigOrdering
 
 setClass("ContigOrdering",
-		 contains='data.frame')
+		 contains='matrix')
+
+
+#' Constructor for ContigOrdering
+#' @aliases ContigOrdering
+#' @rdname ContigOrdering
+#' @param ordering a matrix of two character vectors that represent the calculated ordering of a linkage group. 
+#'  The first element of this matrix is the Linkage Group sub-setted by contigs with equal strand states across all libraries
+#'  in the calculated order. 
+#'  The second element is the names of names of each contig in the calculated order.
+#' @return a \code{ContigOrdering}
+#' @export
+#' @examples
+#' thisOrdering <- ContigOrdering(matrix(ncol=2, c( "LG1.11", "chr2:1000820-2001640", 
+#' 			"LG1.1", "chr2:3002461-4003281")))
+
+ContigOrdering <- function(ordering=character())
+{
+	new('ContigOrdering', ordering)	
+}
+
 
 # =========================================================================
 #' A class for storing contig orientations
 #'
 #' \describe{
-#'  This class is data.frame of two character vectors that represent the orientation of contigs. 
-#'  The first element of this data.frame is the contigs name
-#'  The second element is the orinetation (as either + or -.
+#'  This class is a matrix of two character vectors that represent the orientation of contigs. 
+#'  The first element of thismatrix is the contigs name
+#'  The second element is the orinetation (as either + or -).
 #' }
 #
 #' @export
 #' @rdname OrientationFrame
 
 setClass("OrientationFrame",
-		 contains='data.frame')
+		 contains='matrix')
+
+#' Constructor for OrientationFrame
+#' @aliases OrientationFrame
+#' @rdname OrientationFrame
+#' @param orientation  a matrix of two character vectors that represent the orientation of contigs. 
+#'  The first element of thismatrix is the contigs name
+#'  The second element is the orinetation (as either + or -).
+#' @return a \code{OrientationFrame}
+#' @export
+#' @examples
+#' OrientationFrame(matrix(ncol=2, c("chr4:3002423-4003230", "+", 
+#' 		"chr4:140113083-141113889", "+")))
+
+OrientationFrame <- function(orientation=character())
+{
+	new('OrientationFrame', orientation)	
+}
 
 # =========================================================================
 #' A class for storing chromosome/fragment lengths
 #'
 #' \describe{
-#'  This class is data.frame of two or three vectors. The first is a character vector representing the chromosome name, the second is an integer of either 
-#'  length of the molecule or the start of the molecule, and the (optional) third is a integer of the end of the molecule.
-#'  Note the rowname represents the fragment name.
+#'  This class is a GRanges object with a meta column called name, which represents the fragment name.
 #' }
 #
 #' @export
 #' @rdname ChrTable
 
 setClass("ChrTable",
-		 contains='data.frame')
+		 contains='GRanges',
+		 validity=function(object){length(object$name) > 0})
+
+#' Constructor for ChrTable
+#' @aliases ChrTable
+#' @rdname ChrTable
+#' @param chrRanges  a GRanges object with a meta column 
+#' called name, which represents the fragment name
+#' @return a \code{ChrTable}
+#' @export
+
+ChrTable <- function(chrRanges=GRanges())
+{
+	new('ChrTable', chrRanges)	
+}
 
 
 # ========================================================================
@@ -198,7 +298,7 @@ NULL
 #' @keywords data
 NULL
 
-#' Example of a split ChromosomeTable, containing contigs and their lengths
+#' Example of a divided chromosome, containing contigs and their lengths
 #' @name exampleDividedChr
 #' @docType data
 #' @keywords data

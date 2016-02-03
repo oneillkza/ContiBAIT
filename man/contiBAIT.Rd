@@ -4,16 +4,16 @@
 \alias{contiBAIT}
 \title{contiBAIT -- master function to process strand-seq libraries into ordered linkage groups}
 \usage{
-contiBAIT(path = ".", cluster = 1, clusNum = 1, saveName = FALSE,
-  filter = FALSE, readQual = 10, readLimit = 10, pairedEnd = TRUE,
-  makePlots = FALSE, verbose = TRUE)
+contiBAIT(path = ".", cluster = 1, clusterParam = NULL,
+  saveName = FALSE, filter = FALSE, readQual = 10, readLimit = 10,
+  pairedEnd = TRUE, makePlots = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{path}{String denoting location of Strand-seq bam files (default is ".")}
 
 \item{cluster}{Integer denoting the number of reclusterings to be performed for creating linkage groups (default is 1)}
 
-\item{clusNum}{Number of parallel processors to use when clustering contigs. Default is 1.}
+\item{clusterParam}{Number of parallel processors to use when clustering contigs. Default is NULL.}
 
 \item{saveName}{String denoting the file name for saved data. If FALSE, no intermediate files are saved (default is FALSE)}
 
@@ -41,9 +41,14 @@ contiBAIT -- master function to process strand-seq libraries into ordered linkag
 #Get a list of BAM files containing libraries for cells from the same organism, aligned to the same genome
 #In this case these are the example BAM files provided with the package (hence the call to system.file);
 data("exampleDividedChr")
+library(BiocParallel)
 
 example.dir <- file.path(system.file(package='contiBAIT'), 'extdata')
 
-orderedContigs <- contiBAIT(path=example.dir, cluster=1, clusNum=1, filter=exampleDividedChr, pairedEnd=FALSE)
+orderedContigs <- contiBAIT(path=example.dir, 
+							cluster=1, 
+							clusterParam=MulticoreParam(), 
+							filter=exampleDividedChr, 
+							pairedEnd=FALSE)
 }
 

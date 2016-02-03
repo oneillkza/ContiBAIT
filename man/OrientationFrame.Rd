@@ -2,13 +2,31 @@
 % Please edit documentation in R/AllClasses.R
 \docType{class}
 \name{OrientationFrame-class}
+\alias{OrientationFrame}
 \alias{OrientationFrame-class}
 \title{A class for storing contig orientations}
+\usage{
+OrientationFrame(orientation = character())
+}
+\arguments{
+\item{orientation}{a matrix of two character vectors that represent the orientation of contigs. 
+The first element of thismatrix is the contigs name
+The second element is the orinetation (as either + or -).}
+}
+\value{
+a \code{OrientationFrame}
+}
 \description{
 \describe{
- This class is data.frame of two character vectors that represent the orientation of contigs. 
- The first element of this data.frame is the contigs name
- The second element is the orinetation (as either + or -.
+ This class is a matrix of two character vectors that represent the orientation of contigs. 
+ The first element of thismatrix is the contigs name
+ The second element is the orinetation (as either + or -).
 }
+
+Constructor for OrientationFrame
+}
+\examples{
+OrientationFrame(matrix(ncol=2, c("chr4:3002423-4003230", "+", 
+		"chr4:140113083-141113889", "+")))
 }
 

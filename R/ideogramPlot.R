@@ -3,7 +3,7 @@ ideogramPlot.func <- function(WatsonFreqList,
  							  chrTable, 
  							  plotBy='lib', 
  							  showPage=FALSE, 
- 							  orderFrame=FALSE,
+ 							  orderFrame=NULL,
  							  orientationData=NULL, 
  							  verbose=TRUE)
 {
@@ -15,28 +15,30 @@ ideogramPlot.func <- function(WatsonFreqList,
 
 		pointFrameW <- data.frame(bin=1, chr=object$chr[1], max=0)
 		pointFrameC <- pointFrameW
-		if(length(which(object$WatsonPlot == capper)) > 0) {pointFrameW <- data.frame(bin=object$bin[which(object$WatsonPlot == capper)], 
-																					  chr=object$chr[which(object$WatsonPlot == capper)], 
-																					  max=capper, 
-																					  lib=object$lib[which(object$WatsonPlot == capper)])}
-		if(length(which(object$CrickPlot == capper)) > 0) {pointFrameC <- data.frame(bin=object$bin[which(object$CrickPlot == -capper)], 
-																					 chr=object$chr[which(object$CrickPlot == -capper)], 
-																					 max=-capper, 
-																					 lib=object$lib[which(object$CrickPlot == capper)])}
+		if(length(which(object$WatsonPlot == capper)) > 0) {
+			pointFrameW <- data.frame(bin=object$bin[which(object$WatsonPlot == capper)], 
+									  chr=object$chr[which(object$WatsonPlot == capper)], 
+									  max=capper, 
+									  lib=object$lib[which(object$WatsonPlot == capper)])}
+		if(length(which(object$CrickPlot == capper)) > 0) {
+			pointFrameC <- data.frame(bin=object$bin[which(object$CrickPlot == -capper)], 
+									  chr=object$chr[which(object$CrickPlot == -capper)], 
+									  max=-capper, 
+									  lib=object$lib[which(object$CrickPlot == capper)])}
 		return(list(object, pointFrameW, pointFrameC))
 	}
 
 	roorientBAITtables <- function(WatsonFreqList, CrickFreqList, orientationFrame)
 	{
-		toFlip <- orientationFrame$contig[which(orientationFrame$orientation == '-')]
+		toFlip <- orientationFrame[which(orientationFrame[,2] == '-'),1]
 		tempWatson <- WatsonFreqList
 		WatsonFreqList[which(rownames(WatsonFreqList) %in% toFlip),] <- CrickFreqList[which(rownames(CrickFreqList) %in% toFlip),]
 		CrickFreqList[which(rownames(CrickFreqList) %in% toFlip),] <- tempWatson[which(rownames(tempWatson) %in% toFlip),]
 		return(list(WatsonFreqList, CrickFreqList))
 	}
 
-	WatsonFreqList <- WatsonFreqList[which(rownames(WatsonFreqList) %in% rownames(chrTable)),,drop=FALSE]
-	CrickFreqList <- CrickFreqList[which(rownames(CrickFreqList) %in% rownames(chrTable)),, drop=FALSE]
+	#WatsonFreqList <- WatsonFreqList[which(rownames(WatsonFreqList) %in% rownames(chrTable)),,drop=FALSE]
+	#CrickFreqList <- CrickFreqList[which(rownames(CrickFreqList) %in% rownames(chrTable)),, drop=FALSE]
 
 	if(!(is.null(orientationData)))
 	{
@@ -45,13 +47,16 @@ ideogramPlot.func <- function(WatsonFreqList,
 		CrickFreqList <- flippedBAITtables[[2]]
 	}
 
-	if(length(orderFrame) != 1)
+	if(!is.null(orderFrame))
 	{
 		WatsonFreqList <- WatsonFreqList[orderFrame[,2],,drop=FALSE]
 		CrickFreqList <- CrickFreqList[orderFrame[,2],,drop=FALSE]
-		chrTable <- chrTable[orderFrame$contig,]
-		chrTable$chr <- sub("\\..*", "", orderFrame$LG)
 
+		#Create new GRange in order
+		chrTable <- as.data.frame(chrTable)
+		rownames(chrTable) <- chrTable$name
+		chrTable <- chrTable[orderFrame[,2],]
+		chrTable <- GRanges(sub("\\..*", "", orderFrame[,1]), IRanges(start=chrTable$start, end=chrTable$end), name=chrTable$name )
 	}
 
 	if(plotBy == 'chr')
@@ -63,15 +68,16 @@ ideogramPlot.func <- function(WatsonFreqList,
 							   lib=vector())
 	}
 
-	for(lib in seq(1,ncol(WatsonFreqList)))
+	for(lib in seq_len(ncol(WatsonFreqList)))
 	{
 		if(verbose){message('-> Generating plotting data [', lib, '/', ncol(WatsonFreqList), ']' )}
 
 		WFreqs <- as.data.frame(WatsonFreqList[,lib, drop=FALSE])
 		CFreqs <- as.data.frame(CrickFreqList[,lib, drop=FALSE]*-1)
-		binNums <- table(chrTable$chr)
-		binNums <- binNums[which(binNums >0)]
-		findMax <- max(binNums)
+		binNums <- table(seqnames(chrTable))
+#		binNums <- binNums[which(binNums >0)]
+		#find longest chromosome. use only first element in instance where two chromosomes are the same size
+		findMax <- max(binNums)[1]
 		maxCap <- vector()
 		totalReads <- 0
 		allChrDataFrame <- data.frame(WatsonPlot=vector(), 
@@ -80,13 +86,14 @@ ideogramPlot.func <- function(WatsonFreqList,
 							 chr=vector(), 
 							 lib=vector())
 
-		for(i in unique(chrTable$chr))
+		for(i in unique(seqnames(chrTable)))
 		{
-			WatsonPlot <- WFreqs[rownames(chrTable[which(chrTable$chr == i),]),]
+
+			WatsonPlot <- WFreqs[chrTable$name[which(seqnames(chrTable) == i)],]
 			plotOffset <- findMax-length(WatsonPlot)
 			WatsonPlot <- c(rep(0, plotOffset), WatsonPlot)
 
-			CrickPlot <- CFreqs[rownames(chrTable[which(chrTable$chr == i),]),]
+			CrickPlot <- CFreqs[chrTable$name[which(seqnames(chrTable) == i)],]
 			plotOffset <- findMax-length(CrickPlot)
 			CrickPlot <- c(rep(0, plotOffset), CrickPlot)
 
@@ -103,7 +110,7 @@ ideogramPlot.func <- function(WatsonFreqList,
 			maxCap <- c(maxCap, capOff)
 			totalReads <- totalReads+readsPerChr
 		}
-		ideos <- data.frame(a=-1, b=1, c=findMax-binNums, d=findMax, chr=unique(chrTable$chr))
+		ideos <- data.frame(a=-1, b=1, c=as.vector(findMax-binNums), d=as.vector(findMax), chr=unique(seqnames(chrTable)))
 
 		if(plotBy == 'chr')
 		{
@@ -116,11 +123,11 @@ ideogramPlot.func <- function(WatsonFreqList,
 			levels(plotList[[1]]$chr) <- mixedsort(levels(plotList[[1]]$chr))
 			levels(ideos) <- levels(plotList[[1]]$chr)
 			print(ggplot()+
-			geom_ribbon(data=plotList[[1]], aes(x=bin, ymin=0, ymax=WatsonPlot), fill='paleturquoise4')+
-			geom_ribbon(data=plotList[[1]], aes(x=bin, ymin=0, ymax=CrickPlot), fill='sandybrown')+
-			geom_point(data=plotList[[2]], aes(bin, max), colour='paleturquoise4', size=0.5)+
-			geom_point(data=plotList[[3]], aes(bin, max), colour='sandybrown', size=0.5)+
-			geom_rect(data=ideos, mapping=aes(ymin=a, ymax=b, xmin=c, xmax=d), fill='grey70')+
+			geom_ribbon(data=plotList[[1]], aes_string(x="bin", ymin=0, ymax="WatsonPlot"), fill='paleturquoise4')+
+			geom_ribbon(data=plotList[[1]], aes_string(x="bin", ymin=0, ymax="CrickPlot"), fill='sandybrown')+
+			geom_point(data=plotList[[2]], aes_string("bin", "max"), colour='paleturquoise4', size=0.5)+
+			geom_point(data=plotList[[3]], aes_string("bin", "max"), colour='sandybrown', size=0.5)+
+			geom_rect(data=ideos, mapping=aes_string(ymin="a", ymax="b", xmin="c", xmax="d"), fill='grey70')+
 
 			coord_flip()+
 			scale_x_reverse()+
@@ -143,7 +150,7 @@ ideogramPlot.func <- function(WatsonFreqList,
 		{
 			subsetChr <- allLibraryDataFrame[allLibraryDataFrame$chr == chr,]
 
-			for(page in seq(1, ceiling(length(unique(subsetChr$lib))/25)))
+			for(page in seq_len(ceiling(length(unique(subsetChr$lib))/25)))
 			{
 				if(showPage != FALSE){page <- showPage}
 				elementStart <-	seq(0,(page*30),by=30)[page]+1
@@ -163,10 +170,10 @@ ideogramPlot.func <- function(WatsonFreqList,
 
 				plotList <- capOffPlots(subsetLib, maxCap)
 				print(ggplot()+
-				geom_ribbon(data=plotList[[1]], aes(x=bin, ymin=0, ymax=WatsonPlot), fill='paleturquoise4')+
-				geom_ribbon(data=plotList[[1]], aes(x=bin, ymin=0, ymax=CrickPlot), fill='sandybrown')+
-				geom_point(data=plotList[[2]], aes(bin, max), colour='paleturquoise4', size=0.5)+
-				geom_point(data=plotList[[3]], aes(bin, max), colour='sandybrown', size=0.5)+
+				geom_ribbon(data=plotList[[1]], aes_string(x="bin", ymin=0, ymax="WatsonPlot"), fill='paleturquoise4')+
+				geom_ribbon(data=plotList[[1]], aes_string(x="bin", ymin=0, ymax="CrickPlot"), fill='sandybrown')+
+				geom_point(data=plotList[[2]], aes_string("bin", "max"), colour='paleturquoise4', size=0.5)+
+				geom_point(data=plotList[[3]], aes_string("bin", "max"), colour='sandybrown', size=0.5)+
 				#geom_rect(data=bob, mapping=aes(ymin=a, ymax=b, xmin=c, xmax=d), fill='grey70')+
 
 				coord_flip()+
@@ -214,7 +221,7 @@ ideogramPlot.func <- function(WatsonFreqList,
 #' @import ggplot2
 #' @importFrom gtools mixedsort chr
 #' @importFrom S4Vectors DataFrame
-#' @aliases ideogramPlot ideogramPlot,StrandReadMatrix,StrandReadMatrix-method, ChrTable, ChrTable-method 
+#' @aliases ideogramPlot ideogramPlot,StrandReadMatrix,StrandReadMatrix-method,ChrTable,ChrTable-method
 #' @export
 #' @example inst/examples/ideogramPlot.R
 #' @include AllClasses.R
