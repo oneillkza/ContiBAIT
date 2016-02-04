@@ -45,7 +45,7 @@ if(ignoreInternalQual == FALSE)
 		stCol <- ncol(strandTable)
 		lqRow <- nrow(lowQualList)
 		if(verbose){message(paste("-> Removed ", lqRow, " libraries from a total of ", stCol, ". ", stCol-lqRow, " remaining (", round((stCol-lqRow)/stCol*100, digits=1), "%)", sep="") )}
-		strandTable <- strandTable[,!(names(strandTable) %in% lowQualList[,1])]
+		strandTable <- strandTable[,!(colnames(strandTable) %in% lowQualList[,1])]
 	}	
 }
 	rawTable <- strandTable
