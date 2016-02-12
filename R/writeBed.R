@@ -15,9 +15,11 @@ writeBed.func <- function(chrTable,
 	chrTable <- as.data.frame(chrTable)
 	rownames(chrTable) <- chrTable$name
 	chrTable <- chrTable[,1:3]
-	toBed <- data.frame(chrTable[contigOrder[,2],], strand=orientationData[contigOrder[,2],2] )
+	toBed <- data.frame(chrTable[contigOrder[,2],], 
+						strand=orientationData[contigOrder[,2],2] )
 	bedNames <- paste(contigOrder[,1],contigOrder[,2], sep="_")
-	bedRange <- GRanges(toBed[,1:3], strand=toBed$strand, score=libWeight[contigOrder[,2]], name=bedNames)
+	bedRange <- GRanges(toBed[,1:3], strand=toBed$strand, 
+						score=libWeight[contigOrder[,2]], name=bedNames)
 	export.bed(con =file,bedRange)
 
 }
@@ -40,6 +42,7 @@ writeBed.func <- function(chrTable,
 ####################################################################################################
 
 setMethod('writeBed',
-		  signature = signature(orientationData='OrientationFrame', contigOrder='ContigOrdering'),
+		  signature = signature(orientationData='OrientationFrame', 
+		  					  contigOrder='ContigOrdering'),
 		  definition = writeBed.func
 		  )

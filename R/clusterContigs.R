@@ -23,7 +23,8 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 			if(!is.null(randomWeight))
 			{
 				#dequantise by adding some tiny random noise in case there are many zeroes:
-				randomWeight <- randomWeight + runif(length(randomWeight)) / (10^5*max(randomWeight))
+				randomWeight <- randomWeight + 
+					runif(length(randomWeight)) / (10^5*max(randomWeight))
 				names(randomOrder) <- sample(rownames(object), prob=randomWeight)
 				
 			}else
@@ -45,11 +46,13 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 		lg.num <- 1 #index to keep track of location in list
 		
 		#Function to assign a new contig to an existing linkage group, or create a new one:
-		if(verbose){message(paste('Initializing contig ', contigs[1], ' [1/', nrow(object), '] as LG1', sep=""))}		
+		if(verbose){message(paste('Initializing contig ', contigs[1], 
+								  ' [1/', nrow(object), '] as LG1', sep=""))}		
 
 		for (contig.num in 2:nrow(object))
 		{
-			if(verbose){message('Clustering contig ', contigs[contig.num], ' [', contig.num, '/', nrow(object), ']   \r', appendLF=FALSE )}
+			if(verbose){message('Clustering contig ', contigs[contig.num], 
+								' [', contig.num, '/', nrow(object), ']   \r', appendLF=FALSE )}
 			computePairwiseSim <- function(linkage.num, contig.num)
 			{
 				contigStrand <- object[contig.num,]
@@ -69,7 +72,10 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 			}else
 				#Otherwise, add this to the best matched group, and recompute the strand state for that group:
 			{
-				if(verbose){message(paste('\n  -> Adding ', contigs[contig.num],' to LG', best.match, ' for a cluster of ',length(linkageGroups[[best.match]])+1 , sep=""))}
+				if(verbose){message(paste('\n  -> Adding ', 
+										  contigs[contig.num],' to LG', best.match, 
+										  ' for a cluster of ',
+										  length(linkageGroups[[best.match]])+1 , sep=""))}
 				linkageGroups[[best.match]] <- append(linkageGroups[[best.match]], contig.num)
 				strandVec <- computeConsensus(linkageGroups[[best.match]], object)
 				linkageStrands[best.match,] <- strandVec
@@ -116,7 +122,9 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 		#Then get consensus:
 		if(!is.null(clusterParam))
 		{
-			if(verbose){message(paste('-> Running ', recluster, ' clusterings in parallel on ', clusterParam$workers, ' processors', sep=""))}
+			if(verbose){message(paste('-> Running ', recluster, 
+									  ' clusterings in parallel on ', 
+									  clusterParam$workers, ' processors', sep=""))}
 			multiClust <-bplapply(  seq_len(recluster), 
 						  			runOneForTheEnsemble, 
 									object, 
@@ -151,11 +159,12 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 	}
 
 	#order linkage groups by biggest first
-	#names(linkageGroups) <- sapply(1:length(linkageGroups), function(x){paste('LG', x, ' (', length(linkageGroups[[x]]), ')', sep='') })
-  	linkageGroups <- LinkageGroupList(
+	linkageGroups <- LinkageGroupList(
   						 linkageGroups[order(sapply(linkageGroups, length), decreasing=TRUE)], 
   						  names= sapply(1:length(linkageGroups), 
-  						  			  function(x){paste('LG', x, ' (', length(linkageGroups[[x]]), ')', sep='') }))
+  						  			  function(x){
+  						  			  	paste('LG', x, ' (', length(linkageGroups[[x]]), ')', sep='') 
+  						  			  	}))
 
 
 	return(linkageGroups)

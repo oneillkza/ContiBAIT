@@ -27,8 +27,12 @@ if(ignoreInternalQual == FALSE)
 		
 		if(libraryQual < lowQualThreshold || libraryQual == "NaN")
 		{
-			if(libraryQual == "NaN" & verbose){message(paste("    -> ", libName, " has insufficient reads. Removing", sep=""))}else{
-			if(verbose){message(paste("    -> ",libName, " has high background (", (1-libraryQual)*100, " %). Removing", sep=""))}}
+			if(libraryQual == "NaN" & verbose){
+				message(paste("    -> ", libName, 
+							  " has insufficient reads. Removing", sep=""))}else{
+			if(verbose){
+				message(paste("    -> ",libName, 
+							  " has high background (", (1-libraryQual)*100, " %). Removing", sep=""))}}
 			lowQualList <- rbind(lowQualList, colQual)
 		} else {
 			qualList <- rbind(qualList, colQual)
@@ -44,7 +48,10 @@ if(ignoreInternalQual == FALSE)
 	} else {
 		stCol <- ncol(strandTable)
 		lqRow <- nrow(lowQualList)
-		if(verbose){message(paste("-> Removed ", lqRow, " libraries from a total of ", stCol, ". ", stCol-lqRow, " remaining (", round((stCol-lqRow)/stCol*100, digits=1), "%)", sep="") )}
+		if(verbose){message(paste("-> Removed ", lqRow,
+								  " libraries from a total of ", stCol, ". ", 
+								  stCol-lqRow, " remaining (", 
+								  round((stCol-lqRow)/stCol*100, digits=1), "%)", sep="") )}
 		strandTable <- strandTable[,!(colnames(strandTable) %in% lowQualList[,1])]
 	}	
 }
@@ -58,22 +65,27 @@ if(ignoreInternalQual == FALSE)
 	{
 		##### PRE-FILTER CONTIGS ##### 
 		#Ignore contigs present in fewer than 10 libraries
-		strandTable <- strandTable[which(apply(strandTable, 1, function(x){length(which(!is.na(x)))} >= minLib)),]
+		strandTable <- strandTable[which(apply(strandTable, 1, 
+											   function(x){length(which(!is.na(x)))} >= minLib)),]
 
 		#Ignore contigs that are entirely WC (likely contain inversions) (NB all <10 contigs have already been excluded)
 		colThresh <- ncol(strandTable)*filterThreshold
 		rowThresh <- nrow(strandTable)*filterThreshold 
 		if(onlyWC)
 		{
-			strandTable <- strandTable[which(apply(strandTable, 1, function(x){length(which(x == 2))} > colThresh )),]
+			strandTable <- strandTable[which(apply(strandTable, 1, 
+												   function(x){length(which(x == 2))} > colThresh )),]
 		}else{
-			strandTable <- strandTable[which(apply(strandTable, 1, function(x){length(which(x == 2))} <= colThresh )),]
+			strandTable <- strandTable[which(apply(strandTable, 1, 
+												   function(x){length(which(x == 2))} <= colThresh )),]
 		}
 		##### PRE-FILTER LIBRARIES #####
 		#Ignore libraries that are mostly WC (indicating Strand-Seq failure)
-		strandTable <- strandTable[,which(apply(strandTable, 2, function(x){length(which(x == 2))} <= rowThresh ))]
+		strandTable <- strandTable[,which(apply(strandTable, 2, 
+												function(x){length(which(x == 2))} <= rowThresh ))]
 		#And ignore libraries that are entirely NA (indicating no cell present)	
-		strandTable <- strandTable[,which(apply(strandTable, 2, function(x){length(which(is.na(x)))} <= rowThresh ))]
+		strandTable <- strandTable[,which(apply(strandTable, 2, 
+												function(x){length(which(is.na(x)))} <= rowThresh ))]
 		return(strandTable)
 	}
 
@@ -94,7 +106,8 @@ if(ignoreInternalQual == FALSE)
 	if(orderMethod=='libsAndConc')
 	{
 		if(verbose){message("-> Computing QA measures for contigs and sorting by best quality first")}
-		contigNAs <- apply(strandTable, 1, function(x){length(which(!is.na(x)))}) / ncol(strandTable) #number of libraries contig is non-NA 
+		contigNAs <- apply(strandTable, 1, 
+						   function(x){length(which(!is.na(x)))}) / ncol(strandTable) #number of libraries contig is non-NA 
 		#Compute the divergence between the call for a contig and the raw value used to make that call:
 		computeOneAgreement <- function(contigName)
 		{
@@ -107,10 +120,12 @@ if(ignoreInternalQual == FALSE)
 					contigRaw <- rawTable[contigName, lib]
 					if(contigCall == 2)
 					{
-						contigDist <- (strandTableThreshold - abs(contigRaw)) / strandTableThreshold
+						contigDist <- (strandTableThreshold - abs(contigRaw)) /
+							strandTableThreshold
 					}else
 					{
-						contigDist <- (abs(contigRaw) - strandTableThreshold) / (1-strandTableThreshold)
+						contigDist <- (abs(contigRaw) - strandTableThreshold) / 
+							(1-strandTableThreshold)
 					}
 					contigDists <- append(contigDists, contigDist)
 				}

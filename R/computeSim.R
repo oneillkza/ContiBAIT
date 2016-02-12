@@ -6,5 +6,6 @@
 
 computeSim <- function(contigStrand, linkageStrand, minimumLibraryOverlap)
 {
-	.Call('computeSim', as.integer(contigStrand), as.integer(linkageStrand), minimumLibraryOverlap)
+	.Call('computeSim', as.integer(contigStrand), 
+		  as.integer(linkageStrand), minimumLibraryOverlap)
 }

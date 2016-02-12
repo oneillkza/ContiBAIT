@@ -27,6 +27,9 @@
 #' 
 #' @return ordered contigs in bed format. Depending on options, intermediate files and plots will also be generated
 #' @import diagram
+#' @importFrom graphics boxplot hist legend lines text
+#' @importFrom stats cutree dist hclust lm rbinom
+#' @importFrom utils head tail
 #' @importFrom S4Vectors DataFrame
 #' @example inst/examples/contiBAIT.R
 #' @export
@@ -183,8 +186,13 @@ contiBAIT <- function(path=".",
     dev.off()
   }
 
- if(saveName != FALSE){save(this.message, strandFrequencyList,strandStateMatrixList,linkage.groups,linkage.merged, reorientedTable, contigOrder, file=paste(saveName, '_', cluster, 'clusters_linkgeData.Rd', sep=""))}
-
+  if(saveName != FALSE){
+  	save(this.message, strandFrequencyList,strandStateMatrixList,
+  		 linkage.groups,linkage.merged, reorientedTable, 
+  		 contigOrder, 
+  		 file=paste(saveName, '_', cluster, 'clusters_linkgeData.Rd', sep=""))
+  }
+  
   return(contigOrder)
 
 }

@@ -9,15 +9,19 @@ barplotLinkageGroupCalls.func <- function(object, chrTable, by='lg', returnTable
 		chr.vector <- rep(0, length(complete.list))
 		names(chr.vector) <- complete.list
 		chr.represented <- unique(lg.chr)
-		chr.lengths <- sapply(chr.represented, function(chr.name){sum(lg.lengths[which(lg.chr==chr.name)])})
+		chr.lengths <- sapply(chr.represented, 
+							  function(chr.name){sum(lg.lengths[which(lg.chr==chr.name)])})
 		chr.vector[chr.represented] <- chr.lengths
 		chr.vector
 	}
 
-	linkage.lengths <- lapply(object, function(x){ width(chrTable[chrTable$name %in% x])  }) 
-	linkage.chr <- lapply(object, function(x){as.character(seqnames(chrTable)[chrTable$name %in% x])  })
+	linkage.lengths <- lapply(object, 
+							  function(x){ width(chrTable[chrTable$name %in% x])  }) 
+	linkage.chr <- lapply(object, 
+						  function(x){as.character(seqnames(chrTable)[chrTable$name %in% x])  })
 	complete.list <- unique(unlist(linkage.chr))
-	chr.table <- sapply(1:length(linkage.chr), calcOneGroupChr, linkage.chr, linkage.lengths, complete.list)
+	chr.table <- sapply(1:length(linkage.chr), 
+						calcOneGroupChr, linkage.chr, linkage.lengths, complete.list)
 	chr.table2 <- matrix(unlist(chr.table), nrow=nrow(chr.table))
 	rownames(chr.table2) <- rownames(chr.table)
 	colnames(chr.table2) <- c(paste('LG', 1:ncol(chr.table), sep=""))
@@ -53,7 +57,9 @@ barplotLinkageGroupCalls.func <- function(object, chrTable, by='lg', returnTable
 		theme(axis.text.x = element_text(angle = 90, hjust = 1))+
 		labs(x="Chromosome", y="DNA Represented in Chromosome (Mb)")+
 		theme(legend.position=leg)+
-		ggtitle(paste("Barplot of ", length(unique(chromoFrame$LG)), " linkage groups clustering into ", length(unique(chromoFrame$chr)), " chromosomes",  sep="")))
+		ggtitle(paste("Barplot of ", length(unique(chromoFrame$LG)), 
+					  " linkage groups clustering into ", 
+					  length(unique(chromoFrame$chr)), " chromosomes",  sep="")))
 	}
 
 	if(returnTable == TRUE){return(chr.table)}
