@@ -24,7 +24,7 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
     
     mergedContigs <- list()
     beenMerged <- vector()
-    mergedStrands <- matrix(nrow=ncol(linkageStrands), ncol=ncol(linkageStrands))
+    mergedStrands <- matrix(nrow=nrow(linkageStrands), ncol=ncol(linkageStrands))
     groupCount <- 1
     
     for(contig in rownames(linkageStrands))
@@ -62,7 +62,7 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
     return(list(mergedStrands=mergedStrands, contigKey=orderedContigMatrix))
   }
 
-  if(is.null(whichLG)){whichLG=c(seq_len(length(linkageGroupList)))}
+  if(is.null(whichLG)){whichLG=seq_len(length(linkageGroupList))}
   orderedGroups <- matrix(nrow=0, ncol=2)
  
   for(lg in whichLG)

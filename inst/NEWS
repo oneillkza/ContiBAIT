@@ -1,3 +1,13 @@
+contiBAIT v0.99.3
+==============
+
+Bug fixes:
+- fixed error where strandTable removal in preprocessStrandTable was resulting in empty matrix
+- fixed error where combineZeroDistances was creating an empty matrix that was too small for some data
+- fixed bugs in contiBAIT:
+a) bug where error would occur if verbose=FALSE but saveFiles=TRUE (because this.message only produced if verbose is TRUE)
+b) changed linkage.groups to linkage.merged the second time reorientLinkageGroups is called
+
 contiBAIT v0.99.2
 ==============
 (In response to first round of Bioconductor review).
