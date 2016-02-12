@@ -109,7 +109,7 @@ strandSeqFreqTable <- function(bamFileList,
 	{
 		colnames(strandTable) <- sapply(bamFileList, 
 										function(x) 
-											trsplit(basename(x), 
+											strsplit(basename(x), 
 													paste('\\', fieldSep, sep=""))[[1]][field] )
 	}else{
 		colnames(strandTable) <- bamFileList 
