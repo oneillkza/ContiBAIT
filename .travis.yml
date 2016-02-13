@@ -2,7 +2,7 @@ language: R
 sudo: required
 
 install:
-  - sudo apt-get install --no-install-recommends texinfo
+  - sudo apt-get install --no-install-recommends -y texinfo
 bioc_required: true
 bioc_packages:
   - BiocCheck
