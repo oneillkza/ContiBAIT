@@ -1,7 +1,7 @@
 Package: contiBAIT
 Type: Package
 Title: Improves Early Build Genome Assemblies using Strand-Seq Data
-Version: 0.99.2
+Version: 0.99.4
 Date: 2016-02-02
 Author: Kieran O'Neill, Mark Hills, Mike Gottlieb
 Maintainer: Kieran O'Neill <koneill@bccrc.ca>
