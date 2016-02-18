@@ -27,6 +27,9 @@
 #' 
 #' @return ordered contigs in bed format. Depending on options, intermediate files and plots will also be generated
 #' @import diagram
+#' @importFrom graphics boxplot hist legend lines text
+#' @importFrom stats cutree dist hclust lm rbinom
+#' @importFrom utils head tail
 #' @importFrom S4Vectors DataFrame
 #' @example inst/examples/contiBAIT.R
 #' @export
@@ -49,9 +52,7 @@ contiBAIT <- function(path=".",
   #Create directory to store all the files
   bamFileList <- list.files(path=path, pattern=".bam$", full.names=TRUE)
 
-	if(verbose)
-  	{
-  	this.message <- paste('RUNNING CONTIBAIT ON ', 
+ 	this.message <- paste('RUNNING CONTIBAIT ON ', 
                       length(bamFileList), 
                       ' BAM FILES!\n\n PARAMETERS FOR BAM ANALYSIS: \n----------------------------------\n     -> paired end data=', 
                       pairedEnd, 
@@ -64,21 +65,22 @@ contiBAIT <- function(path=".",
                       '\n\n PARAMETERS FOR CLUSTERING: \n----------------------------------\n     -> number of reclusters=',
                        cluster)
   	
-  		if(!is.null(clusterParam))
-  		{
-  			this.message <- paste(this.message,
-  								  '\n     -> number of cores to use=', 
-  								  clusterParam$workers)
-  		}
-        this.message <- paste(this.message,
-                       '\n\n ADDITIONAL PARAMETERS:', 
-                       '\n----------------------------------\n     -> saving intermediate files=', 
-                       if(saveName==FALSE){'FALSE'}else{'TRUE'}, 
-                       '\n     -> creating analysis plots=', 
-                       makePlots, 
-                       '\n----------------------------------')
-    message(this.message)
-	}
+  if(!is.null(clusterParam))
+  {
+
+  	this.message <- paste(this.message,
+    					  '\n     -> number of cores to use=', 
+  						  clusterParam$workers)
+  }
+    this.message <- paste(this.message,
+                   '\n\n ADDITIONAL PARAMETERS:', 
+                   '\n----------------------------------\n     -> saving intermediate files=', 
+                   if(saveName==FALSE){'FALSE'}else{'TRUE'}, 
+                   '\n     -> creating analysis plots=', 
+                    makePlots, 
+                    '\n----------------------------------')
+
+  if(verbose){message(this.message)}
 
   if(verbose){message('-> Creating read table from bam files [1/7]')}
 
@@ -123,10 +125,11 @@ contiBAIT <- function(path=".",
   if(verbose){message('-> Merging related linkage groups [5/7]')}
   linkage.merged <- mergeLinkageGroups(linkage.groups, 
                                        reorientedTable[[1]],
+                                       cluster=cluster,
   									 clusterParam=clusterParam)
 
   if(verbose){message('-> Re-checking orientation of merged groups [6/7]')}
-  reorientedTable <- reorientLinkageGroups(linkage.groups, 
+  reorientedTable <- reorientLinkageGroups(linkage.merged, 
                                            reorientedTable[[1]], 
                                            previousOrient=reorientedTable[[2]], 
                                            verbose=FALSE)
@@ -171,7 +174,7 @@ contiBAIT <- function(path=".",
                                          strandFrequencyList[[1]], 
                                          strandFrequencyList[[2]], 
                                          saveOrdered=TRUE, 
-                                         randomAttempts=500)
+                                         randomAttempts=100)
     ideogramPlot(strandFrequencyList[[3]], 
                  strandFrequencyList[[4]], 
                  chrTable, 
@@ -183,8 +186,13 @@ contiBAIT <- function(path=".",
     dev.off()
   }
 
- if(saveName != FALSE){save(this.message, strandFrequencyList,strandStateMatrixList,linkage.groups,linkage.merged, reorientedTable, contigOrder, file=paste(saveName, '_', cluster, 'clusters_linkgeData.Rd', sep=""))}
-
+  if(saveName != FALSE){
+  	save(this.message, strandFrequencyList,strandStateMatrixList,
+  		 linkage.groups,linkage.merged, reorientedTable, 
+  		 contigOrder, 
+  		 file=paste(saveName, '_', cluster, 'clusters_linkgeData.Rd', sep=""))
+  }
+  
   return(contigOrder)
 
 }

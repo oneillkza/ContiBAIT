@@ -47,7 +47,8 @@ mapGapFromOverlap <- function(sceFile,  gapFile, chrTable, verbose=TRUE, overlap
 		gapPerChr <- gapFile[seqnames(gapFile) == as.character(chr)]
 		if(max(gapPerChr$overlapSCE) >= overlapNum)
 		{
-			CNA.object <- CNA(gapPerChr$overlapSCE, as.character(seqnames(gapPerChr)), start(gapPerChr))
+			CNA.object <- CNA(gapPerChr$overlapSCE, 
+							  as.character(seqnames(gapPerChr)), start(gapPerChr))
 			smoothed.CNA.object <- smooth.CNA(CNA.object, smooth.region=2)
 			segmented <- segment(smoothed.CNA.object, verbose=0)
 			segs <- segmented$output

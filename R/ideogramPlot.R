@@ -32,8 +32,10 @@ ideogramPlot.func <- function(WatsonFreqList,
 	{
 		toFlip <- orientationFrame[which(orientationFrame[,2] == '-'),1]
 		tempWatson <- WatsonFreqList
-		WatsonFreqList[which(rownames(WatsonFreqList) %in% toFlip),] <- CrickFreqList[which(rownames(CrickFreqList) %in% toFlip),]
-		CrickFreqList[which(rownames(CrickFreqList) %in% toFlip),] <- tempWatson[which(rownames(tempWatson) %in% toFlip),]
+		WatsonFreqList[which(rownames(WatsonFreqList) %in% toFlip),] <- 
+			CrickFreqList[which(rownames(CrickFreqList) %in% toFlip),]
+		CrickFreqList[which(rownames(CrickFreqList) %in% toFlip),] <- 
+			tempWatson[which(rownames(tempWatson) %in% toFlip),]
 		return(list(WatsonFreqList, CrickFreqList))
 	}
 
@@ -56,7 +58,8 @@ ideogramPlot.func <- function(WatsonFreqList,
 		chrTable <- as.data.frame(chrTable)
 		rownames(chrTable) <- chrTable$name
 		chrTable <- chrTable[orderFrame[,2],]
-		chrTable <- GRanges(sub("\\..*", "", orderFrame[,1]), IRanges(start=chrTable$start, end=chrTable$end), name=chrTable$name )
+		chrTable <- GRanges(sub("\\..*", "", orderFrame[,1]), 
+							IRanges(start=chrTable$start, end=chrTable$end), name=chrTable$name )
 	}
 
 	if(plotBy == 'chr')
@@ -110,7 +113,8 @@ ideogramPlot.func <- function(WatsonFreqList,
 			maxCap <- c(maxCap, capOff)
 			totalReads <- totalReads+readsPerChr
 		}
-		ideos <- data.frame(a=-1, b=1, c=as.vector(findMax-binNums), d=as.vector(findMax), chr=unique(seqnames(chrTable)))
+		ideos <- data.frame(a=-1, b=1, c=as.vector(findMax-binNums), 
+							d=as.vector(findMax), chr=unique(seqnames(chrTable)))
 
 		if(plotBy == 'chr')
 		{

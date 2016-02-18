@@ -214,7 +214,8 @@ setMethod("show",
 		  	cat('A linkage group list containing ', length(object), ' linkage groups.\n\n')
 		  	show(data.frame(NumberOfContigs=head(sapply(object, length)), row.names=NULL))
 		  	if(length(object) > 5)
-            show(data.frame("...           "=tail(sapply(object, length)), row.names=seq(length(object)-5, length(object) )))
+            show(data.frame("...           "=tail(sapply(object, length)), 
+            				row.names=seq(length(object)-5, length(object) )))
 
 		  }
 )
@@ -237,8 +238,11 @@ setMethod("show",
     		len1 <- length(unique(sapply(lg, '[', 1)))     # first element of object$LG
     		len2 <- length(unique(sapply(lg, '[', 2)))   # second element of object$LG
  
-		  	cat('A matrix of', len1, 'LGs split into', len2, 'sub-groups from', nrow(object), 'ordered fragments.\n')
-		  	if(length(unique(sapply(1:nrow(object), function(x) strsplit(as.character(object[,1]), "\\.")[[x]][2]))) > 25)
+		  	cat('A matrix of', len1, 'LGs split into', len2, 
+		  		'sub-groups from', nrow(object), 'ordered fragments.\n')
+		  	if(length(unique(sapply(1:nrow(object), 
+		  							function(x) 
+		  								strsplit(as.character(object[,1]), "\\.")[[x]][2]))) > 25)
 		  	{
 			  	show(head(table(object[,1])))
 			  	cat('...')
@@ -263,6 +267,7 @@ setMethod("show",
 		  {
 		  	elements <- nrow(object)
 		  	misorientations <- nrow(object[which(object[,2] == '-'),])
-		  	cat('A matrix of ', elements, ' contigs with ',misorientations,' identified misorientations.\n')
+		  	cat('A matrix of ', elements, ' contigs with ',
+		  		misorientations,' identified misorientations.\n')
 		  }
 )
