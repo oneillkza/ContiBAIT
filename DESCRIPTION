@@ -1,0 +1,32 @@
+Package: contiBAIT
+Type: Package
+Title: Improves Early Build Genome Assemblies using Strand-Seq Data
+Version: 0.99.4
+Date: 2016-02-02
+Author: Kieran O'Neill, Mark Hills, Mike Gottlieb
+Maintainer: Kieran O'Neill <koneill@bccrc.ca>
+Description: Using strand inheritance data from multiple single cells
+        from the organism whose genome is to be assembled, contiBAIT
+        can cluster unbridged contigs together into putative
+        chromosomes, and order the contigs within those chromosomes.
+License: BSD_2_clause + file LICENSE
+Depends: BH (>= 1.51.0-3), Rsamtools (>= 1.21)
+LinkingTo: Rcpp, BH
+Imports: grDevices, clue, cluster, gplots, IRanges, GenomicRanges,
+        S4Vectors, Rcpp, TSP, GenomicFiles, gtools, rtracklayer,
+        BiocParallel, DNAcopy, colorspace, reshape2, ggplot2, methods,
+        exomeCopy, diagram
+Suggests: BiocStyle
+biocViews: CellBasedAssays, QualityControl, WholeGenome, Genetics,
+        GenomeAssembly
+Collate: 'AllClasses.R' 'AllGenerics.R' 'BAIT.R'
+        'barplotLinkageGroupCalls.R' 'clusterContigs.R'
+        'computeConsensus.R' 'computeSim.R' 'contiBAIT.R'
+        'ideogramPlot.R' 'makeBoxPlot.R' 'makeChrTable.R'
+        'mapGapFromOverlap.R' 'mergeLinkageGroups.R'
+        'orderAllLinkageGroups.R' 'orderContigsGreedy.R'
+        'orderContigsTSP.R' 'plotContigOrder.R' 'plotLGDistances.R'
+        'plotWCdistribution.R' 'preprocessStrandTable.R'
+        'reorientLinkageGroups.R' 'strandSeqFreqTable.R' 'writeBed.R'
+RoxygenNote: 5.0.1
+NeedsCompilation: yes
