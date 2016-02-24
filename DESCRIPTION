@@ -10,6 +10,8 @@ Description: Using strand inheritance data from multiple single cells from the
     contigs together into putative chromosomes, and order the contigs within
     those chromosomes.
 License: BSD_2_clause + file LICENSE
+URL: https://github.com/oneillkza/ContiBAIT
+BugReports: https://github.com/oneillkza/ContiBAIT/issues
 Depends:
     BH (>= 1.51.0-3),
     Rsamtools (>= 1.21)
