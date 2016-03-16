@@ -4,12 +4,14 @@
 \alias{plotContigOrder}
 \title{Plot ordering of contigs within a single linkage group.}
 \usage{
-plotContigOrder(contigOrder, lg)
+plotContigOrder(contigOrder, lg = "all", verbose = TRUE)
 }
 \arguments{
 \item{contigOrder}{matrix from orderAllContigs with the subdivided linkage groups and the names of the contigs to plot}
 
-\item{lg}{Integer specifying the linkage group by which to plot}
+\item{lg}{Integer specifying the linkage group by which to plot. Default is all}
+
+\item{verbose}{prints messages to the terminal (default is TRUE)}
 }
 \value{
 A ggplot object (which will be plotted automatically if not assigned).

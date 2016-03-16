@@ -19,18 +19,44 @@ setGeneric("preprocessStrandTable",
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 #' @export clusterContigs
 setGeneric("clusterContigs", 
-		   function(object, 
-		   		 similarityCutoff=NULL,
-		   		 recluster=NULL, 
-		   		 minimumLibraryOverlap=NULL,
-		   		 randomise=NULL,
-		   		 randomSeed=NULL,
-		   		 randomWeight=NULL,
-		   		 clusterParam=NULL,
-		   		 clusterBy=NULL,
-		   		 verbose=NULL) standardGeneric("clusterContigs"),
-		   signature='object')
+		   	function(object, 
+		   			 similarityCutoff=NULL,
+			   		 recluster=NULL, 
+			   		 minimumLibraryOverlap=NULL,
+			   		 randomise=NULL,
+			   		 randomSeed=NULL,
+			   		 randomWeight=NULL,
+			   		 clusterParam=NULL,
+			   		 clusterBy=NULL,
+			   		 verbose=NULL) standardGeneric("clusterContigs"),
+			   		 signature='object')
 
+## =========================================================================
+## Generic for findSimilarLibraries.R
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export findSimilarLibraries
+setGeneric("findSimilarLibraries", 
+		   function(strandStateMatrix, 
+		   		 	strandReadMatrix,
+		   		 	chrGrange,
+		   		 	chrNum,
+			   		cluster=NULL, 
+			   		clusterParam=NULL,
+			   		verbose=NULL) standardGeneric("findSimilarLibraries"),
+			   		signature=c('strandStateMatrix', 'strandReadMatrix', 'chrGrange', 'chrNum'))
+
+## =========================================================================
+## Generic for locateMisorients.R
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export locateMisorients
+setGeneric("locateMisorients", 
+		   function(compiledGrange, 
+		   		 	gapFile=NULL,
+		   		 	stateNum=NULL,
+		   		 	readCutOff=NULL,
+			   		writeBed=NULL, 
+			   		verbose=NULL) standardGeneric("locateMisorients"),
+			   		signature='compiledGrange')
 
 ## =========================================================================
 ## Generic for reorientLinkageGroups.R
@@ -218,7 +244,6 @@ setMethod("show",
 
 		  }
 )
-
 
 ## show ContigOrdering
 #' @name show,ContigOrdering-method

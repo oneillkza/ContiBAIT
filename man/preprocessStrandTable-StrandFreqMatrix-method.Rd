@@ -11,7 +11,7 @@ a genome}
 \S4method{preprocessStrandTable}{StrandFreqMatrix}(strandTable,
   strandTableThreshold = 0.8, filterThreshold = 0.8,
   orderMethod = "libsAndConc", lowQualThreshold = 0.9, verbose = TRUE,
-  minLib = 10, ignoreInternalQual = FALSE)
+  minLib = 10)
 }
 \arguments{
 \item{strandTable}{data.frame containing the strand table to use as input}
@@ -22,13 +22,12 @@ a genome}
 
 \item{orderMethod}{the method to oder contigs. currently libsAndConc only option. Set to FALSE to not order contigs based on library quality}
 
-\item{lowQualThreshold}{background threshold at which to toss an entire library}
+\item{lowQualThreshold}{background threshold at which to toss an entire library. If NULL, function will not make an overall assessment of library quality.
+Very chimeric assemblies can appear low quality across all libraries.}
 
 \item{verbose}{messages written to terminal}
 
 \item{minLib}{minimum number of libraries a contig must be present in to be included in the output}
-
-\item{ignoreInternalQual}{logical that prevents function for making an overall assessment of library quality. Very chimeric assemblies can appear low quality across all libraries.}
 }
 \value{
 A list of one matrix and three quality data.frames -- 1: a matrix of WW/WC/WW calls for all contigs; 3: the quality of libraries used (based on frequencies outside expected ranges); 4: A data.frame of libraries that are of low quality and therefore excluded from analysis; 5: contigs that are present as WC in more libraries than expected. These are excluded from the strandStateMatrix, but are potentially worth investigating for chimerism.

@@ -37,7 +37,7 @@ makeChrTable <- function(bamFile,
 						 splitBy=NULL, 
 					     verbose=TRUE) 
 {
-	if(verbose){message(paste("-> Creating chromosome table from", bamFile, sep=""))}
+	if(verbose){message(paste("-> Creating chromosome table from ", bamFile, sep=""))}
 	lengthOfContigs <- scanBamHeader(bamFile)[[1]][["text"]]
 	bamChr <- sapply(lengthOfContigs[grep("SN:", lengthOfContigs)], "[",1)
 	bamChr <- gsub("SN:", "", as.character(bamChr))
@@ -45,21 +45,57 @@ makeChrTable <- function(bamFile,
 	bamLength <- sapply(lengthOfContigs[grep("LN:", lengthOfContigs)], "[",2)
 	bamLength <-  as.numeric(gsub("LN:", "", bamLength))
 
-
 	chrTable <- GRanges(bamChr, IRanges(start=0, end=bamLength))
 
 	if(!(is.null(splitFile)))
 	{
-		appendedChrTable <- append(chrTable, splitFile)
+		#If the splitFile contains a name meta (ie is a ChrTable instance), remove it to allow appending.
+		if(length(elementMetadata(splitFile)) != 0)
+		{
+			strippedSplitFile <- splitFile
+			strand(strippedSplitFile) <- '*'
+			elementMetadata(strippedSplitFile) <- NULL
+			appendedChrTable <- append(chrTable, strippedSplitFile)			
+		}else{ 
+			appendedChrTable <- append(chrTable, splitFile)
+		}
 		chrTable <- disjoin(appendedChrTable)
 	}
 
 	if(!(is.null(splitBy)))
 	{
-		chrTable <- subdivideGRanges(chrTable, subsize=splitBy)
+		#Only split those fragments bigger than splitBy; improves speed of subdivideGRanges
+		splitBig <- chrTable[which(width(chrTable) >= splitBy)]
+		dontSplit <- chrTable[which(width(chrTable) < splitBy)]
+		#Alternate strand for fragments. Prevents inherent 'reduce' within subdivideGRanges that will merge fragments previously split with splitFile
+		strand(splitBig) <- rep(c('+','-'), (length(splitBig)/2)+1)[1:length(splitBig)]
+		splitBig <- subdivideGRanges(splitBig, subsize=splitBy)
+		strand(splitBig) <- "*"
+		#then merge everything back together
+		chrTable <- append(splitBig, dontSplit)
+		chrTable <- sort(chrTable)
 	}
 
-	chrTable$name <- paste(seqnames(chrTable), ":", start(chrTable), "-", end(chrTable), sep="")
+	#now attempt to reappend metadata. First if there's strand information
+	olap <- NULL
+	if(length(which(strand(splitFile) != "*")) != 0)
+	{
+		olap <- findOverlaps(chrTable, splitFile)
+		strand(chrTable[queryHits(olap)]) <- strand(splitFile[subjectHits(olap)])
+	}
+
+	if(length(splitFile$name) > 0)
+	{
+		if(is.null(olap)){olap <- findOverlaps(chrTable, splitFile)}
+		chrTable$name <- c(1:length(chrTable))
+		chrTable$name[queryHits(olap)] <- splitFile$name[subjectHits(olap)]
+		unLocation <- grep("chrUn", chrTable$name)
+		chrTable$name <- paste(seqnames(chrTable), ":", start(chrTable), "-", end(chrTable), sep="")	
+		chrTable$name[unLocation] <- paste("chrUn_", seqnames(chrTable)[unLocation], ":", start(chrTable)[unLocation], "-", end(chrTable)[unLocation], sep="")
+	}else{
+		chrTable$name <- paste(seqnames(chrTable), ":", start(chrTable), "-", end(chrTable), sep="")	
+	}
+
 	chrTable <- ChrTable(chrTable)
 	return(chrTable)
 }
