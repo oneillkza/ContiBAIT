@@ -4,7 +4,8 @@ plotWCdistribution.func <- function(object, filterThreshold=0.8)
 {
 	object <- object[, colSums(!(is.na(object))) > 0]
 	breaks <-  round( seq(-1,1, by=2/40),digits=2)
-	matrixHistogram <- sapply(seq(1, ncol(object)), function(x) hist(object[,x], breaks=breaks, plot=FALSE)$count)
+	matrixHistogram <- sapply(seq(1, ncol(object)), function(x) 
+		hist(object[,x], breaks=breaks, plot=FALSE)$count)
 	matrixHistogram <- t(matrixHistogram)
 	avContNum <- mean(apply(matrixHistogram, 1, sum))
 	matrixTable <- table(c(rbinom(100000, 40, 0.5), 1:40)) /(100000/(avContNum/2)) 
@@ -21,11 +22,14 @@ plotWCdistribution.func <- function(object, filterThreshold=0.8)
 			col=colors, 
 			xlab="WC frequency per contig (W-C)/(W+C)", 
 			ylab="Number of contigs", 
-			main=paste("WC distributions from", nrow(matrixHistogram), "libraries\nwith an average of", round(avContNum, digits=0), "fragments", sep=" ") )
+			main=paste("WC distributions from", nrow(matrixHistogram), 
+					   "libraries\nwith an average of", round(avContNum, digits=0), 
+					   "fragments", sep=" ") )
 	lines(names(matrixTable), matrixTable, col='mediumblue', lwd=2)
 
 	#find the average height of WW and CC calls to compare to modelled data
-	AvHomoHeight <- apply(matrixHistogram[,which(abs(as.numeric(colnames(matrixHistogram))) >= filterThreshold)], 2, median)
+	AvHomoHeight <- 
+		apply(matrixHistogram[,which(abs(as.numeric(colnames(matrixHistogram))) >= filterThreshold)], 2, median)
 	WWLoc <- AvHomoHeight[which(as.numeric(names(AvHomoHeight)) >= filterThreshold)]
 	CCLoc <- AvHomoHeight[which(as.numeric(names(AvHomoHeight)) <= filterThreshold)]
 	lines(c(1,length(WWLoc)), c(sum(CCLoc),sum(CCLoc)), col='green4', lwd=2)

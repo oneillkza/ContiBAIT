@@ -24,7 +24,8 @@ orderContigsTSP <- function(linkageGroupReadTable)
   
   #order the table entered into function and convert to factor, then add factor levels.
   linkageGroupReadTable[] <- lapply(linkageGroupReadTable[contigsOrder,], factor)
-  linkageGroupReadTable <- data.frame(lapply(linkageGroupReadTable, function(x){levels(x) <- c(1,2,3); x}) )
+  linkageGroupReadTable <- data.frame(lapply(linkageGroupReadTable, 
+  										   function(x){levels(x) <- c(1,2,3); x}) )
   rownames(linkageGroupReadTable) <- contigsOrder
 
   return(list(orderVector=contigsOrder, orderedMatrix=linkageGroupReadTable))

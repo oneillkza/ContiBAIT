@@ -1,5 +1,6 @@
 language: R
 sudo: required
+
 bioc_required: true
 bioc_packages:
   - BiocCheck

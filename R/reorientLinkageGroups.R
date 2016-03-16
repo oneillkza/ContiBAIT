@@ -21,7 +21,8 @@ reorientLinkageGroups.func <- function(object,
 	colnames(completeOrientation) <- c('contig', 'orientation')
 	rememberRows <- rownames(allStrands)
 	
-	allStrands <-  data.frame(lapply(data.frame(allStrands), function(x){factor(x, levels=c(1,2,3))})) 
+	allStrands <-  data.frame(lapply(data.frame(allStrands), 
+									 function(x){factor(x, levels=c(1,2,3))})) 
 	rownames(allStrands) <- rememberRows
   
 	#find consensus
@@ -33,7 +34,8 @@ reorientLinkageGroups.func <- function(object,
 
 	for(lg in names(object))
 	{
-		if(verbose){message('Reorienting fragments from ', lg, ' [', counter, '/', length(object), ']' )}
+		if(verbose){message('Reorienting fragments from ', lg, 
+							' [', counter, '/', length(object), ']' )}
 
 		linkageGroup <- object[[lg]]
 		if(length(linkageGroup) > 1)
@@ -41,7 +43,8 @@ reorientLinkageGroups.func <- function(object,
 			subsetStrands <- allStrands[which(rownames(allStrands) %in% linkageGroup),]
 
 			#add dummy opposite line to subsetStrands
-			subsetStrands <- rbind(subsetStrands, linkageStrands[which(rownames(linkageStrands) == lg),])
+			subsetStrands <- rbind(subsetStrands, 
+								   linkageStrands[which(rownames(linkageStrands) == lg),])
 			subsetStrands <- replace(subsetStrands, subsetStrands == 2, NA)
       
 			sim <- suppressWarnings(1-as.matrix(daisy(data.frame(subsetStrands))))
@@ -99,6 +102,7 @@ reorientLinkageGroups.func <- function(object,
 ####################################################################################################
 
 setMethod('reorientLinkageGroups',
-		  signature = signature(object='LinkageGroupList', allStrands = 'StrandStateMatrix'),
+		  signature = signature(object='LinkageGroupList', 
+		  					  allStrands = 'StrandStateMatrix'),
 		  definition = reorientLinkageGroups.func
 		  )

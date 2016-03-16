@@ -26,7 +26,8 @@ computeConsensus <- function(groupMembers, allStrands, minSupport=0.05)
 		tables <- do.call(cbind, lapply(groupStrands, makeTab))
 		rownames(tables) <- seq_len(3)
 		strandVec <- apply(tables, 2, function(x){names(which.max(x))})
-		qcScores <- apply(groupStrands, 2, function(x){length(which(!is.na(x)))}) / nrow(groupStrands)
+		qcScores <- apply(groupStrands, 2, 
+						  function(x){length(which(!is.na(x)))}) / nrow(groupStrands)
 		strandVec[which(qcScores<minSupport)] <- NA
 		#scores <- apply(tables, 2, function(x){})
 		#counter <- counter + 1

@@ -62,10 +62,16 @@ strandSeqFreqTable <- function(bamFileList,
 	strandInfo <- function(x, strand=TRUE, ...) {
 		# Handle paired end read by looking only at first mate read
 		if(pairedEnd){
-		    param <- ScanBamParam(flag=scanBamFlag(isFirstMateRead=TRUE, isUnmappedQuery=FALSE, isMinusStrand=strand ), mapqFilter=qual, what=c("rname","pos","strand"))
+		    param <- ScanBamParam(flag=scanBamFlag(isFirstMateRead=TRUE, 
+		    									   isUnmappedQuery=FALSE, 
+		    									   isMinusStrand=strand ), 
+		    					  mapqFilter=qual, 
+		    					  what=c("rname","pos","strand"))
 	    }else{
 	    	# Handle single end reads by just looking at strand direction	
-		    param <- ScanBamParam(flag=scanBamFlag(isUnmappedQuery=FALSE, isMinusStrand=strand ), mapqFilter=qual, what=c("rname","pos","strand"))
+		    param <- ScanBamParam(flag=scanBamFlag(isUnmappedQuery=FALSE, 
+		    									   isMinusStrand=strand ), 
+		    					  mapqFilter=qual, what=c("rname","pos","strand"))
 	    }
 	    scanBam(x, param=param)[[1]]
 	}
@@ -101,13 +107,17 @@ strandSeqFreqTable <- function(bamFileList,
 	strandTable <- matrix(nrow=lengthOfContigs, ncol=bamFileLength)
 	if(field != FALSE)
 	{
-		colnames(strandTable) <- sapply(bamFileList, function(x) strsplit(basename(x), paste('\\', fieldSep, sep=""))[[1]][field] )
+		colnames(strandTable) <- sapply(bamFileList, 
+										function(x) 
+											strsplit(basename(x), 
+													paste('\\', fieldSep, sep=""))[[1]][field] )
 	}else{
 		colnames(strandTable) <- bamFileList 
 	}
 
 	#if library names are numeric, add 'lib_' in front to avoid numeric colnames 
-	colnames(strandTable) [grep("^[0-9]", colnames(strandTable) )] <- paste('lib', colnames(strandTable) [grep("[0-9]", colnames(strandTable) )], sep='_')
+	colnames(strandTable) [grep("^[0-9]", colnames(strandTable) )] <- 
+		paste('lib', colnames(strandTable) [grep("[0-9]", colnames(strandTable) )], sep='_')
 
 	rownames(strandTable) <- filter$name
 	countTable <- strandTable
@@ -136,14 +146,22 @@ strandSeqFreqTable <- function(bamFileList,
 		# Read bamfile into tileChunk pieces
 		bf = BamFile(fileName, yieldSize=tileChunk)
 		# Count plus strand reads from first read
-		resultPos <- reduceByYield(bf, strandInfo, overlapStrand, DONE=loopedChunk, grfilter=filter)
+		resultPos <- reduceByYield(bf, strandInfo, 
+								   overlapStrand, DONE=loopedChunk, 
+								   grfilter=filter)
 
 		if(is.list(resultPos)){
-			warning('\n####################\n WARNING! BAM FILE', index, 'APPEARS TO BE SINGLE-END. TRY RERUNNING WITH pairedEnd=FALSE \n####################')
+			warning('\n####################\n WARNING! BAM FILE', 
+					index, 'APPEARS TO BE SINGLE-END. TRY RERUNNING WITH pairedEnd=FALSE \n####################')
 			break
 		}
 		# Count minus strand reads from first read
-		resultNeg <- reduceByYield(bf, strandInfo, overlapStrand, DONE=loopedChunk, grfilter=filter, strand=FALSE)
+		resultNeg <- reduceByYield(bf, 
+								   strandInfo, 
+								   overlapStrand, 
+								   DONE=loopedChunk, 
+								   grfilter=filter, 
+								   strand=FALSE)
 
 		# Total read number
 		absCount <- resultPos + resultNeg
@@ -158,7 +176,8 @@ strandSeqFreqTable <- function(bamFileList,
 			CrickTable[,indexCounter] <- resultNeg
 		}
 
-		if(verbose){message('-> Creating contig table for index ', index, " [", indexCounter, "/", bamFileLength, "]")}
+		if(verbose){message('-> Creating contig table for index ',
+							index, " [", indexCounter, "/", bamFileLength, "]")}
 		indexCounter <- indexCounter+1
 	}
 
