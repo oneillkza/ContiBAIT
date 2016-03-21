@@ -1,22 +1,32 @@
 contiBAIT v0.99.4
 ==============
 
-- Added some core R dependencies to make things happy with the new devel version of R
-- Shortened some lines of code
-
-
-contiBAIT v0.99.3
-==============
-
 Bug fixes:
 - fixed error where strandTable removal in preprocessStrandTable was resulting in empty matrix
 - fixed error where combineZeroDistances was creating an empty matrix that was too small for some data
 - fixed bugs in contiBAIT:
-a) bug where error would occur if verbose=FALSE but saveFiles=TRUE (because this.message only produced if verbose is TRUE)
-b) changed linkage.groups to linkage.merged the second time reorientLinkageGroups is called
+	a) bug where error would occur if verbose=FALSE but saveFiles=TRUE (because this.message only produced if verbose is TRUE)
+	b) changed linkage.groups to linkage.merged the second time reorientLinkageGroups is called
+- Changed makeChrTable so it can now accept both a splitFile and a splitBy argument. Also will ensure that GRanges with meta columns won't interfere with splitting
+- plotContigOrder now defaults to all chromosomes unless 'lg' is specified
+- preprocessStrandTable has retired ignoreInternatlQual. To ignore quality libraries, just set lowQualityThreshold to NULL
+- strandSeqFreqTable now behaves differently if the filter file has strand information. Any elements in the filter object will have their reads flipped to reflect the orientation specified in this file.
+- replaced reorientLinkageGroup0s and mergeLinkageGroups into a combined function; reoientAndMergeLGs.
+
+New Functions:
+1. findSimilarLibraries.  Uses the clustering algorithm across libraries rather than contigs to find libraries where the distribution of directional reads are similar across a particular chromosome. These libraries can be merged into deeper files to look for chimerism using thoroughBed
+2. thoroughBed. This function takes the list of lists from findSimilarLibraries and for each chromsome, merges similar libraries together. The output is a GRange object with merged reads for each chromosome
+3. locateMisorients. This function takes the output of thoroghBed and using a circular binary segmenting algorithm to identify changes in strandState. The resulting file is of class ChrTable and includes directionality. As such, when fed into strandSeqFreqTable, regions of misorientations will be flipped, and chimeric sequence will be seperated.
+
+contiBAIT v0.99.3
+==============
+
+- Added some core R dependencies to make things happy with the new devel version of R
+- Shortened some lines of code
 
 contiBAIT v0.99.2
 ==============
+
 (In response to first round of Bioconductor review).
 
 CLUSTERCONTIGS:

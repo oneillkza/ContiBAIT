@@ -19,40 +19,56 @@ setGeneric("preprocessStrandTable",
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 #' @export clusterContigs
 setGeneric("clusterContigs", 
-		   function(object, 
-		   		 similarityCutoff=NULL,
-		   		 recluster=NULL, 
-		   		 minimumLibraryOverlap=NULL,
-		   		 randomise=NULL,
-		   		 randomSeed=NULL,
-		   		 randomWeight=NULL,
-		   		 clusterParam=NULL,
-		   		 clusterBy=NULL,
-		   		 verbose=NULL) standardGeneric("clusterContigs"),
-		   signature='object')
-
+		   	function(object, 
+		   			 similarityCutoff=NULL,
+			   		 recluster=NULL, 
+			   		 minimumLibraryOverlap=NULL,
+			   		 randomise=NULL,
+			   		 randomSeed=NULL,
+			   		 randomWeight=NULL,
+			   		 clusterParam=NULL,
+			   		 clusterBy=NULL,
+			   		 verbose=NULL) standardGeneric("clusterContigs"),
+			   		 signature='object')
 
 ## =========================================================================
-## Generic for reorientLinkageGroups.R
+## Generic for findSimilarLibraries.R
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-#' @export reorientLinkageGroups
-setGeneric("reorientLinkageGroups", 
+#' @export findSimilarLibraries
+setGeneric("findSimilarLibraries", 
+		   function(strandStateMatrix, 
+		   		 	strandReadMatrix,
+		   		 	chrGrange,
+		   		 	chrNum,
+			   		cluster=NULL, 
+			   		clusterParam=NULL,
+			   		verbose=NULL) standardGeneric("findSimilarLibraries"),
+			   		signature=c('strandStateMatrix', 'strandReadMatrix', 'chrGrange', 'chrNum'))
+
+## =========================================================================
+## Generic for locateMisorients.R
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export locateMisorients
+setGeneric("locateMisorients", 
+		   function(compiledGrange, 
+		   		 	gapFile=NULL,
+		   		 	stateNum=NULL,
+		   		 	readCutOff=NULL,
+			   		writeBed=NULL, 
+			   		verbose=NULL) standardGeneric("locateMisorients"),
+			   		signature='compiledGrange')
+
+## =========================================================================
+## Generic for reorientAndMergeLGs.R
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export reorientAndMergeLGs
+setGeneric("reorientAndMergeLGs", 
 		   function(object, 
 		   			allStrands,
-		   			previousOrient=NULL,
-		   		 	verbose=NULL) standardGeneric("reorientLinkageGroups"),
-		   signature=c('object', 'allStrands'))
-
-## =========================================================================
-## Generic for mergeLinkageGroups.R
-## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-#' @export mergeLinkageGroups
-setGeneric("mergeLinkageGroups", 
-           function(object, 
-                    allStrands,
-                    clusterParam=NULL, 
-                    cluster=NULL,
-                    similarityCutoff=NULL) standardGeneric("mergeLinkageGroups"),
+			   		cluster=NULL, 
+			   		clusterParam=NULL,
+			   		similarityCutoff=NULL,
+		   		 	verbose=NULL) standardGeneric("reorientAndMergeLGs"),
 		   signature=c('object', 'allStrands'))
 
 ## =========================================================================
@@ -212,14 +228,46 @@ setMethod("show",
 		  definition=function(object)
 		  {
 		  	cat('A linkage group list containing ', length(object), ' linkage groups.\n\n')
-		  	show(data.frame(NumberOfContigs=head(sapply(object, length)), row.names=NULL))
-		  	if(length(object) > 5)
+		  	if(length(object) < 10)	{	  	
+		  	show(data.frame(NumberOfContigs=sapply(object, length), row.names=NULL))
+		  	}else{
+ 		  	show(data.frame(NumberOfContigs=head(sapply(object, length)), row.names=NULL))
             show(data.frame("...           "=tail(sapply(object, length)), 
             				row.names=seq(length(object)-5, length(object) )))
-
+        	}
 		  }
 )
 
+## show LibraryGroupList
+#' @name show,LibraryGroupList-method
+#' @export
+#' @docType methods
+#' @title show-methods
+#' @param object a LibraryGroupList
+#' @return nothing
+#' @description Shows a LibraryGroupList
+setMethod("show",
+		  signature=signature(object="LibraryGroupList"),
+		  definition=function(object)
+		  {
+		  	cat('A library group list containing ', length(object), ' linkage groups.\n\n')
+		  	if(length(object) < 10)	{	  	
+		  	show(data.frame(Contig=names(object),
+		  					MostlyCrickLibraries=sapply(seq_along(object), function(x) length(object[[x]][[1]])),
+		  					MostlyWatsonLibraries=sapply(seq_along(object), function(x) length(object[[x]][[2]])), 
+		  					row.names=NULL))
+		  	}else{
+		  	show(data.frame(Contig=names(object),
+		  					MostlyCrickLibraries=c(head(sapply(seq_along(object), function(x) length(object[[x]][[1]]))), 
+		  										 "...", 
+		  										 tail(sapply(seq_along(object), function(x) length(object[[x]][[1]])))),
+		  					MostlyWatsonLibraries=c(head(sapply(seq_along(object), function(x) length(object[[x]][[2]]))),
+		  										 "...", 
+		  										 tail(sapply(seq_along(object), function(x) length(object[[x]][[2]])))),
+		  					row.names=c(1:6, "...", seq(length(object)-5, length(object) ) )))
+		  	}
+		  }
+)
 
 ## show ContigOrdering
 #' @name show,ContigOrdering-method

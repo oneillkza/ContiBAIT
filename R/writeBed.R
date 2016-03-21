@@ -28,7 +28,7 @@ writeBed.func <- function(chrTable,
 #' function to write contig order to BED file
 #' @param file character string for bed file name to write
 #' @param chrTable a GRanges object with a 'name' meta column matching contig names. Product of makeChrTable
-#' @param orientationData data.frame of contig and strand (with rownames matching contig names). Product of reorientLinkageGroups[[2]]
+#' @param orientationData data.frame of contig and strand (with rownames matching contig names). Product of reorientAndMergeLGs[[2]]
 #' @param contigOrder an object of type ContigOrdering with ordered Linkage Groups and contigs. Product of orderAllLinkageGroups 
 #' @param libWeight average quality across all libraries for a contig
 #' @importFrom rtracklayer export.bed
