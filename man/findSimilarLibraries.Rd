@@ -49,8 +49,10 @@ example.dir <- file.path(system.file(package='contiBAIT'), 'extdata')
 
 chrGrange <- exampleDividedChr[which(exampleDividedChr$name \%in\% rownames(exampleWCMatrix))]
 
-relatedLibList <- lapply(seq_len(length(unique(seqnames(chrGrange)))), function(x) findSimilarLibraries(exampleWCMatrix, exampleReadCounts, chrGrange, x, cluster=1, clusterParam=MulticoreParam()))
+exampleLibList <- lapply(seq_len(length(unique(seqnames(chrGrange)))), function(x) findSimilarLibraries(exampleWCMatrix, exampleReadCounts, chrGrange, x, cluster=1, clusterParam=MulticoreParam()))
+exampleLibList <- exampleLibList[!sapply(exampleLibList, is.null)]
+exampleLibList <- LibraryGroupList(exampleLibList)
 
-show(relatedLibList)
+show(exampleLibList)
 }
 

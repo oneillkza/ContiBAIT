@@ -22,16 +22,6 @@ findSimilarLibraries.func <- function(strandStateMatrix,
     }
   }
 
-  #Only take the top two groups: the 'mostly Watson' and 'mostly Crick'
-  findBestMatch <- function(libNum)
-  { 
-    groupCon <- computeConsensus(linkage.libraries[[libNum]], strandStateLibrary)
-    maxOne <- sapply(c(1,3), function(x) length(which(groupCon == x)))
-    maxOne <- which(maxOne == max(maxOne))
-    maxOne <- if(maxOne == 1){paste("Watson")}else{paste("Crick")}
-    return(paste(chrToUse[chrNum], "_mostly_", maxOne, "_(", length(linkage.libraries[[libNum]]), ")", sep="" ) )
-  }
-
   chrToUse <- unique(seqnames(chrGrange)[which(duplicated(as.character(seqnames(chrGrange))))])
 
   if(verbose){message("  -> Running analysis on ", chrToUse[chrNum], " [", chrNum, "/", length(chrToUse), "]")}
@@ -80,10 +70,22 @@ findSimilarLibraries.func <- function(strandStateMatrix,
                                            clusterBy='homo',
                                            randomise=TRUE,
                                            verbose=FALSE)
-        newNames <- sapply(1:2, function(x) findBestMatch(x))
-        topTwo <- LinkageGroupList(linkage.libraries[1:2])
-        names(topTwo) <- newNames
 
+
+        groupCon <- computeConsensus(linkage.libraries[[1]], strandStateLibrary)
+        maxOne <- sapply(c(1,3), function(x) length(which(groupCon == x)))
+        maxOne <- which(maxOne == max(maxOne))[1]
+        maxOne <- if(maxOne == 1){c("Watson", "Crick")}else{c("Crick", "Watson")}
+        newNames <- c(paste(chrToUse[chrNum], "_mostly_", maxOne[1], "_(", length(linkage.libraries[[1]]), ")", sep="" ),
+                       paste(chrToUse[chrNum], "_mostly_", maxOne[2], "_(", length(linkage.libraries[[2]]), ")", sep=""))
+
+        if(maxOne[1] == "Crick")
+        {
+          topTwo <- LinkageGroupList(linkage.libraries[1:2])
+        }else{
+          topTwo <- LinkageGroupList(list(linkage.libraries[[2]], linkage.libraries[[1]]))
+        }
+        names(topTwo) <- newNames[order(newNames)]
         return(topTwo)
       }
     }

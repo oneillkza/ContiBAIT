@@ -22,8 +22,9 @@ computeConsensus <- function(groupMembers, allStrands, minSupport=0.05)
 	{
 		groupStrands <- allStrands[groupMembers,]
 		#one liner to make a table
-		makeTab <- function(y){sapply(1:3, function(x) length(grep(x, y)))}
-		tables <- do.call(cbind, lapply(groupStrands, makeTab))
+		tables <- sapply(1:ncol(groupStrands), 
+						 function(y) sapply(1:3, 
+						 function(x) length(grep(x, groupStrands[,y]))))
 		rownames(tables) <- seq_len(3)
 		strandVec <- apply(tables, 2, function(x){names(which.max(x))})
 		qcScores <- apply(groupStrands, 2, 

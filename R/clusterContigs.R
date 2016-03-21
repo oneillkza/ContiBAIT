@@ -158,9 +158,10 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 		}
 	}
 
+	linkageGroups <- linkageGroups[order(sapply(linkageGroups, length), decreasing=TRUE)]
 	#order linkage groups by biggest first
 	linkageGroups <- LinkageGroupList(
-  						 linkageGroups[order(sapply(linkageGroups, length), decreasing=TRUE)], 
+  						 linkageGroups, 
   						  names= sapply(1:length(linkageGroups), 
   						  			  function(x){
   						  			  	paste('LG', x, ' (', length(linkageGroups[[x]]), ')', sep='') 
