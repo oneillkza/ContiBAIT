@@ -14,7 +14,7 @@
 \arguments{
 \item{chrTable}{a GRanges object with a 'name' meta column matching contig names. Product of makeChrTable}
 
-\item{orientationData}{data.frame of contig and strand (with rownames matching contig names). Product of reorientLinkageGroups[[2]]}
+\item{orientationData}{data.frame of contig and strand (with rownames matching contig names). Product of reorientAndMergeLGs[[2]]}
 
 \item{contigOrder}{an object of type ContigOrdering with ordered Linkage Groups and contigs. Product of orderAllLinkageGroups}
 

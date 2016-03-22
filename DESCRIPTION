@@ -17,7 +17,7 @@ Depends:
     Rsamtools (>= 1.21)
 LinkingTo: Rcpp, BH
 Imports:
-	grDevices,
+    grDevices,
     clue,
     cluster,
     gplots,
@@ -36,6 +36,7 @@ Imports:
     ggplot2,
     methods,
     exomeCopy,
+    GenomicAlignments,
     diagram
 Suggests:
     BiocStyle
@@ -50,11 +51,12 @@ Collate:
     'computeConsensus.R'
     'computeSim.R'
     'contiBAIT.R'
+    'findSimilarLibraries.R'
     'ideogramPlot.R'
+    'locateMisorients.R'
     'makeBoxPlot.R'
     'makeChrTable.R'
     'mapGapFromOverlap.R'
-    'mergeLinkageGroups.R'
     'orderAllLinkageGroups.R'
     'orderContigsGreedy.R'
     'orderContigsTSP.R'
@@ -62,7 +64,8 @@ Collate:
     'plotLGDistances.R'
     'plotWCdistribution.R'
     'preprocessStrandTable.R'
-    'reorientLinkageGroups.R'
+    'reorientAndMergeLGs.R'
     'strandSeqFreqTable.R'
+    'thoroughBed.R'
     'writeBed.R'
 RoxygenNote: 5.0.1

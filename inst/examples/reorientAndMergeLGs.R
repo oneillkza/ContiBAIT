@@ -1,7 +1,7 @@
+data(exampleLGList)
 data(exampleWCMatrix)
-clusteredContigs <- clusterContigs(exampleWCMatrix, randomise=FALSE)
 
-reorientedMatrix <- reorientLinkageGroups(clusteredContigs,
+reorientedMatrix <- reorientAndMergeLGs(exampleLGList,
 										  exampleWCMatrix)
 
 # Note that in this example data, everything is correctly oreiented to

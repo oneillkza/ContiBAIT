@@ -18,7 +18,7 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
     linkRows <- apply(linkageStrands, 1, function(x) length(which(is.na(x))) != ncol(linkageStrands))
     linkCols <- apply(linkageStrands, 2, function(x) length(which(is.na(x))) != nrow(linkageStrands))
     linkageStrands <- linkageStrands[linkRows , linkCols]
-    
+    linkageMat <- linkageMat[linkRows, linkCols]   
     ##Combine zero dist contigs:
     strandDist <- as.matrix(daisy(linkageStrands))
     
