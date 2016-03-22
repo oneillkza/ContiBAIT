@@ -46,6 +46,18 @@ setGeneric("findSimilarLibraries",
 			   		signature=c('strandStateMatrix', 'strandReadMatrix', 'chrGrange', 'chrNum'))
 
 ## =========================================================================
+## Generic for thoroughBed.R
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export thoroughBed
+setGeneric("thoroughBed", 
+		   function(bamFileList,
+		   			relatedLibList, 
+		   		 	qual=NULL,
+		   		 	pairedEnd=NULL,
+		   			verbose=NULL) standardGeneric("thoroughBed"),
+			   		signature=c('bamFileList', 'relatedLibList'))
+
+## =========================================================================
 ## Generic for locateMisorients.R
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 #' @export locateMisorients
@@ -57,6 +69,7 @@ setGeneric("locateMisorients",
 			   		writeBed=NULL, 
 			   		verbose=NULL) standardGeneric("locateMisorients"),
 			   		signature='compiledGrange')
+
 
 ## =========================================================================
 ## Generic for reorientAndMergeLGs.R
@@ -257,7 +270,9 @@ setMethod("show",
 		  					MostlyWatsonLibraries=sapply(seq_along(object), function(x) length(object[[x]][[2]])), 
 		  					row.names=NULL))
 		  	}else{
-		  	show(data.frame(Contig=names(object),
+		  	show(data.frame(Contig=c(head(names(object)),
+		  							"...",
+		  							tail(names(object))),
 		  					MostlyCrickLibraries=c(head(sapply(seq_along(object), function(x) length(object[[x]][[1]]))), 
 		  										 "...", 
 		  										 tail(sapply(seq_along(object), function(x) length(object[[x]][[1]])))),
