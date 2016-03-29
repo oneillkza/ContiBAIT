@@ -52,6 +52,7 @@ Collate:
     'computeSim.R'
     'contiBAIT.R'
     'findSimilarLibraries.R'
+    'highlightAssemblyErrors.R'
     'ideogramPlot.R'
     'locateMisorients.R'
     'makeBoxPlot.R'

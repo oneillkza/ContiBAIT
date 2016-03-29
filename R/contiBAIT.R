@@ -117,7 +117,9 @@ contiBAIT <- function(path=".",
    # make orientation calls for each group; WW and CC only
   if(verbose){message('-> Reorienting discordant fragments [4/7]')}
   reorientedTable <- reorientAndMergeLGs(linkage.groups, 
-                                           strandStateMatrixList[[1]])
+                                          cluster=cluster,
+                                          clusterParam=clusterParam,
+                                          strandStateMatrixList[[1]])
 
   linkage.merged <- reorientedTable[[3]]
 
@@ -173,7 +175,14 @@ contiBAIT <- function(path=".",
     dev.off()
   }
 
- if(saveName != FALSE){save(this.message, strandFrequencyList,strandStateMatrixList,linkage.groups,linkage.merged, reorientedTable, contigOrder, file=paste(saveName, '_', cluster, 'clusters_linkgeData.Rd', sep=""))}
+ if(saveName != FALSE){save(this.message,
+                            filter, 
+                            strandFrequencyList,
+                            strandStateMatrixList,
+                            linkage.groups, 
+                            reorientedTable, 
+                            contigOrder, 
+                            file=paste(saveName, '_', cluster, 'clusters_linkgeData.Rd', sep=""))}
 
   return(contigOrder)
 

@@ -1,28 +1,4 @@
-
-####################################################################################################
-#' thoroughBed -- function to merge chromosomes from libraries that have the same strand states 
-#' 
-#' @param bamFileList vector containing the location of the bams file to be read
-#' @param relatedLibList list where each element contains all library names that show similar strand pattern. The product of findSimilarLibraries 
-#' @param qual Mapping quality threshold. Default is 10 
-#' @param pairedEnd Whether the bam files being read are in paired end format. Default is TRUE. Note,
-#' since paired reads will be the same direction, only first mate read of pair is used in output to reduce file size
-#' @param verbose prints messages to the terminal (default is TRUE)
-#' 
-#' @return a GRanges object comprising merged directional reads from all libraries in relatedLibList. 
-#' @import Rsamtools
-#' @import IRanges
-#' @import GenomicRanges
-#' @import GenomicFiles
-#' @import GenomicAlignments
-#' @importFrom S4Vectors DataFrame
-#' @example inst/examples/thoroughBed.R
-#' @export
-#' @include AllClasses.R
-####################################################################################################
-
-
-thoroughBed <- function(bamFileList, relatedLibList, qual=10, pairedEnd=TRUE, verbose=TRUE)
+thoroughBed.func <- function(bamFileList, relatedLibList, qual=10, pairedEnd=TRUE, verbose=TRUE)
 {   
   directionalRange <- GRanges()
   #set parameters. Parameters are different if paired end data is used.  
@@ -34,6 +10,7 @@ thoroughBed <- function(bamFileList, relatedLibList, qual=10, pairedEnd=TRUE, ve
     param <- ScanBamParam(flag=scanBamFlag(isUnmappedQuery=FALSE), mapqFilter=qual)
   }
 
+  names(relatedLibList) <- NULL
   #Open each bam and allocate chromosomes: ie. chrck library name against findSimilarLibrary Output.
   for(fileName in bamFileList)
   {
@@ -62,3 +39,32 @@ thoroughBed <- function(bamFileList, relatedLibList, qual=10, pairedEnd=TRUE, ve
   }
   return(directionalRange)
 }
+
+####################################################################################################
+#' thoroughBed -- function to merge chromosomes from libraries that have the same strand states 
+#' 
+#' @param bamFileList vector containing the location of the bams file to be read
+#' @param relatedLibList list where each element contains all library names that show similar strand pattern. The product of findSimilarLibraries 
+#' @param qual Mapping quality threshold. Default is 10 
+#' @param pairedEnd Whether the bam files being read are in paired end format. Default is TRUE. Note,
+#' since paired reads will be the same direction, only first mate read of pair is used in output to reduce file size
+#' @param verbose prints messages to the terminal (default is TRUE)
+#' 
+#' @return a GRanges object comprising merged directional reads from all libraries in relatedLibList. 
+#' @aliases thoroughBed thoroughBed,thoroughBed-LibraryGroupList-method
+#' @rdname thoroughBed
+#' @import Rsamtools
+#' @import IRanges
+#' @import GenomicRanges
+#' @import GenomicFiles
+#' @import GenomicAlignments
+#' @importFrom S4Vectors DataFrame
+#' @example inst/examples/thoroughBed.R
+#' @export
+#' @include AllClasses.R
+####################################################################################################
+
+setMethod('thoroughBed',
+          signature=signature(relatedLibList='LibraryGroupList'),
+          definition = thoroughBed.func
+          )

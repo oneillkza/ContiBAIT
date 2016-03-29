@@ -96,6 +96,8 @@ makeChrTable <- function(bamFile,
 		chrTable$name <- paste(seqnames(chrTable), ":", start(chrTable), "-", end(chrTable), sep="")	
 	}
 
+	#removes bug where occasionally empty or 1 nucleotide splits occur
+	chrTable <- chrTable[width(chrTable) > 1]
 	chrTable <- ChrTable(chrTable)
 	return(chrTable)
 }

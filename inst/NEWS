@@ -1,3 +1,15 @@
+contiBAIT v0.99.5
+==============
+Bug fixes:
+Major changes:
+-Added master function highlightAssemblyErrors for use in detecting misorientations and chimera
+
+Minor changes:
+-Added generic for thoroghBed
+-Fixed view error for LibraryGroupList with >10 elements
+-Removed empty/1 base elements from makeChrTable, that occasionally occurred while using a splitBy file
+
+
 contiBAIT v0.99.4
 ==============
 
