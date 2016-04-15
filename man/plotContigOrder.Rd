@@ -30,6 +30,6 @@ contigOrder <- orderAllLinkageGroups(exampleLGList,
 								     exampleWCMatrix, 
 								     exampleStrandFreq, 
 								     exampleReadCounts)
-plotContigOrder(contigOrder)
+plotContigOrder(contigOrder[[1]])
 }
 

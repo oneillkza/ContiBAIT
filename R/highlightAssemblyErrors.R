@@ -35,6 +35,8 @@ highlightAssemblyErrors <- function(path,
 {
 	bamFileList <- list.files(path=path, pattern=".bam$", full.names=TRUE)
 	filter <- makeChrTable(bamFileList[1], splitBy=splitBy, verbose=verbose)
+
+	#if(length(which(width(filter) >= splitBy)))
 	strandFrequencyList <- strandSeqFreqTable(bamFileList, 
 	                                             filter=filter,
 	                                             field=FALSE, 

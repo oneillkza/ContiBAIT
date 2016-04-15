@@ -1,3 +1,19 @@
+contiBAIT v0.99.6
+==============
+Bug fixes:
+Major changes:
+-Added function fixLinkageGroups. This iteratively looks through each ordered linkageGroup and assesses whether the contigs actually belong together based on similarity of adjacent contigs. For example,
+any adjacent contigs that are < 0.6 similar (this relatedCutOff is a user-definable option) are unlikely to actually be adjacent. This allows users to split groups that clustercContigs had erroneously merged
+-Added function mergeFlankedLGs. For organisms with large chromosomes, computing a consensus strand state for each linkage group is inefficient; the 'consensus' will be highly variable compared to the 
+contigs at each extreme flank of a linkage group. This function takes an ordered linkage group, and computes a consensus for the extreme flank at each side of a linkage group. It then merges groups that clluster
+-To faciliate the above functions, orderAllLinkageGroups now outputs a list, with the contig order as the first element, and a series of strandStateMatrices as the second element. These strandStateMatrices are ordered, and 
+parameters required for fixLinkageGroups and mergeFlankedContigs.  The strandStateMatrices are themselves stored in a list, which constitutes a new class; StrandStateList
+
+Minor changes:
+-Fixed a few bugs where single-contig LGs were being ignored or throwing out errors in orderAllLinkageGroups
+-Added alreadyOrdered function to plotLGDistances, which prevents heatmap clustering and outputs in the order in which data is given. Will eventually remove the plotting function inherent in orderAllLinkageGroups
+
+
 contiBAIT v0.99.5
 ==============
 Bug fixes:

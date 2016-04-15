@@ -108,7 +108,8 @@ setGeneric("plotLGDistances",
            function(object, 
                     allStrands,
                     lg=NULL,
-                    labels=NULL) standardGeneric("plotLGDistances"),
+                    labels=NULL,
+                    alreadyOrdered=NULL) standardGeneric("plotLGDistances"),
 		   signature=c('object', 'allStrands'))
 
 ## =========================================================================
@@ -169,6 +170,33 @@ setGeneric("writeBed",
 		   signature=c('chrTable', 'orientationData', 'contigOrder'))
 
 ## =========================================================================
+## Generic for fixLinkageGroups
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export fixLinkageGroups
+setGeneric("fixLinkageGroups",
+		   function(contigOrdering, 
+					orderFrame, 
+					linkageGroupList,
+					whichLG=NULL,
+					relatedCutOff=NULL,
+					verbose=NULL) standardGeneric("fixLinkageGroups"),
+		   signature=c('contigOrdering', 'orderFrame', 'linkageGroupList'))
+
+## =========================================================================
+## Generic for mergeFlankedLGs
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export mergeFlankedLGs
+setGeneric("mergeFlankedLGs",
+		   function(linkageGroupList, 
+					strandStateMatrix, 
+					buildConsensus=NULL,
+					cluster=NULL,
+					clusterParam=NULL,
+					verbose=NULL) standardGeneric("mergeFlankedLGs"),
+		   signature=c('linkageGroupList', 'strandStateMatrix'))
+
+
+## =========================================================================
 ## show Methods
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -186,7 +214,7 @@ setMethod("show",
 		  {
         	d <- dim(object)
   
-		  	cat('A strand state matrix for ', d[[1]], ' contigs over ',d[[2]],' libraries.\n')
+		  	cat('A strand state matrix for', d[[1]], 'contigs over',d[[2]],'libraries.\n')
 		  }
 )
 
@@ -205,7 +233,7 @@ setMethod("show",
 		  {
 		  	d <- dim(object)
 		  	
-		  	cat('A matrix of strand frequencies for ', d[[1]], ' contigs over ',d[[2]],' libraries.\n')
+		  	cat('A matrix of strand frequencies for', d[[1]], 'contigs over',d[[2]],'libraries.\n')
 		  }
 )
 
@@ -223,7 +251,7 @@ setMethod("show",
 		  {
 		  	d <- dim(object)
 		  	
-		  	cat('A matrix of read counts for ', d[[1]], ' contigs over ',d[[2]],' libraries.\n')
+		  	cat('A matrix of read counts for', d[[1]], 'contigs over',d[[2]],'libraries.\n')
 		  }
 )
 
@@ -240,7 +268,7 @@ setMethod("show",
 		  signature=signature(object="LinkageGroupList"),
 		  definition=function(object)
 		  {
-		  	cat('A linkage group list containing ', length(object), ' linkage groups.\n\n')
+		  	cat('A linkage group list containing', length(object), 'linkage groups.\n\n')
 		  	if(length(object) < 10)	{	  	
 		  	show(data.frame(NumberOfContigs=sapply(object, length), row.names=NULL))
 		  	}else{
@@ -263,7 +291,7 @@ setMethod("show",
 		  signature=signature(object="LibraryGroupList"),
 		  definition=function(object)
 		  {
-		  	cat('A library group list containing ', length(object), ' linkage groups.\n\n')
+		  	cat('A library group list containing', length(object), 'linkage groups.\n\n')
 		  	if(length(object) < 10)	{	  	
 		  	show(data.frame(Contig=names(object),
 		  					MostlyCrickLibraries=sapply(seq_along(object), function(x) length(object[[x]][[1]])),
@@ -330,7 +358,31 @@ setMethod("show",
 		  {
 		  	elements <- nrow(object)
 		  	misorientations <- nrow(object[which(object[,2] == '-'),])
-		  	cat('A matrix of ', elements, ' contigs with ',
-		  		misorientations,' identified misorientations.\n')
+		  	cat('A matrix of', elements, 'contigs with ',
+		  		misorientations,'identified misorientations.\n')
+		  }
+)
+
+## show StrandStateList
+#' @name show,StrandStateList-method
+#' @export
+#' @docType methods
+#' @title show-methods
+#' @param object a StrandStateList
+#' @return nothing
+#' @description Shows a StrandStateList
+setMethod("show",
+		  signature=signature(object="StrandStateList"),
+		  definition=function(object)
+		  {
+	  		cat('A strandStateList containing', length(object), 'StrandStateMatrices.\n\n')
+		  	if(length(object) < 10)	{	  	
+		  		show(data.frame(Name=names(object), NumberOfContigs= sapply(1:length(object), function(x) nrow(object[[x]])), row.names=NULL))
+		  	}else{
+				endLength <- seq(length(object)-4, length(object))
+	 		  	show(data.frame(Name=head(names(object),5), NumberOfContigs= sapply(1:5, function(x) nrow(object[[x]])), row.names=NULL))
+	            show(data.frame("...           "=tail(names(object),5), 
+	            				NumberOfContigs=sapply(endLength, function(x) nrow(object[[x]])), row.names=endLength ))
+		  	}
 		  }
 )

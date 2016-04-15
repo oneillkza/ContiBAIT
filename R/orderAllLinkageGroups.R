@@ -1,4 +1,4 @@
-orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, strandFreqMatrix, strandReadCount, whichLG=NULL, saveOrdered=FALSE, orderCall='greedy', randomAttempts=75, verbose=TRUE)
+orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, strandFreqMatrix, strandReadCount, whichLG=NULL, saveOrdered=NULL, orderCall='greedy', randomAttempts=75, verbose=TRUE)
 {
 
   combineZeroDistContigs <- function(linkageStrands, rawStrandTable, lg)
@@ -41,9 +41,9 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
         groupCount <- groupCount +1
       }
     }
-    mergedStrands <- mergedStrands[rowSums(is.na(mergedStrands)) != ncol(mergedStrands),]
     colnames(mergedStrands) <- colnames(linkageMat)
-  
+    mergedStrands <- mergedStrands[rowSums(is.na(mergedStrands)) != ncol(mergedStrands),]
+
     orderedContigMatrix <- matrix(c(unlist(lapply(1:length(mergedContigs), 
                                       function(x) rep(names(mergedContigs[x]), 
                                       length(mergedContigs[[x]]) ))), 
@@ -56,15 +56,22 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
 
     orderedContigMatrix <- ContigOrdering(orderedContigMatrix)
 
-    rownames(mergedStrands) <- names(mergedContigs)
-    mergedStrands <- StrandStateMatrix(mergedStrands)
-
+    if(class(mergedStrands) != 'matrix')
+    {
+      mergedStrands <- t(as.matrix(mergedStrands))
+      rownames(mergedStrands) <- names(mergedContigs)
+      mergedStrands <- StrandStateMatrix(mergedStrands)
+    }else{
+      rownames(mergedStrands) <- names(mergedContigs)
+      mergedStrands <- StrandStateMatrix(mergedStrands)
+    }
     return(list(mergedStrands=mergedStrands, contigKey=orderedContigMatrix))
   }
 
   if(is.null(whichLG)){whichLG=seq_len(length(linkageGroupList))}
   orderedGroups <- matrix(nrow=0, ncol=2)
- 
+
+  plotGroups <- vector("list", length(whichLG))
   for(lg in whichLG)
   {
     if(verbose){message(paste('-> Ordering fragments in LG', lg, sep=""))}
@@ -76,12 +83,17 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
       zeroGroups <- combineZeroDistContigs(linkageGroupReadTable, strandFreqMatrix, lg)
       #Make a contig Weight vector
       ordMat <- cbind(zeroGroups[[2]], apply(strandReadCount[which(rownames(strandReadCount) %in% zeroGroups[[2]][,2] ),] , 1, median))
-      #The make a LG weight by taking the sum of all contigs within that LG, and order the linkageGroupTable based on the deepest LG
+      #Then make a LG weight by taking the sum of all contigs within that LG, and order the linkageGroupTable based on the deepest LG
       uniqueZeros <- unique(ordMat[,1])
       orderZeros <-sapply(uniqueZeros, function(x) sum(as.numeric(ordMat[which(ordMat[,1] == x),3])))
       orderZeros <- names(sort(orderZeros, decreasing=TRUE))
-      linkageGroupReadTable <- zeroGroups[[1]][orderZeros,]
-      
+      #solves issue that subsetting one value matrix coreces it to a vector and causes crash
+      if(nrow(zeroGroups[[1]]) > 1)
+      {
+        linkageGroupReadTable <- zeroGroups[[1]][orderZeros,]
+      }else{
+        linkageGroupReadTable <- zeroGroups[[1]]
+      }
       #Choose which ordering method to use
       if(orderCall == 'greedy')
       {
@@ -100,28 +112,51 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
       }
       orderedGroups <- rbind(orderedGroups, mergedGroups)
 
-      chromosome <- strsplit(linkageGroupList[[lg]][1],':')[[1]][1]
-      if(saveOrdered != FALSE)
+      plotGroups[[lg]] <- StrandStateMatrix(outOfOrder[[2]])
+      if(!(is.null(saveOrdered)))
       {
-        plotFrame <- data.frame(outOfOrder[[2]])
-        plotFrame <- data.frame(lapply(plotFrame, function(x) factor(x, levels=c(1,2,3))))
-        rownames(plotFrame) <- rownames(outOfOrder[[2]])
-        
-        similarLinkageStrands <- as.matrix(1-daisy(plotFrame))
-        diag(similarLinkageStrands) <- 1
-        if(nrow(similarLinkageStrands) > 1)
-        {
-          breaks <- seq(0, 100, length.out=101)/100 
-          cols <- colorRampPalette(c("cyan", "blue", "grey30", "black", "grey30", "red", "orange"))
-          suppressWarnings(heatmap.2(similarLinkageStrands, Rowv=NA, Colv=NA, dendrogram="none", revC=TRUE, col=cols(100), breaks=breaks, trace='none', main=paste('greedy-ordered ', chromosome, sep="")))
-        }
+        #find fragment names from lg
+        chromosome <- sort(table(sapply(seq_len(length(linkageGroupList[[lg]])), function(x) strsplit(linkageGroupList[[lg]][x] ,':')[[1]][1])), decreasing=TRUE)
+        #find predominant fragment name
+        chromosome <- round(chromosome[1]/length(linkageGroupList[[lg]])*100, digits=1)
+
+         plotFrame <- data.frame(outOfOrder[[2]])
+         plotFrame <- data.frame(lapply(plotFrame, function(x) factor(x, levels=c(1,2,3))))
+         rownames(plotFrame) <- rownames(outOfOrder[[2]])
+         similarLinkageStrands <- as.matrix(1-daisy(plotFrame))
+         diag(similarLinkageStrands) <- 1
+
+         if(nrow(similarLinkageStrands) > 1)
+         {
+           breaks <- seq(0, 100, length.out=101)/100 
+           cols <- colorRampPalette(c("cyan", "blue", "grey30", "black", "grey30", "red", "orange"))
+           suppressWarnings(heatmap.2(similarLinkageStrands, 
+                                      Rowv=NA, 
+                                      Colv=NA, 
+                                      dendrogram="none", 
+                                      revC=TRUE, 
+                                      col=cols(100), 
+                                      breaks=breaks, 
+                                      trace='none', 
+                                      main=paste(orderCall, '-ordered LG', lg, '\n main fragment: ', names(chromosome), ' (', chromosome, '%)', sep="")))
+         }
       }
+    }else{
+      groupName <-  paste('LG', lg, '.1', sep='')
+      linkageGroup <- linkageGroupList[[lg]]
+      orderedGroups <- rbind(orderedGroups, c(groupName, linkageGroup))
+      linkageGroupReadTable <- t(as.matrix(strandStateMatrix[linkageGroup,]))
+      rownames(linkageGroupReadTable) <- groupName
+      plotGroups[[which(whichLG == lg)]] <- StrandStateMatrix(linkageGroupReadTable)
     }
   }  
   rownames(orderedGroups) <- NULL
   colnames(orderedGroups) <- c('LG', 'contig')
+  rownames(orderedGroups) <- sapply(seq_len(nrow(orderedGroups)), function(x) strsplit(orderedGroups[x,], "[.]")[[1]][1])
   orderedGroups <- ContigOrdering(orderedGroups)
-  return(orderedGroups)
+
+  plotGroups <- StrandStateList(plotGroups, names=paste('LG', whichLG, ' StrandStateMatrix', sep=''))
+  return(list(orderedGroups, plotGroups))
 }
 
 ####################################################################################################

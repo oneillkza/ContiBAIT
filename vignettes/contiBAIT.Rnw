@@ -191,14 +191,14 @@ exampleReadCounts,
 whichLG=1,
 saveOrdered=TRUE)
 
-contigOrder
+contigOrder[[1]]
 @
 
 If the assembly is mostly complete and you wish to compare the actual location of the fragments in the assembly you're working with against the output of orderAllLinkageGroups, contiBAIT has the built in plotContigOrder function. This assumes that the contig name from the contigOrdering object is in a format of chr:start-end.
 
 <<orderAllLinkageGroupsExampleb, fig=TRUE>>=
 
-plotContigOrder(contigOrder)
+plotContigOrder(contigOrder[[1]])
 @
 
 Alternatively, all contigs can be ordered simultaneously by omitting the whichLG argument. If saveOrdered is set to TRUE, plots will be generated for every linkage group.  By ordering all of the linkage groups we can proceed to create BED files of these data for the new assemblies.
@@ -209,7 +209,7 @@ exampleWCMatrix,
 exampleStrandFreq,
 exampleReadCounts)
 
-contigOrderAll
+contigOrderAll[[1]]
 @
 
 
@@ -239,7 +239,7 @@ If chromosome builds are not complete (and so each contig has not been assigned 
 ideogramPlot(singleWatsonLibrary,
 singleCrickLibrary,
 exampleDividedChr,
-orderFrame=contigOrderAll)
+orderFrame=contigOrderAll[[1]])
 @
 
 Alternatively, all libraries can be compared side by side for a single chromosome. Because this will print to multiple pages, the showPage option can be used to limit the output to a user=specified page. Here we will use the orderedContig object representing just one linkage group.
@@ -248,7 +248,7 @@ Alternatively, all libraries can be compared side by side for a single chromosom
 ideogramPlot(WatsonFreqList,
 CrickFreqList,
 exampleDividedChr,
-orderFrame=contigOrder,
+orderFrame=contigOrder[[1]],
 plotBy='chr',
 showPage=1)
 @
@@ -261,7 +261,7 @@ This file can be passed to bedtools along with the original (draft) reference ge
 
 writeBed(exampleDividedChr,
 reorientedMatrix[[2]],
-contigOrder)
+contigOrder[[1]])
 @
 
 \newpage

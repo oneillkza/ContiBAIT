@@ -277,6 +277,35 @@ ChrTable <- function(chrRanges=GRanges())
 	new('ChrTable', chrRanges)	
 }
 
+# =========================================================================
+#' A class for storing StrandStateList lists for contigs
+#' 
+#' \describe{
+#'  This class is a list of StrandStateMatrices, each a subset of the StrandStateMatrix split by linkagegroups
+#' }
+#'
+#' @export
+#' @rdname StrandStateList
+
+setClass("StrandStateList", 
+		 representation('list', names='character'),
+		 # Ensure all list elements in LibraryGroupList are of class StrandStateMatrix
+		 validity=function(object){unique(sapply(seq_along(object), function(x) class(object[[x]]) == "StrandStateMatrix"))}
+		 )
+
+#' Constructor StrandStateList
+#' @aliases StrandStateList
+#' @rdname StrandStateList
+#' @param strandGroupList a list of StrandStateMatrix elements, with each primary element representing a StrandStateMatrix containing ordered contigs from a LinkageGroupList element
+#' @param names a vector of names of StrandStateMatrix elements
+#' @return a \code{StrandStateList}
+#' @export
+
+StrandStateList <- function(strandGroupList= list(), names=character())
+{
+	new('StrandStateList', strandGroupList, names=names)
+}
+
 
 # ========================================================================
 # Data sets
