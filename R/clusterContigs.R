@@ -198,7 +198,7 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 #' @return \code{LinkageGroupList} of vectors containing labels of contigs belonging to each linkage
 #' group
 #' 
-#' @details Note that \code{clusterParam} 
+#' @details Note that \code{clusterParam} requires \code{BiocParallel} to be installed.
 #' 
 #' @aliases clusterContigs clusterContigs,StrandStateMatrix,StrandStateMatrix-method
 #' 

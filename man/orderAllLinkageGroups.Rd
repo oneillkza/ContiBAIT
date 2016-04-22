@@ -10,7 +10,7 @@
 
   \S4method{orderAllLinkageGroups}{LinkageGroupList,StrandStateMatrix,StrandFreqMatrix,StrandReadMatrix}(linkageGroupList,
   strandStateMatrix, strandFreqMatrix, strandReadCount, whichLG = NULL,
-  saveOrdered = FALSE, orderCall = "greedy", randomAttempts = 75,
+  saveOrdered = NULL, orderCall = "greedy", randomAttempts = 75,
   verbose = TRUE)
 }
 \arguments{

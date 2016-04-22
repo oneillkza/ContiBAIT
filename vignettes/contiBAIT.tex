@@ -177,16 +177,16 @@ This returns a list of two data.frames if the BAITtables argument is set to FALS
 \end{Sinput}
 \begin{Soutput}
 $strandTable
-A matrix of strand frequencies for  145  contigs over  35  libraries.
+A matrix of strand frequencies for 145 contigs over 35 libraries.
 
 $countTable
-A matrix of read counts for  145  contigs over  35  libraries.
+A matrix of read counts for 145 contigs over 35 libraries.
 
 $WatsonReads
-A matrix of read counts for  3089  contigs over  35  libraries.
+A matrix of read counts for 3089 contigs over 35 libraries.
 
 $CrickReads
-A matrix of read counts for  3089  contigs over  35  libraries.
+A matrix of read counts for 3089 contigs over 35 libraries.
 \end{Soutput}
 \begin{Sinput}
 > # Exclude frequencies calculated from
@@ -225,7 +225,7 @@ The returned list of strandSeqFreqTable can be converted to a strand state matri
 > exampleStrandStateMatrix[[1]]
 \end{Sinput}
 \begin{Soutput}
-A strand state matrix for  76  contigs over  35  libraries.
+A strand state matrix for 76 contigs over 35 libraries.
 \end{Soutput}
 \end{Schunk}
 
@@ -239,3 +239,67 @@ clusterContigs utilizes a custom algorithm to cluster all fragments together tha
 > clusteredContigs <- clusterContigs(exampleWCMatrix, randomise=FALSE)
 > reorientedMatrix <- reorientAndMergeLGs(clusteredContigs,
 +  exampleWCMatrix)
+> exampleLGList <- reorientedMatrix[[3]]
+> exampleLGList
+\end{Sinput}
+\begin{Soutput}
+A linkage group list containing 5 linkage groups.
+
+  NumberOfContigs
+1              19
+2              19
+3              19
+4              18
+5               1
+\end{Soutput}
+\begin{Sinput}
+> exampleLGList[[1]]
+\end{Sinput}
+\begin{Soutput}
+ [1] "chr2:3002461-4003281"     "chr2:170139480-171140299"
+ [3] "chr2:20016409-21017229"   "chr2:6004923-7005742"    
+ [5] "chr2:190155889-191156709" "chr2:60049228-61050048"  
+ [7] "chr2:80065638-81066457"   "chr2:240196913-241197732"
+ [9] "chr2:40032819-41033638"   "chr2:50041023-51041843"  
+[11] "chr2:200164094-201164913" "chr2:230188708-231189527"
+[13] "chr2:10008205-11009024"   "chr2:220180503-221181323"
+[15] "chr2:30024614-31025434"   "chr2:1000820-2001640"    
+[17] "chr2:150123070-151123890" "chr2:70057433-71058252"  
+[19] "chr2:130106661-131107480"
+\end{Soutput}
+\end{Schunk}
+
+
+The clusterContigs function generates a list of linkage groups consisting of all the clustered contigs.  After reorientation and merging, all contigs within the linkage groups are highly similar, while the contigs between linkage groups are highly dissimilar.  The similarity between linkage groups can be visualized using plotLGDistances.
+
+\begin{Schunk}
+\begin{Sinput}
+> plotLGDistances(exampleLGList, exampleWCMatrix)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{contiBAIT-clusterContigsExampleb}
+
+
+While the similarity within linkage groups can be visualized using plotLinkageGroup (here, the first linkage group is used for creating this heatmap). Note, side by side comparisons of linkage group members can be performs with multiple lg options (e.g. lg=1:2 will plot the first two linkage groups, lg=c(1,4) will plot the first and forth etc.).
+
+\begin{Schunk}
+\begin{Sinput}
+> plotLGDistances(exampleLGList, exampleWCMatrix, lg=1)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{contiBAIT-clustercontigsExamplec}
+
+
+\section{Ordering contigs within chromosomes}
+
+With contigs clustered to chromosomes, we can then order them within chromosomes. Just as meiotic recombination shuffles loci and allows genetic distances between them to be determined, sister chromatid exchanges (SCE) events reshuffle templates, and similarly allow us to infer a linkage distance. We have employed a greedy algorithm to do this, but have an argument allowing a TSP solution as an alternative. Contigs are ordered by similarity across libraries, then by contig name. Contigs that are zero distance apart (ie have no SCE events between them and are therefore unordered) are returned in contig name order. The output is split into sub-linkage groups, so Linkage group 1 will be split into a number of groups depending on the number of SCE events that occur within the chromosome. The output will be an S4 object of type contigOrdering.
+
+\begin{Schunk}
+\begin{Sinput}
+> contigOrder <- orderAllLinkageGroups(exampleLGList,
++ exampleWCMatrix,
++ exampleStrandFreq,
++ exampleReadCounts,
++ whichLG=1,
++ saveOrdered=TRUE)
+> contigOrder

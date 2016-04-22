@@ -71,22 +71,24 @@ findSimilarLibraries.func <- function(strandStateMatrix,
                                            randomise=TRUE,
                                            verbose=FALSE)
 
-
-        groupCon <- computeConsensus(linkage.libraries[[1]], strandStateLibrary)
-        maxOne <- sapply(c(1,3), function(x) length(which(groupCon == x)))
-        maxOne <- which(maxOne == max(maxOne))[1]
-        maxOne <- if(maxOne == 1){c("Watson", "Crick")}else{c("Crick", "Watson")}
-        newNames <- c(paste(chrToUse[chrNum], "_mostly_", maxOne[1], "_(", length(linkage.libraries[[1]]), ")", sep="" ),
-                       paste(chrToUse[chrNum], "_mostly_", maxOne[2], "_(", length(linkage.libraries[[2]]), ")", sep=""))
-
-        if(maxOne[1] == "Crick")
+        if(length(linkage.libraries) > 1)
         {
-          topTwo <- LinkageGroupList(linkage.libraries[1:2])
-        }else{
-          topTwo <- LinkageGroupList(list(linkage.libraries[[2]], linkage.libraries[[1]]))
+          groupCon <- computeConsensus(linkage.libraries[[1]], strandStateLibrary)
+          maxOne <- sapply(c(1,3), function(x) length(which(groupCon == x)))
+          maxOne <- which(maxOne == max(maxOne))[1]
+          maxOne <- if(maxOne == 1){c("Watson", "Crick")}else{c("Crick", "Watson")}
+          newNames <- c(paste(chrToUse[chrNum], "_mostly_", maxOne[1], "_(", length(linkage.libraries[[1]]), ")", sep="" ),
+                         paste(chrToUse[chrNum], "_mostly_", maxOne[2], "_(", length(linkage.libraries[[2]]), ")", sep=""))
+
+          if(maxOne[1] == "Crick")
+          {
+            topTwo <- LinkageGroupList(linkage.libraries[1:2])
+          }else{
+            topTwo <- LinkageGroupList(list(linkage.libraries[[2]], linkage.libraries[[1]]))
+          }
+          names(topTwo) <- newNames[order(newNames)]
+          return(topTwo)
         }
-        names(topTwo) <- newNames[order(newNames)]
-        return(topTwo)
       }
     }
   }
