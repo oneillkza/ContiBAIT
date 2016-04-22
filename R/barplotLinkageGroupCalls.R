@@ -1,57 +1,92 @@
-####################################################################################################
-#' Bar plot all linkage groups, with the true chromosomes of contigs coloured.
-#' @param linkageGroups list of vectors, each specifying which contigs belong in which linkage group
-#' @param assemblyBED table from a BED containing assembly information about the contigs, including length and chromosome
-#' Note that the rownames of assemblyBED should be the contig names, as they are used in linkageGroups. 
-#' To use a bam file header, the product of makeChrTable(bamFile) with or without the asBed option is suitable for input
-#' contig within that linkage group
-#' @param by ='lg' whether to plot by linkage group (if 'lg') or chromosomes ('chr')
-#' @param returnTable TRUE to return chromosome length matrix
-#' @param ... any additional parameters to pass down to barplot()
-#' @return a matrix of lengths of each chromosome (rows) in each linkage group (columns)
-#' @export
-#' @importFrom colorspace rainbow_hcl
-####################################################################################################
-
-
-
-barplotLinkageGroupCalls <- function(linkageGroups, assemblyBED, by='lg', returnTable=FALSE,  ...)
+barplotLinkageGroupCalls.func <- function(object, chrTable, by='lg', returnTable=FALSE)
 {
 
-	linkage.chr <- lapply(linkageGroups, function(x){as.character(assemblyBED[x, colnames(assemblyBED[1])])})
-	complete.list <- unique(unlist(linkage.chr))
-		
-	chr.table <- computeBarPlotMatrix(linkageGroups, assemblyBED)
-	#colnames(chr.table) <- seq(1:ncol(chr.table))
-
-	roundUpNice <- function(x, nice=c(1,2,3,4,5,6,7,8,9,10)) 
+	#Calculate length of each chromosome represented for one linkage group:
+	calcOneGroupChr <- function(lg.num, linkage.chr, linkage.lengths, complete.list)
 	{
-    	if(length(x) != 1) stop("'x' must be of length 1")
-    	10^floor(log10(x)) * nice[[which(x <= 10^floor(log10(x)) * nice)[[1]]]]
+		lg.chr <- linkage.chr[[lg.num]]
+		lg.lengths <- linkage.lengths[[lg.num]]
+		chr.vector <- rep(0, length(complete.list))
+		names(chr.vector) <- complete.list
+		chr.represented <- unique(lg.chr)
+		chr.lengths <- sapply(chr.represented, 
+							  function(chr.name){sum(lg.lengths[which(lg.chr==chr.name)])})
+		chr.vector[chr.represented] <- chr.lengths
+		chr.vector
 	}
-	  
+
+	linkage.lengths <- lapply(object, 
+							  function(x){ width(chrTable[chrTable$name %in% x])  }) 
+	linkage.chr <- lapply(object, 
+						  function(x){as.character(seqnames(chrTable)[chrTable$name %in% x])  })
+	complete.list <- unique(unlist(linkage.chr))
+	chr.table <- sapply(1:length(linkage.chr), 
+						calcOneGroupChr, linkage.chr, linkage.lengths, complete.list)
+	chr.table2 <- matrix(unlist(chr.table), nrow=nrow(chr.table))
+	rownames(chr.table2) <- rownames(chr.table)
+	colnames(chr.table2) <- c(paste('LG', 1:ncol(chr.table), sep=""))
+	chr.table2 <- chr.table2[order(rownames(chr.table2)),]
+	chr.table <- chr.table2 / 10^6
+
+	chr.table <- chr.table[mixedsort(rownames(chr.table)),]
+
+	chromoFrame <- melt(chr.table)
+	colnames(chromoFrame) <- c('chr', 'LG', 'count')
+	chromoFrame$LG <- factor(chromoFrame$LG, levels=mixedsort(levels(chromoFrame$LG)) )
+	chromoFrame$chr <- factor(chromoFrame$chr, levels=mixedsort(levels(chromoFrame$chr)))
+
 	#Plot by linkage group
 	if(by=='lg')
 	{	
-		maxX <- max(sapply(seq(1,ncol(chr.table)), function(x) sum(chr.table[,x])))
-		maxX <- roundUpNice(max(maxX))
-		chr.cols <- rainbow_hcl(length(complete.list), c=90, l=60)
-		barplot(chr.table, col = chr.cols, names.arg=colnames(chr.table), las=2, xlab='Linkage group', ylab='Length in Mb', ylim=c(0,maxX), ...)
+		if(length(unique(chromoFrame$chr)) > 50){leg='none'}else{leg='right'}
+		print(ggplot(chromoFrame, aes_string("LG", "count"))+
+		geom_bar(stat="identity", aes_string(fill="chr"), colour='black')+
+		theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+		labs(x="Linkage Group", y="DNA Represented in Linkage Groups (Mb)")+
+		theme(legend.position=leg)+
+		ggtitle(paste("Barplot of ", length(unique(chromoFrame$chr)), " contigs clustered into ", length(unique(chromoFrame$LG)), " linkage groups",  sep="")))
 	}
 	
 	#Alternately, plot by chromosome:
 	if(by=='chr')
 	{
-		#change order to chromosome number
-		chr.table <- chr.table[order(rownames(chr.table)),]
-		maxX <- max(sapply(seq(1,nrow(chr.table)), function(x) sum(chr.table[x,])))
-		maxX <- roundUpNice(max(maxX))
 
-		linkage.cols <- rainbow_hcl(ncol(chr.table), c=100, l=60) 
-		barplot(t(chr.table), col=linkage.cols, names.arg=rownames(chr.table), xlab='Chromosome', ylab='Length in Mb', ylim=c(0,maxX), ...) 
+		if(length(unique(chromoFrame$LG)) > 50){leg='none'}else{leg='right'}
+		print(ggplot(chromoFrame, aes_string("chr", "count"))+
+		geom_bar(stat="identity", aes_string(fill="LG"), colour='black')+
+		theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+		labs(x="Chromosome", y="DNA Represented in Chromosome (Mb)")+
+		theme(legend.position=leg)+
+		ggtitle(paste("Barplot of ", length(unique(chromoFrame$LG)), 
+					  " linkage groups clustering into ", 
+					  length(unique(chromoFrame$chr)), " chromosomes",  sep="")))
 	}
-	if(returnTable == TRUE)
-	{
-		return(chr.table)
-	}
+
+	if(returnTable == TRUE){return(chr.table)}
 }
+
+
+####################################################################################################
+#' Bar plot all linkage groups, with the true chromosomes of contigs coloured.
+#' @param object LinkageGroupList, as generated by clusterContigs
+#' @param chrTable GRanges object containing assembly information about the contigs, including a meta column called 'name' that has names matching the object. 
+#' Note that the rownames of chrTable should be the contig names, as they are used in object, and the first column (chromosome name) will used to order by chromosome if 'chr' option used in by parameter. 
+#' To use a bam file header, the product of makeChrTable(bamFile) is suitable for input
+#' @param by whether to plot by linkage group (if 'lg') or chromosomes ('chr')
+#' @param returnTable TRUE to return chromosome length matrix.
+#' Note to include legend, use legend=rownames(chr.table) for by='lg', and legend=colnames(chr.table) for by='chr'
+#' 
+#' @return a matrix of lengths of each chromosome (rows) in each linkage group (columns)
+#' 
+#' @aliases barplotLinkageGroupCalls barplotLinkageGroupCalls,LinkageGroupList,LinkageGroupList-method,ChrTable,ChrTable-method
+#' @example inst/examples/barplotLinkageGroupCalls.R
+#' @export
+#' @import ggplot2
+#' @importFrom reshape2 melt 
+#' @importFrom gtools mixedsort
+####################################################################################################
+
+setMethod('barplotLinkageGroupCalls',
+          signature = signature(object = 'LinkageGroupList', chrTable='ChrTable'),
+          definition = barplotLinkageGroupCalls.func
+)

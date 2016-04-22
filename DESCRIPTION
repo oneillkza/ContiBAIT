@@ -1,58 +1,74 @@
 Package: contiBAIT
 Type: Package
-Title: Improves early build genome assemblies using strand-seq data.
-Version: 0.99.0
-Date: 2013-10-21
-Author: Kieran O'Neill, Mark Hills
-Maintainer: Who to complain to <yourfault@somewhere.net>
+Title: Improves Early Build Genome Assemblies using Strand-Seq Data
+Version: 0.99.6
+Date: 2016-02-02
+Author: Kieran O'Neill, Mark Hills, Mike Gottlieb
+Maintainer: Kieran O'Neill <koneill@bccrc.ca>
 Description: Using strand inheritance data from multiple single cells from the
     organism whose genome is to be assembled, contiBAIT can cluster unbridged
     contigs together into putative chromosomes, and order the contigs within
     those chromosomes.
-License: BSD_2_clause
+License: BSD_2_clause + file LICENSE
+URL: https://github.com/oneillkza/ContiBAIT
+BugReports: https://github.com/oneillkza/ContiBAIT/issues
 Depends:
-    BH (>= 1.51.0-3)
+    BH (>= 1.51.0-3),
+    Rsamtools (>= 1.21)
 LinkingTo: Rcpp, BH
 Imports:
+    grDevices,
     clue,
     cluster,
-    colorspace,
     gplots,
     IRanges,
+    GenomicRanges,
     S4Vectors,
-    Rsamtools,
     Rcpp,
-    TSP
+    TSP,
+    GenomicFiles,
+    gtools,
+    rtracklayer,
+    BiocParallel,
+    DNAcopy,
+    colorspace,
+    reshape2,
+    ggplot2,
+    methods,
+    exomeCopy,
+    GenomicAlignments,
+    diagram
 Suggests:
-    snow,
     BiocStyle
-biocViews: CellBasedAssays, QualityControl, Alignment, WholeGenome, Genetics
+biocViews: CellBasedAssays, QualityControl, WholeGenome, Genetics,
+    GenomeAssembly
 Collate:
     'AllClasses.R'
     'AllGenerics.R'
+    'BAIT.R'
     'barplotLinkageGroupCalls.R'
     'clusterContigs.R'
-    'combineZeroDistContigs.R'
-    'computeBarPlotMatrix.R'
     'computeConsensus.R'
-    'computeQCMatrix.R'
     'computeSim.R'
-    'countDirectionReads.R'
-    'expandMergedContigs.R'
-    'extractReads.R'
-    'heatPlotLinkageGroupCalls.R'
+    'contiBAIT.R'
+    'findSimilarLibraries.R'
+    'fixLinkageGroups.R'
+    'highlightAssemblyErrors.R'
+    'ideogramPlot.R'
+    'locateMisorients.R'
     'makeBoxPlot.R'
-    'mergeLinkageGroups.R'
+    'makeChrTable.R'
+    'mapGapFromOverlap.R'
+    'mergeFlankedLGs.R'
+    'orderAllLinkageGroups.R'
     'orderContigsGreedy.R'
     'orderContigsTSP.R'
-    'orderWithinGroup.R'
     'plotContigOrder.R'
     'plotLGDistances.R'
-    'plotLinkageGroup.R'
-    'plotWCvsQuality.R'
+    'plotWCdistribution.R'
     'preprocessStrandTable.R'
-    'readStrandCountsFromBAM.R'
-    'reorientLinkageGroups.R'
-    'reorientStrandTable.R'
-    'runContiBAIT.R'
-    'write.bed.R'
+    'reorientAndMergeLGs.R'
+    'strandSeqFreqTable.R'
+    'thoroughBed.R'
+    'writeBed.R'
+RoxygenNote: 5.0.1
