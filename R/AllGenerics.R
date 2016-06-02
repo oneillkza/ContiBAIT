@@ -19,40 +19,69 @@ setGeneric("preprocessStrandTable",
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 #' @export clusterContigs
 setGeneric("clusterContigs", 
-		   function(object, 
-		   		 similarityCutoff=NULL,
-		   		 recluster=NULL, 
-		   		 minimumLibraryOverlap=NULL,
-		   		 randomise=NULL,
-		   		 randomSeed=NULL,
-		   		 randomWeight=NULL,
-		   		 clusterParam=NULL,
-		   		 clusterBy=NULL,
-		   		 verbose=NULL) standardGeneric("clusterContigs"),
-		   signature='object')
+		   	function(object, 
+		   			 similarityCutoff=NULL,
+			   		 recluster=NULL, 
+			   		 minimumLibraryOverlap=NULL,
+			   		 randomise=NULL,
+			   		 randomSeed=NULL,
+			   		 randomWeight=NULL,
+			   		 clusterParam=NULL,
+			   		 clusterBy=NULL,
+			   		 verbose=NULL) standardGeneric("clusterContigs"),
+			   		 signature='object')
+
+## =========================================================================
+## Generic for findSimilarLibraries.R
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export findSimilarLibraries
+setGeneric("findSimilarLibraries", 
+		   function(strandStateMatrix, 
+		   		 	strandReadMatrix,
+		   		 	chrGrange,
+		   		 	chrNum,
+			   		cluster=NULL, 
+			   		clusterParam=NULL,
+			   		verbose=NULL) standardGeneric("findSimilarLibraries"),
+			   		signature=c('strandStateMatrix', 'strandReadMatrix', 'chrGrange', 'chrNum'))
+
+## =========================================================================
+## Generic for thoroughBed.R
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export thoroughBed
+setGeneric("thoroughBed", 
+		   function(bamFileList,
+		   			relatedLibList, 
+		   		 	qual=NULL,
+		   		 	pairedEnd=NULL,
+		   			verbose=NULL) standardGeneric("thoroughBed"),
+			   		signature=c('bamFileList', 'relatedLibList'))
+
+## =========================================================================
+## Generic for locateMisorients.R
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export locateMisorients
+setGeneric("locateMisorients", 
+		   function(compiledGrange, 
+		   		 	gapFile=NULL,
+		   		 	stateNum=NULL,
+		   		 	readCutOff=NULL,
+			   		writeBed=NULL, 
+			   		verbose=NULL) standardGeneric("locateMisorients"),
+			   		signature='compiledGrange')
 
 
 ## =========================================================================
-## Generic for reorientLinkageGroups.R
+## Generic for reorientAndMergeLGs.R
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-#' @export reorientLinkageGroups
-setGeneric("reorientLinkageGroups", 
+#' @export reorientAndMergeLGs
+setGeneric("reorientAndMergeLGs", 
 		   function(object, 
 		   			allStrands,
-		   			previousOrient=NULL,
-		   		 	verbose=NULL) standardGeneric("reorientLinkageGroups"),
-		   signature=c('object', 'allStrands'))
-
-## =========================================================================
-## Generic for mergeLinkageGroups.R
-## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-#' @export mergeLinkageGroups
-setGeneric("mergeLinkageGroups", 
-           function(object, 
-                    allStrands,
-                    clusterParam=NULL, 
-                    cluster=NULL,
-                    similarityCutoff=NULL) standardGeneric("mergeLinkageGroups"),
+			   		cluster=NULL, 
+			   		clusterParam=NULL,
+			   		similarityCutoff=NULL,
+		   		 	verbose=NULL) standardGeneric("reorientAndMergeLGs"),
 		   signature=c('object', 'allStrands'))
 
 ## =========================================================================
@@ -79,7 +108,8 @@ setGeneric("plotLGDistances",
            function(object, 
                     allStrands,
                     lg=NULL,
-                    labels=NULL) standardGeneric("plotLGDistances"),
+                    labels=NULL,
+                    alreadyOrdered=NULL) standardGeneric("plotLGDistances"),
 		   signature=c('object', 'allStrands'))
 
 ## =========================================================================
@@ -140,6 +170,33 @@ setGeneric("writeBed",
 		   signature=c('chrTable', 'orientationData', 'contigOrder'))
 
 ## =========================================================================
+## Generic for fixLinkageGroups
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export fixLinkageGroups
+setGeneric("fixLinkageGroups",
+		   function(contigOrdering, 
+					orderFrame, 
+					linkageGroupList,
+					whichLG=NULL,
+					relatedCutOff=NULL,
+					verbose=NULL) standardGeneric("fixLinkageGroups"),
+		   signature=c('contigOrdering', 'orderFrame', 'linkageGroupList'))
+
+## =========================================================================
+## Generic for mergeFlankedLGs
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export mergeFlankedLGs
+setGeneric("mergeFlankedLGs",
+		   function(linkageGroupList, 
+					strandStateMatrix, 
+					buildConsensus=NULL,
+					cluster=NULL,
+					clusterParam=NULL,
+					verbose=NULL) standardGeneric("mergeFlankedLGs"),
+		   signature=c('linkageGroupList', 'strandStateMatrix'))
+
+
+## =========================================================================
 ## show Methods
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -157,7 +214,7 @@ setMethod("show",
 		  {
         	d <- dim(object)
   
-		  	cat('A strand state matrix for ', d[[1]], ' contigs over ',d[[2]],' libraries.\n')
+		  	cat('A strand state matrix for', d[[1]], 'contigs over',d[[2]],'libraries.\n')
 		  }
 )
 
@@ -176,7 +233,7 @@ setMethod("show",
 		  {
 		  	d <- dim(object)
 		  	
-		  	cat('A matrix of strand frequencies for ', d[[1]], ' contigs over ',d[[2]],' libraries.\n')
+		  	cat('A matrix of strand frequencies for', d[[1]], 'contigs over',d[[2]],'libraries.\n')
 		  }
 )
 
@@ -194,7 +251,7 @@ setMethod("show",
 		  {
 		  	d <- dim(object)
 		  	
-		  	cat('A matrix of read counts for ', d[[1]], ' contigs over ',d[[2]],' libraries.\n')
+		  	cat('A matrix of read counts for', d[[1]], 'contigs over',d[[2]],'libraries.\n')
 		  }
 )
 
@@ -211,15 +268,49 @@ setMethod("show",
 		  signature=signature(object="LinkageGroupList"),
 		  definition=function(object)
 		  {
-		  	cat('A linkage group list containing ', length(object), ' linkage groups.\n\n')
-		  	show(data.frame(NumberOfContigs=head(sapply(object, length)), row.names=NULL))
-		  	if(length(object) > 5)
+		  	cat('A linkage group list containing', length(object), 'linkage groups.\n\n')
+		  	if(length(object) < 10)	{	  	
+		  	show(data.frame(NumberOfContigs=sapply(object, length), row.names=NULL))
+		  	}else{
+ 		  	show(data.frame(NumberOfContigs=head(sapply(object, length)), row.names=NULL))
             show(data.frame("...           "=tail(sapply(object, length)), 
             				row.names=seq(length(object)-5, length(object) )))
-
+        	}
 		  }
 )
 
+## show LibraryGroupList
+#' @name show,LibraryGroupList-method
+#' @export
+#' @docType methods
+#' @title show-methods
+#' @param object a LibraryGroupList
+#' @return nothing
+#' @description Shows a LibraryGroupList
+setMethod("show",
+		  signature=signature(object="LibraryGroupList"),
+		  definition=function(object)
+		  {
+		  	cat('A library group list containing', length(object), 'linkage groups.\n\n')
+		  	if(length(object) < 10)	{	  	
+		  	show(data.frame(Contig=names(object),
+		  					MostlyCrickLibraries=sapply(seq_along(object), function(x) length(object[[x]][[1]])),
+		  					MostlyWatsonLibraries=sapply(seq_along(object), function(x) length(object[[x]][[2]])), 
+		  					row.names=NULL))
+		  	}else{
+		  	show(data.frame(Contig=c(head(names(object)),
+		  							"...",
+		  							tail(names(object))),
+		  					MostlyCrickLibraries=c(head(sapply(seq_along(object), function(x) length(object[[x]][[1]]))), 
+		  										 "...", 
+		  										 tail(sapply(seq_along(object), function(x) length(object[[x]][[1]])))),
+		  					MostlyWatsonLibraries=c(head(sapply(seq_along(object), function(x) length(object[[x]][[2]]))),
+		  										 "...", 
+		  										 tail(sapply(seq_along(object), function(x) length(object[[x]][[2]])))),
+		  					row.names=c(1:6, "...", seq(length(object)-5, length(object) ) )))
+		  	}
+		  }
+)
 
 ## show ContigOrdering
 #' @name show,ContigOrdering-method
@@ -267,7 +358,31 @@ setMethod("show",
 		  {
 		  	elements <- nrow(object)
 		  	misorientations <- nrow(object[which(object[,2] == '-'),])
-		  	cat('A matrix of ', elements, ' contigs with ',
-		  		misorientations,' identified misorientations.\n')
+		  	cat('A matrix of', elements, 'contigs with ',
+		  		misorientations,'identified misorientations.\n')
+		  }
+)
+
+## show StrandStateList
+#' @name show,StrandStateList-method
+#' @export
+#' @docType methods
+#' @title show-methods
+#' @param object a StrandStateList
+#' @return nothing
+#' @description Shows a StrandStateList
+setMethod("show",
+		  signature=signature(object="StrandStateList"),
+		  definition=function(object)
+		  {
+	  		cat('A strandStateList containing', length(object), 'StrandStateMatrices.\n\n')
+		  	if(length(object) < 10)	{	  	
+		  		show(data.frame(Name=names(object), NumberOfContigs= sapply(1:length(object), function(x) nrow(object[[x]])), row.names=NULL))
+		  	}else{
+				endLength <- seq(length(object)-4, length(object))
+	 		  	show(data.frame(Name=head(names(object),5), NumberOfContigs= sapply(1:5, function(x) nrow(object[[x]])), row.names=NULL))
+	            show(data.frame("...           "=tail(names(object),5), 
+	            				NumberOfContigs=sapply(endLength, function(x) nrow(object[[x]])), row.names=endLength ))
+		  	}
 		  }
 )

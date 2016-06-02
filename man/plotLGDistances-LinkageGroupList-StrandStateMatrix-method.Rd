@@ -8,7 +8,7 @@
 \title{plotLGDistances -- plots a heatmap of the distances between linkage groups}
 \usage{
 \S4method{plotLGDistances}{LinkageGroupList,StrandStateMatrix}(object,
-  allStrands, lg = "all", labels = TRUE)
+  allStrands, lg = "all", labels = TRUE, alreadyOrdered = FALSE)
 }
 \arguments{
 \item{object}{LinkageGroupList}
@@ -19,6 +19,9 @@
 strand calls for all linkage groups and plot them side by side (default it 'all')}
 
 \item{labels}{=TRUE if TRUE, contig names will be plotted on the axes}
+
+\item{alreadyOrdered}{if TRUE, the function will assume that the linkageGroupList is already ordered and not 
+create a dendrogram. Default is FALSE}
 
 \item{...}{additional parameters to pass to heatmap.2}
 }

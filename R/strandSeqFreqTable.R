@@ -127,6 +127,19 @@ strandSeqFreqTable <- function(bamFileList,
 		CrickTable <- strandTable
 	}
 
+
+	#if there is strand information in the filter file, use to flip misoriented fragments
+	if(length(which(strand(filter) == '-')) > 0)
+	{
+		regionsToFlip <- filter$name[which(strand(filter) == '-')]
+		strandTable[regionsToFlip,]
+		#Now strip strandedness from filter as otherwise will only look for reads on same strand as direciton
+		strand(filter) <- "*" 
+	}else{ 
+		regionsToFlip <- NULL
+	}
+
+
 	for(fileName in bamFileList)
 	{
 		index <- colnames(strandTable)[indexCounter]
@@ -143,8 +156,13 @@ strandSeqFreqTable <- function(bamFileList,
 			break
 		}
 		# Count minus strand reads from first read
-		resultNeg <- reduceByYield(bf, strandInfo, overlapStrand, 
-								   DONE=loopedChunk, grfilter=filter, strand=FALSE)
+		resultNeg <- reduceByYield(bf, 
+								   strandInfo, 
+								   overlapStrand, 
+								   DONE=loopedChunk, 
+								   grfilter=filter, 
+								   strand=FALSE)
+
 		# Total read number
 		absCount <- resultPos + resultNeg
 		# Calculate strand call
@@ -163,9 +181,21 @@ strandSeqFreqTable <- function(bamFileList,
 		indexCounter <- indexCounter+1
 	}
 
+	if(length(which(strand(filter) == '-')))
+	{
+		rownames(strandTable)[regionsToFlip] <- paste("-", rownames(strandTable)[regionsToFlip], sep="")
+		rownames(countTable)[regionsToFlip] <- paste("-", rownames(countTable)[regionsToFlip], sep="")
+	}
+
 	#Get rid of contigs that are entirely empty to prevent low quality calls in downstream functions
 	strandTable <- strandTable[which(apply(countTable, 1, sum) > 0),]
 	countTable <- countTable[which(apply(countTable, 1, sum) > 0),]
+
+	if(!(is.null(regionsToFlip)))
+	{ 
+		strandTable[regionsToFlip,] <- strandTable[regionsToFlip,]*-1
+	}
+
 
 	if(BAITtables == FALSE){
   		return(list(strandTable=StrandFreqMatrix(strandTable), 

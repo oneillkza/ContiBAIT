@@ -53,7 +53,7 @@ Note that a more stringent similarity cutoff will result in more clusters, and a
 since at every iteration a distance is computed to the existing clusters. However, in lower-quality data, a
 more stringent cutoff may be necessary to reduce the number of contigs that are erroneously grouped.
 
-Note that \code{clusterParam}
+Note that \code{clusterParam} requires \code{BiocParallel} to be installed.
 }
 \examples{
 data("exampleWCMatrix")
@@ -61,8 +61,5 @@ data("exampleWCMatrix")
 clusteredContigs <- clusterContigs(exampleWCMatrix, verbose=FALSE)
 show(clusteredContigs)
 show(clusteredContigs[[1]])
-
-reorientedMatrix <- reorientLinkageGroups(clusteredContigs, exampleWCMatrix)
-mergedLinkageGroups <- mergeLinkageGroups(clusteredContigs,reorientedMatrix[[1]])
 }
 

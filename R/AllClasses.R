@@ -147,6 +147,39 @@ LinkageGroupList <- function(linkageGroups = list(), names=character())
 	new('LinkageGroupList', linkageGroups, names=names)	
 }
 
+# =========================================================================
+#' A class for storing library group calls for contigs
+#' 
+#' \describe{
+#'  This class is a list of lists, each primary list element is a chromosome/contig, and contains 2 sub-list elements: a list of 'Mostly Watson" and "Mostly Crick" library names. 
+#' }
+#
+#' @export
+#' @rdname LibraryGroupList
+
+setClass("LibraryGroupList", 
+		 representation('list', names='character'),
+		 # Ensure all list elements in LibraryGroupList are of class LinkageGroupList
+		 validity=function(object){unique(sapply(seq_along(object), function(x) class(object[[x]]) == "LinkageGroupList"))}
+		 )
+
+#' Constructor forLibraryGroupList
+#' @aliases LibraryGroupList
+#' @rdname LibraryGroupList
+#' @param libraryGroups a list of lists, with each primary list element representing a chromosome with two internal list elements; a character vector of mostly watson library names, and a character vector of mostly Crick library names
+#' @param names a vector of names of linkage groups
+#' @return a \code{LibraryGroupList}
+#' @export
+#' @examples
+#' lg1 <- LinkageGroupList(list(a=c('library1', 'library2'), b=c('library3')), names=c('chr1_Mostly_Crick', 'chr1_Mostly_Watson'))
+#' lg2 <- LinkageGroupList(list(a=c('library1'), b=c('library6', 'library4')), names=c('chr2_Mostly_Crick', 'chr2_Mostly_Watson'))
+#' libList <- LibraryGroupList(list(lg1, lg2))
+
+LibraryGroupList <- function(libraryGroups = list(), names=character())
+{
+	names <- sapply(seq_along(libraryGroups), function(x) strsplit(names(libraryGroups[[x]][1]), "_")[[1]][1])	
+	new('LibraryGroupList', libraryGroups, names=names)	
+}
 
 
 # =========================================================================
@@ -244,6 +277,35 @@ ChrTable <- function(chrRanges=GRanges())
 	new('ChrTable', chrRanges)	
 }
 
+# =========================================================================
+#' A class for storing StrandStateList lists for contigs
+#' 
+#' \describe{
+#'  This class is a list of StrandStateMatrices, each a subset of the StrandStateMatrix split by linkagegroups
+#' }
+#'
+#' @export
+#' @rdname StrandStateList
+
+setClass("StrandStateList", 
+		 representation('list', names='character'),
+		 # Ensure all list elements in LibraryGroupList are of class StrandStateMatrix
+		 validity=function(object){unique(sapply(seq_along(object), function(x) class(object[[x]]) == "StrandStateMatrix"))}
+		 )
+
+#' Constructor StrandStateList
+#' @aliases StrandStateList
+#' @rdname StrandStateList
+#' @param strandGroupList a list of StrandStateMatrix elements, with each primary element representing a StrandStateMatrix containing ordered contigs from a LinkageGroupList element
+#' @param names a vector of names of StrandStateMatrix elements
+#' @return a \code{StrandStateList}
+#' @export
+
+StrandStateList <- function(strandGroupList= list(), names=character())
+{
+	new('StrandStateList', strandGroupList, names=names)
+}
+
 
 # ========================================================================
 # Data sets
@@ -300,6 +362,12 @@ NULL
 
 #' Example of a divided chromosome, containing contigs and their lengths
 #' @name exampleDividedChr
+#' @docType data
+#' @keywords data
+NULL
+
+#' Example of a LibraryGroupList, containing library names
+#' @name exampleLibList
 #' @docType data
 #' @keywords data
 NULL
