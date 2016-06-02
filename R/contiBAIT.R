@@ -27,9 +27,6 @@
 #' 
 #' @return ordered contigs in bed format. Depending on options, intermediate files and plots will also be generated
 #' @import diagram
-#' @importFrom graphics boxplot hist legend lines text
-#' @importFrom stats cutree dist hclust lm rbinom
-#' @importFrom utils head tail
 #' @importFrom S4Vectors DataFrame
 #' @example inst/examples/contiBAIT.R
 #' @export
@@ -119,22 +116,14 @@ contiBAIT <- function(path=".",
 
    # make orientation calls for each group; WW and CC only
   if(verbose){message('-> Reorienting discordant fragments [4/7]')}
-  reorientedTable <- reorientLinkageGroups(linkage.groups, 
-                                           strandStateMatrixList[[1]])
+  reorientedTable <- reorientAndMergeLGs(linkage.groups, 
+                                          cluster=cluster,
+                                          clusterParam=clusterParam,
+                                          strandStateMatrixList[[1]])
 
-  if(verbose){message('-> Merging related linkage groups [5/7]')}
-  linkage.merged <- mergeLinkageGroups(linkage.groups, 
-                                       reorientedTable[[1]],
-                                       cluster=cluster,
-  									 clusterParam=clusterParam)
+  linkage.merged <- reorientedTable[[3]]
 
-  if(verbose){message('-> Re-checking orientation of merged groups [6/7]')}
-  reorientedTable <- reorientLinkageGroups(linkage.merged, 
-                                           reorientedTable[[1]], 
-                                           previousOrient=reorientedTable[[2]], 
-                                           verbose=FALSE)
-
-  if(makePlots != TRUE)
+   if(makePlots != TRUE)
   {
     if(verbose){message('-> Ordering contigs [7/7]')}
 
@@ -186,13 +175,15 @@ contiBAIT <- function(path=".",
     dev.off()
   }
 
-  if(saveName != FALSE){
-  	save(this.message, strandFrequencyList,strandStateMatrixList,
-  		 linkage.groups,linkage.merged, reorientedTable, 
-  		 contigOrder, 
-  		 file=paste(saveName, '_', cluster, 'clusters_linkgeData.Rd', sep=""))
-  }
-  
+ if(saveName != FALSE){save(this.message,
+                            filter, 
+                            strandFrequencyList,
+                            strandStateMatrixList,
+                            linkage.groups, 
+                            reorientedTable, 
+                            contigOrder, 
+                            file=paste(saveName, '_', cluster, 'clusters_linkgeData.Rd', sep=""))}
+
   return(contigOrder)
 
 }

@@ -21,9 +21,10 @@ computeConsensus <- function(groupMembers, allStrands, minSupport=0.05)
 	if(length(groupMembers) > 1)
 	{
 		groupStrands <- allStrands[groupMembers,]
+		#one liner to make a table
 		tables <- sapply(1:ncol(groupStrands), 
 						 function(y) sapply(1:3, 
-						 				   function(x) length(grep(x, groupStrands[,y]))))
+						 function(x) length(grep(x, groupStrands[,y]))))
 		rownames(tables) <- seq_len(3)
 		strandVec <- apply(tables, 2, function(x){names(which.max(x))})
 		qcScores <- apply(groupStrands, 2, 
@@ -34,7 +35,7 @@ computeConsensus <- function(groupMembers, allStrands, minSupport=0.05)
 	}
 	else
 	{
-		strandVec <- allStrands[groupMembers,]
+			strandVec <- allStrands[groupMembers,]
 	}
 	strandVec
 }

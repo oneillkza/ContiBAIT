@@ -4,8 +4,7 @@ preprocessStrandTable.func <- function(strandTable,
 									   orderMethod='libsAndConc', 
 									   lowQualThreshold=0.9, 
 									   verbose=TRUE, 
-									   minLib=10, 
-									   ignoreInternalQual=FALSE)
+									   minLib=10)
 {
 	strandTableLength <- nrow(strandTable)
 
@@ -13,55 +12,51 @@ preprocessStrandTable.func <- function(strandTable,
 	lowQualList <- data.frame(library=vector(), quality=vector())
 	qualList <- lowQualList
 
-if(ignoreInternalQual == FALSE)
-{
-	if(verbose){message("-> Checking for high quality libraries")}
-
-	for( col in seq_len(ncol(strandTable)) )
+	if(!(is.null(lowQualThreshold)))
 	{
-		libName <- colnames(strandTable, do.NULL=FALSE)[col]
-		backGroundC <- abs(mean(strandTable[,col][which(strandTable[,col] < -0.6)], na.rm=TRUE)) 
-		backGroundW <- abs(mean(strandTable[,col][which(strandTable[,col] > 0.6)], na.rm=TRUE))
-		libraryQual <- round(backGroundC + backGroundW / 2, digits=3)
-		colQual <- data.frame(library=libName, quality=libraryQual)
-		
-		if(libraryQual < lowQualThreshold || libraryQual == "NaN")
+		if(verbose){message("-> Checking for high quality libraries")}
+
+		for( col in seq_len(ncol(strandTable)) )
 		{
-			if(libraryQual == "NaN" & verbose){
-				message(paste("    -> ", libName, 
-							  " has insufficient reads. Removing", sep=""))}else{
-			if(verbose){
-				message(paste("    -> ",libName, 
-							  " has high background (", (1-libraryQual)*100, " %). Removing", sep=""))}}
-			lowQualList <- rbind(lowQualList, colQual)
-		} else {
-			qualList <- rbind(qualList, colQual)
+			libName <- colnames(strandTable, do.NULL=FALSE)[col]
+			backGroundC <- abs(mean(strandTable[,col][which(strandTable[,col] < -0.6)], na.rm=TRUE)) 
+			backGroundW <- abs(mean(strandTable[,col][which(strandTable[,col] > 0.6)], na.rm=TRUE))
+			libraryQual <- round(backGroundC + backGroundW / 2, digits=3)
+			colQual <- data.frame(library=libName, quality=libraryQual)
+			
+			if(libraryQual < lowQualThreshold || libraryQual == "NaN")
+			{
+				if(libraryQual == "NaN" & verbose){message(paste("    -> ", libName, " has insufficient reads. Removing", sep=""))}else{
+				if(verbose){message(paste("    -> ",libName, " has high background (", (1-libraryQual)*100, " %). Removing", sep=""))}}
+				lowQualList <- rbind(lowQualList, colQual)
+			} else {
+				qualList <- rbind(qualList, colQual)
+			}
 		}
+		
+		if(nrow(lowQualList) == ncol(strandTable))
+		{
+			warning("-> WARNING! ALL LIBRARIES ARE OF LOW QUALITY!! UNABLE TO REMOVE HIGH BACKGROUND LIBRARIES!")
+		} else if(nrow(lowQualList) == 0 & verbose) { 
+			message("-> All libraries of good quality" )
+		}else{
+			if(verbose){
+				stCol <- ncol(strandTable)
+				lqRow <- nrow(lowQualList)
+				message(paste("-> Removed ", lqRow,
+						  	" libraries from a total of ", stCol, ". ", 
+							stCol-lqRow, " remaining (", 
+							round((stCol-lqRow)/stCol*100, digits=1), "%)", sep="") )}
+			strandTable <- strandTable[,!(colnames(strandTable) %in% lowQualList[,1])]
+		}	
 	}
-
-	
-	if(nrow(lowQualList) == ncol(strandTable))
-	{
-		warning("-> WARNING! ALL LIBRARIES ARE OF LOW QUALITY!! UNABLE TO REMOVE HIGH BACKGROUND LIBRARIES!")
-	} else if(nrow(lowQualList) == 0) { 
-		if(verbose){message("-> All libraries of good quality" )}
-	} else {
-		stCol <- ncol(strandTable)
-		lqRow <- nrow(lowQualList)
-		if(verbose){message(paste("-> Removed ", lqRow,
-								  " libraries from a total of ", stCol, ". ", 
-								  stCol-lqRow, " remaining (", 
-								  round((stCol-lqRow)/stCol*100, digits=1), "%)", sep="") )}
-		strandTable <- strandTable[,!(colnames(strandTable) %in% lowQualList[,1])]
-	}	
-}
 	rawTable <- strandTable
 	
 	strandTable[strandTable >= strandTableThreshold] <- 1
 	strandTable[strandTable <= -strandTableThreshold] <- 3
 	strandTable[strandTable < strandTableThreshold & strandTable > -strandTableThreshold] <- 2
 
-	preFilterData <- function(strandTable, filterThreshold=0.8, onlyWC=FALSE, minLib=minLib)
+	preFilterData <- function(strandTable, filterThreshold, minLib, onlyWC=FALSE)
 	{
 		##### PRE-FILTER CONTIGS ##### 
 		#Ignore contigs present in fewer than 10 libraries
@@ -91,13 +86,13 @@ if(ignoreInternalQual == FALSE)
 
 	#Create new data.frame of contigs that are entirely WC to investigate further
 	strandTableAWC <- preFilterData(strandTable, 
-									filterThreshold=filterThreshold, 
-									onlyWC=TRUE, 
-									minLib=minLib)
+									filterThreshold, 
+									minLib,
+									onlyWC=TRUE)
 
 	strandTable <- preFilterData(strandTable, 
-								 filterThreshold=filterThreshold, 
-								 minLib=minLib)
+								 filterThreshold,
+								 minLib)
 
 	rawTable <- rawTable[rownames(strandTable),]
 	rawTable <- rawTable[,colnames(strandTable)]
@@ -168,9 +163,9 @@ if(ignoreInternalQual == FALSE)
 #' @param strandTableThreshold threshold at which to call a contig WW or CC rather than WC
 #' @param filterThreshold maximum number of libraries a contig can be NA or WC in
 #' @param orderMethod the method to oder contigs. currently libsAndConc only option. Set to FALSE to not order contigs based on library quality
-#' @param lowQualThreshold background threshold at which to toss an entire library
+#' @param lowQualThreshold background threshold at which to toss an entire library. If NULL, function will not make an overall assessment of library quality.
+#' Very chimeric assemblies can appear low quality across all libraries.
 #' @param minLib minimum number of libraries a contig must be present in to be included in the output
-#' @param ignoreInternalQual logical that prevents function for making an overall assessment of library quality. Very chimeric assemblies can appear low quality across all libraries. 
 #' @param verbose messages written to terminal
 #' @aliases preprocessStrandTable preprocessStrandTable,StrandFreqMatrix,StrandFreqMatrix-method
 #' 
