@@ -1,0 +1,12 @@
+language: R
+sudo: required
+
+bioc_required: true
+bioc_packages:
+  - BiocCheck
+warnings_are_errors: true
+
+after_script:
+  - ls -lah
+  - FILE=$(ls -1t *.tar.gz | head -n 1)
+  - Rscript -e "library(BiocCheck); BiocCheck(\"${FILE}\")"
