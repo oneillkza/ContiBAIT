@@ -12,21 +12,60 @@ Description: Using strand inheritance data from multiple single cells
 License: BSD_2_clause + file LICENSE
 Depends: BH (>= 1.51.0-3), Rsamtools (>= 1.21)
 LinkingTo: Rcpp, BH
-Imports: grDevices, clue, cluster, gplots, IRanges, GenomicRanges,
-        S4Vectors, Rcpp, TSP, GenomicFiles, gtools, rtracklayer,
-        BiocParallel, DNAcopy, colorspace, reshape2, ggplot2, methods,
-        exomeCopy, diagram
-Suggests: BiocStyle
+Imports:
+    grDevices,
+    clue,
+    cluster,
+    gplots,
+    IRanges,
+    GenomicRanges,
+    S4Vectors,
+    Rcpp,
+    TSP,
+    GenomicFiles,
+    gtools,
+    rtracklayer,
+    BiocParallel,
+    DNAcopy,
+    colorspace,
+    reshape2,
+    ggplot2,
+    methods,
+    exomeCopy,
+    GenomicAlignments,
+    diagram
+Suggests:
+    BiocStyle
 biocViews: CellBasedAssays, QualityControl, WholeGenome, Genetics,
-        GenomeAssembly
-Collate: 'AllClasses.R' 'AllGenerics.R' 'BAIT.R'
-        'barplotLinkageGroupCalls.R' 'clusterContigs.R'
-        'computeConsensus.R' 'computeSim.R' 'contiBAIT.R'
-        'ideogramPlot.R' 'makeBoxPlot.R' 'makeChrTable.R'
-        'mapGapFromOverlap.R' 'mergeLinkageGroups.R'
-        'orderAllLinkageGroups.R' 'orderContigsGreedy.R'
-        'orderContigsTSP.R' 'plotContigOrder.R' 'plotLGDistances.R'
-        'plotWCdistribution.R' 'preprocessStrandTable.R'
-        'reorientLinkageGroups.R' 'strandSeqFreqTable.R' 'writeBed.R'
+    GenomeAssembly
+Collate:
+    'AllClasses.R'
+    'AllGenerics.R'
+    'BAIT.R'
+    'barplotLinkageGroupCalls.R'
+    'clusterContigs.R'
+    'computeConsensus.R'
+    'computeSim.R'
+    'contiBAIT.R'
+    'findSimilarLibraries.R'
+    'fixLinkageGroups.R'
+    'highlightAssemblyErrors.R'
+    'ideogramPlot.R'
+    'locateMisorients.R'
+    'makeBoxPlot.R'
+    'makeChrTable.R'
+    'mapGapFromOverlap.R'
+    'mergeFlankedLGs.R'
+    'orderAllLinkageGroups.R'
+    'orderContigsGreedy.R'
+    'orderContigsTSP.R'
+    'plotContigOrder.R'
+    'plotLGDistances.R'
+    'plotWCdistribution.R'
+    'preprocessStrandTable.R'
+    'reorientAndMergeLGs.R'
+    'strandSeqFreqTable.R'
+    'thoroughBed.R'
+    'writeBed.R'
 RoxygenNote: 5.0.1
 NeedsCompilation: yes
