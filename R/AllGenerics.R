@@ -143,6 +143,16 @@ setGeneric("makeBoxPlot",
 		   signature=c('chrTable', 'linkage.contigs'))
 
 ## =========================================================================
+## Generic for plotContigOrder
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export plotContigOrder
+setGeneric("plotContigOrder", 
+           function(contigOrder, 
+                    lg=NULL,
+                    verbose=NULL) standardGeneric("plotContigOrder"),
+		   signature='contigOrder')
+
+## =========================================================================
 ## Generic for ideogramPlot
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 #' @export ideogramPlot
