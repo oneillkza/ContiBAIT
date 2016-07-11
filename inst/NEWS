@@ -1,3 +1,8 @@
+contiBAIT v1.1.2
+==============
+Bug fixes:
+-Prevented bug where ContigOrdering elements were slow to open due to computationally expensive sapply function in the definition 
+
 contiBAIT v1.1.1
 ==============
 Bug fixes:
