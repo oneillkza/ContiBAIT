@@ -73,14 +73,14 @@ preprocessStrandTable.func <- function(strandTable,
 		}else{
 			strandTable <- strandTable[which(apply(strandTable, 1, 
 												   function(x){length(which(x == 2))} <= colThresh )),]
+			##### PRE-FILTER LIBRARIES #####
+			#Ignore libraries that are mostly WC (indicating Strand-Seq failure)
+			strandTable <- strandTable[,which(apply(strandTable, 2, 
+													function(x){length(which(x == 2))} <= rowThresh ))]
+			#And ignore libraries that are entirely NA (indicating no cell present)	
+			strandTable <- strandTable[,which(apply(strandTable, 2, 
+													function(x){length(which(is.na(x)))} <= rowThresh ))]
 		}
-		##### PRE-FILTER LIBRARIES #####
-		#Ignore libraries that are mostly WC (indicating Strand-Seq failure)
-		strandTable <- strandTable[,which(apply(strandTable, 2, 
-												function(x){length(which(x == 2))} <= rowThresh ))]
-		#And ignore libraries that are entirely NA (indicating no cell present)	
-		strandTable <- strandTable[,which(apply(strandTable, 2, 
-												function(x){length(which(is.na(x)))} <= rowThresh ))]
 		return(strandTable)
 	}
 

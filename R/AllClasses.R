@@ -371,3 +371,10 @@ NULL
 #' @docType data
 #' @keywords data
 NULL
+
+#' Example of a ContigOrdering table, containing a list with a matrix of ordered groups element
+#' and a StrandStateList element
+#' @name exampleContigOrder
+#' @docType data
+#' @keywords data
+NULL
