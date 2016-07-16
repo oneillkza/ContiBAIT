@@ -168,7 +168,7 @@ contiBAIT <- function(path=".",
                  strandFrequencyList[[4]], 
                  chrTable, 
                  plotBy='chr', 
-                 orderFrame=contigOrder, 
+                 orderFrame=contigOrder[[1]], 
                  orientationData=reorientedTable[[2]], 
                  verbose=TRUE)
 
@@ -183,7 +183,7 @@ contiBAIT <- function(path=".",
                             reorientedTable, 
                             contigOrder, 
                             file=paste(saveName, '_', cluster, 'clusters_linkgeData.Rd', sep=""))}
-
+#sapply(seq_len(length(lgs)), function(x) sum(width(filter[which(filter$name %in% lgs[[x]])])))
   return(contigOrder)
 
 }

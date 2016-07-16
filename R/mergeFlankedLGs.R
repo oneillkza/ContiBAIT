@@ -78,6 +78,7 @@ mergeFlankedLGs.func <- function(linkageGroupList,
     #If it falls nicely into two groups, take the smaller group to reorient
     if(length(orientClusters) == 2)
     {
+      if(verbose){message('  -> Found misorientation in ', listElement)}
       flipGroup <- as.character(flankKey[match(orientClusters[[2]], flankKey$clusterName), 2])
       flippedIndex <- names(nameIndex[which(nameIndex %in% toReorient)])
       flipNames <- unlist(linkageGroupList[names(linkageGroupList) %in% flippedIndex])
