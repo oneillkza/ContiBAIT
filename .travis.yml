@@ -1,5 +1,6 @@
 language: R
 r: bioc-devel
+r_github_packages: devtools
 cache: packages
 warnings_are_errors: true
 after_script:
@@ -9,6 +10,3 @@ after_script:
 notifications:
   email:
     - oneillkza@gmail.com
-before_install:
-    - wget https://github.com/hadley/devtools/archive/master.tar.gz -O /tmp/devtools.tar.gz
-    - Rscript -e 'install.packages(c("/tmp/devtools.tar.gz"), dependencies=TRUE);'
