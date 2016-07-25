@@ -1,5 +1,4 @@
 language: R
-github_packages: devtools
 r: bioc-devel
 cache: packages
 warnings_are_errors: true
@@ -10,3 +9,6 @@ after_script:
 notifications:
   email:
     - oneillkza@gmail.com
+before_script:
+	wget https://github.com/hadley/devtools/archive/master.tar.gz -O /tmp/devtools.tar.gz
+	R CMD INSTALL /tmp/devtools.tar.gz
