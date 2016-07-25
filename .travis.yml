@@ -1,6 +1,6 @@
 language: R
 r: bioc-devel
-r_github_packages: devtools
+r_github_packages: hadley/devtools
 cache: packages
 warnings_are_errors: true
 after_script:
