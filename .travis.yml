@@ -9,3 +9,4 @@ after_script:
 notifications:
   email:
     - oneillkza@gmail.com
+github_packages: devtools
