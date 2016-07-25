@@ -11,4 +11,4 @@ notifications:
     - oneillkza@gmail.com
 before_install:
     - wget https://github.com/hadley/devtools/archive/master.tar.gz -O /tmp/devtools.tar.gz
-    - R CMD INSTALL /tmp/devtools.tar.gz
+    - Rscript -e 'install.packages(c("/tmp/devtools.tar.gz"), dependencies=TRUE);'
