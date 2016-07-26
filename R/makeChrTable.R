@@ -45,7 +45,7 @@ makeChrTable <- function(bamFile,
 	bamLength <- sapply(lengthOfContigs[grep("LN:", lengthOfContigs)], "[",2)
 	bamLength <-  as.numeric(gsub("LN:", "", bamLength))
 
-	chrTable <- GRanges(bamChr, IRanges(start=0, end=bamLength))
+	chrTable <- GRanges(bamChr, IRanges(start=1, end=bamLength))
 
 	if(!(is.null(splitFile)))
 	{

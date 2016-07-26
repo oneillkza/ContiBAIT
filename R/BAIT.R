@@ -48,7 +48,7 @@ BAIT <- function(path=".",
 	chrTable <- makeChrTable(bamFileList[1], splitBy=splitBy)
 	if(chroms[1] != 'all')
 	{
-		chrTable <- chrTable[chroms,]
+		chrTable <- unlist(split(chrTable, seqnames(chrTable))[chroms])
 	}
 
 	strandFrequencyList <- strandSeqFreqTable(bamFileList, 

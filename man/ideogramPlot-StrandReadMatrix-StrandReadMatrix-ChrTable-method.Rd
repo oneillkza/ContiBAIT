@@ -9,7 +9,7 @@
 \usage{
 
   \S4method{ideogramPlot}{StrandReadMatrix,StrandReadMatrix,ChrTable}(WatsonFreqList,
-  CrickFreqList, chrTable, plotBy = "lib", showPage = FALSE,
+  CrickFreqList, chrTable, plotBy = "lib", showPage = NULL,
   orderFrame = NULL, orientationData = NULL, verbose = TRUE)
 }
 \arguments{
@@ -21,7 +21,7 @@
 
 \item{plotBy}{Whether to generate a plot for each library ('lib') or a plot for each chromosome ('chr')}
 
-\item{showPage}{Integer specifying which page to plot if plotBy='chr' selected. Useful when not plotting to a file. Default is FALSE}
+\item{showPage}{Integer specifying which LG (if plotBy='chr') or libraries (if plotBy='lib') to plot. Useful when not plotting to a file, or when wishing to subset data. Default is NULL}
 
 \item{orderFrame}{ordered data.frame of contigs (produced by orderAllLinkageGroups). Default is FALSE, where plots will be made from elements in chrTable.}
 

@@ -1,3 +1,11 @@
+contiBAIT v1.1.3
+==============
+Bug fixes:
+-Prevented bug where makeChrTable was creating GRanges starting at nucleotide 0 rather than 1
+-Fixed bug that caused error when 'chrom' option was used in BAIT.R
+-Changed ideogramPlot to be more stable, quicker, no longer generate warnings.
+
+
 contiBAIT v1.1.2
 ==============
 Bug fixes:
