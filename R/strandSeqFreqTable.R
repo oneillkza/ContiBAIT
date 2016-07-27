@@ -132,7 +132,7 @@ strandSeqFreqTable <- function(bamFileList,
 	if(length(which(strand(filter) == '-')) > 0)
 	{
 		regionsToFlip <- filter$name[which(strand(filter) == '-')]
-		strandTable[regionsToFlip,]
+		#strandTable[regionsToFlip,]
 		#Now strip strandedness from filter as otherwise will only look for reads on same strand as direciton
 		strand(filter) <- "*" 
 	}else{ 
