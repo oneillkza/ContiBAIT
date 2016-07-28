@@ -132,7 +132,7 @@ strandSeqFreqTable <- function(bamFileList,
 	if(length(which(strand(filter) == '-')) > 0)
 	{
 		regionsToFlip <- filter$name[which(strand(filter) == '-')]
-		strandTable[regionsToFlip,]
+		#strandTable[regionsToFlip,]
 		#Now strip strandedness from filter as otherwise will only look for reads on same strand as direciton
 		strand(filter) <- "*" 
 	}else{ 
@@ -149,6 +149,8 @@ strandSeqFreqTable <- function(bamFileList,
 		resultPos <- reduceByYield(bf, strandInfo, 
 								   overlapStrand, DONE=loopedChunk, 
 								   grfilter=filter)
+		#fixes bug where no reads returns a list rather than an integer
+		if(class(resultPos) == 'list'){resultPos <- as.integer(rep(0, lengthOfContigs))}
 
 		if(is.list(resultPos)){
 			warning('\n####################\n WARNING! BAM FILE', 
@@ -163,6 +165,7 @@ strandSeqFreqTable <- function(bamFileList,
 								   grfilter=filter, 
 								   strand=FALSE)
 
+		if(class(resultNeg) == 'list'){resultNeg <- as.integer(rep(0, lengthOfContigs))}
 		# Total read number
 		absCount <- resultPos + resultNeg
 		# Calculate strand call

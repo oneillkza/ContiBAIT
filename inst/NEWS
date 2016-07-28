@@ -1,3 +1,30 @@
+contiBAIT v1.1.3
+==============
+Bug fixes:
+-Prevented bug where makeChrTable was creating GRanges starting at nucleotide 0 rather than 1
+-Fixed bug that caused error when 'chrom' option was used in BAIT.R
+-Changed ideogramPlot to be more stable, quicker, no longer generate warnings.
+
+
+contiBAIT v1.1.2
+==============
+Bug fixes:
+-Prevented bug where ContigOrdering elements were slow to open due to computationally expensive sapply function in the definition 
+
+contiBAIT v1.1.1
+==============
+Bug fixes:
+-Changed version number to align with Bioconductor
+
+contiBAIT v0.99.7
+==============
+Bug fixes:
+-prevented rare error where strandSeqFreqTable was crashing when there were no reads for all contigs
+
+Major changes:
+-Added table output of inversion/chimera statistics from locateMisorients
+-Made method for plotContigOrder and cleaned up code
+
 contiBAIT v0.99.6
 ==============
 Bug fixes:

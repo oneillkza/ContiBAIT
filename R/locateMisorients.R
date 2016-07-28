@@ -7,13 +7,19 @@ locateMisorients.func <- function(compiledGrange, gapFile=NULL, stateNum=3, read
   if(!(is.null(gapFile)))
   {
     gapFile <- gapFile[which(seqnames(gapFile) %in% names(compiledGrange))]
-    gapFile <- split(gapFile, seqnames(gapFile))
+    gapFile <- split(gapFile, seqnames(gapFile), drop=TRUE)
   }
 
   fullBedData <- GRanges()
 
-  for(ch in names(compiledGrange) )
+  statMat <- matrix(nrow=length(names(compiledGrange)), ncol=6)
+  colnames(statMat) <- c('No_miso', 'Size_miso', 'Percent_miso', 'No_chim', 'Size_chim', 'Percent_chim')
+  rownames(statMat) <- names(compiledGrange)
+
+
+  for(num in seq_len(length(names(compiledGrange))) )
   {
+    ch <- names(compiledGrange)[num]
     if(verbose){message("Looking for issues on ", ch, " [",  which(names(compiledGrange) == ch), "/", length(compiledGrange), "]:")}
     oneChr <- compiledGrange[[ch]]
     plusString <- as.character(strand(oneChr))
@@ -112,40 +118,52 @@ locateMisorients.func <- function(compiledGrange, gapFile=NULL, stateNum=3, read
       chimRanges <- GRanges()
     }
      chrCalls <- segs[which(segs$calls != 0.5),]
-    chrCalls$calls[which(chrCalls$calls == 1)] <- '+'
-    chrCalls$calls[which(chrCalls$calls == 0)] <- '-'
-    chrCalls$name <- paste(chrCalls$chr, ':', chrCalls$start, '-', chrCalls$end, sep="")
+     if(nrow(chrCalls) > 0)
+     {
+        chrCalls$calls[which(chrCalls$calls == 1)] <- '+'
+        chrCalls$calls[which(chrCalls$calls == 0)] <- '-'
+        chrCalls$name <- paste(chrCalls$chr, ':', chrCalls$start, '-', chrCalls$end, sep="")
 
-   	gCalls <- GRanges(seqnames=chrCalls$chr, IRanges(start=chrCalls$start, end=chrCalls$end), name=chrCalls$name, score=chrCalls$count)
-    strand(gCalls) <- chrCalls$calls
+       	gCalls <- GRanges(seqnames=chrCalls$chr, IRanges(start=chrCalls$start, end=chrCalls$end), name=chrCalls$name, score=chrCalls$count)
+        strand(gCalls) <- chrCalls$calls
 
-    chimSize <- sum(width(chimRanges))
-    misSize <- sum(width(gCalls[which(strand(gCalls) == "-")]))
-    totSize <- chimSize +  sum(width(gCalls))
+        gCallAll <- suppressWarnings(append(gCalls, chimRanges))
+        gCallAll <- gCallAll[order(unstrand(gCallAll))]
 
-   if(verbose){message("    -> ", 
-                        length(which(chrCalls$calls == '-')), 
-                        " misorientations (", 
-                        round(misSize/totSize*100, digits=1), 
-                        "%) & ", length(chimRanges), 
-                        " chimeras found (", 
-                        round(chimSize/totSize*100, digits=1), 
-                        "%)." )}
+        betweenCalls <- gaps(unstrand(gCallAll))
+
+        totCov <- (sum(width(gCalls)) + sum(width(betweenCalls)))/1e6
+
+        chimSize <- sum(width(chimRanges))/1e6
+        misSize <- sum(width(gCalls[which(strand(gCalls) == "-")]))/1e6
+
+        misO <- length(which(strand(gCalls) == '-'))
+        misOPer <- round(misSize/totCov*100, digits=1)
+        chim <- length(chimRanges)
+        chimPer <- round(chimSize/totCov*100, digits=1)
+
+        statMat[num,] <- c(misO, misSize, misOPer, chim, chimSize, chimPer)
+    
+
+       if(verbose){message("    -> ", 
+                            misO, 
+                            " misorientations (", 
+                            misOPer, 
+                            "%) & ", chim, 
+                            " chimeras found (", 
+                            chimPer, 
+                            "%)." )}
 
 
-    gCalls <- suppressWarnings(append(gCalls, chimRanges))
-    gCalls <- gCalls[order(unstrand(gCalls))]
-
-    betweenCalls <- gaps(unstrand(gCalls))
-
-    if(length(betweenCalls) > 0)
-    {
-      betweenCalls$name <- paste(ch, ':', start(betweenCalls), '-', end(betweenCalls), sep='')
-      betweenCalls$score <- 0
-      allCalls <- append(gCalls, betweenCalls)
-      allCalls <- allCalls[order(unstrand(allCalls))]
-      fullBedData <- suppressWarnings(append(fullBedData, allCalls))
-    }
+        if(length(betweenCalls) > 0)
+        {
+          betweenCalls$name <- paste(ch, ':', start(betweenCalls), '-', end(betweenCalls), sep='')
+          betweenCalls$score <- 0
+          allCalls <- append(gCallAll, betweenCalls)
+          allCalls <- allCalls[order(unstrand(allCalls))]
+          fullBedData <- suppressWarnings(append(fullBedData, allCalls))
+        }
+      }
   }
 
 
@@ -153,7 +171,7 @@ locateMisorients.func <- function(compiledGrange, gapFile=NULL, stateNum=3, read
   {
     export.bed(con=writeBed, fullBedData)
   }
-  return(fullBedData)
+  return(list(fullBedData, statMat))
    
 }  
 ####################################################################################################

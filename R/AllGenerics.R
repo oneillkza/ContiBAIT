@@ -143,6 +143,16 @@ setGeneric("makeBoxPlot",
 		   signature=c('chrTable', 'linkage.contigs'))
 
 ## =========================================================================
+## Generic for plotContigOrder
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export plotContigOrder
+setGeneric("plotContigOrder", 
+           function(contigOrder, 
+                    lg=NULL,
+                    verbose=NULL) standardGeneric("plotContigOrder"),
+		   signature='contigOrder')
+
+## =========================================================================
 ## Generic for ideogramPlot
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 #' @export ideogramPlot
@@ -331,9 +341,7 @@ setMethod("show",
  
 		  	cat('A matrix of', len1, 'LGs split into', len2, 
 		  		'sub-groups from', nrow(object), 'ordered fragments.\n')
-		  	if(length(unique(sapply(1:nrow(object), 
-		  							function(x) 
-		  								strsplit(as.character(object[,1]), "\\.")[[x]][2]))) > 25)
+		  	if(length(table(object[,1])) > 10)
 		  	{
 			  	show(head(table(object[,1])))
 			  	cat('...')
