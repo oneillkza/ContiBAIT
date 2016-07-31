@@ -153,7 +153,7 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
   rownames(orderedGroups) <- NULL
   colnames(orderedGroups) <- c('LG', 'contig')
   rownames(orderedGroups) <- sapply(seq_len(nrow(orderedGroups)), function(x) strsplit(orderedGroups[x,], "[.]")[[1]][1])
-  orderedGroups <- ContigOrdering(orderedGroups, reps)
+  orderedGroups <- ContigOrdering(orderedGroups)
 
   plotGroups <- StrandStateList(plotGroups, names=paste('LG', whichLG, ' StrandStateMatrix', sep=''))
   return(list(orderedGroups, plotGroups))
