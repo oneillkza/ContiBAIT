@@ -4,10 +4,12 @@
 \alias{orderContigsTSP}
 \title{Attempt to order contigs within linkage groups using travelling salesperson algorithm}
 \usage{
-orderContigsTSP(linkageGroupReadTable)
+orderContigsTSP(linkageGroupReadTable, reps)
 }
 \arguments{
 \item{linkageGroupReadTable}{dataframe of strand calls (product of combineZeroDists or preprocessStrandTable)}
+
+\item{reps}{Number of repetitions for he 2-opt TSP solver algorithm}
 }
 \value{
 list of two members: 1) contig names in order, 2) the original data.frame entered into function correctly ordered

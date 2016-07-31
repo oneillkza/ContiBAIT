@@ -100,7 +100,7 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
         outOfOrder <- orderContigsGreedy(linkageGroupReadTable, randomAttempts=randomAttempts)
       }else if (orderCall == 'TSP')
       {
-        outOfOrder <- orderContigsTSP(linkageGroupReadTable)
+        outOfOrder <- orderContigsTSP(linkageGroupReadTable, reps=randomAttempts)
       }else{
         warning('###### WARNING! orderCall parameter not recognized! No ordering Performed. ######')
         break
@@ -153,7 +153,7 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
   rownames(orderedGroups) <- NULL
   colnames(orderedGroups) <- c('LG', 'contig')
   rownames(orderedGroups) <- sapply(seq_len(nrow(orderedGroups)), function(x) strsplit(orderedGroups[x,], "[.]")[[1]][1])
-  orderedGroups <- ContigOrdering(orderedGroups)
+  orderedGroups <- ContigOrdering(orderedGroups, reps)
 
   plotGroups <- StrandStateList(plotGroups, names=paste('LG', whichLG, ' StrandStateMatrix', sep=''))
   return(list(orderedGroups, plotGroups))
@@ -170,7 +170,7 @@ orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, stra
 #' @param saveOrdered Will return a pdf of heatmaps for each linkage group; String entered becomes the fileName (default is saveOrderedPDF=FALSE)
 #' @param orderCall currently either 'greedy' for greedy algorithm or 'TSP' for travelling salesperson alogrithm (default is 'greedy')
 #' @param verbose Pringts messages to the terminal. Default is TRUE
-#' @param randomAttempts iterger specifying number of randomized clusterings to identify the best ordering. Default is 75
+#' @param randomAttempts itenger specifying number of iterations of either the Monte Carlo or the 2-opt TSP solver to identify the best ordering. Default is 75, but higher values (eg 1000) make more sense for the TSP.
 #' @aliases orderAllLinkageGroups orderAllLinkageGroups,orderAllLinkageGroups-LinkageGroupList-StrandStateMatrix-StrandFreqMatrix-StrandReadMatrix-method
 #' @rdname orderAllLinkageGroups
 #' 
