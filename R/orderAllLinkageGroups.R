@@ -1,4 +1,12 @@
-orderAllLinkageGroups.func <- function(linkageGroupList, strandStateMatrix, strandFreqMatrix, strandReadCount, whichLG=NULL, saveOrdered=NULL, orderCall='greedy', randomAttempts=75, verbose=TRUE)
+orderAllLinkageGroups.func <- function(linkageGroupList, 
+                                       strandStateMatrix, 
+                                       strandFreqMatrix, 
+                                       strandReadCount, 
+                                       whichLG=NULL, 
+                                       saveOrdered=NULL, 
+                                       orderCall='greedy', 
+                                       randomAttempts=75, 
+                                       verbose=TRUE)
 {
 
   combineZeroDistContigs <- function(linkageStrands, rawStrandTable, lg)

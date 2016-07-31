@@ -12,22 +12,20 @@
 orderContigsTSP <- function(linkageGroupReadTable, reps)
 {
 
-  dists <- as.matrix(daisy(linkageGroupReadTable))
+  factorisedLGReadTable <- data.frame(apply(linkageGroupReadTable, 2, as.factor))
   
+  dists <- as.matrix(daisy(factorisedLGReadTable))
+  
+  # Add a dummy "city" equidistant to all others:
   dists <- cbind(dists, rep(1, nrow(dists)))
   dists <- rbind(dists, rep(1, ncol(dists)))
   rownames(dists)[nrow(dists)] <- 'dummy'
   colnames(dists)[nrow(dists)] <- 'dummy'
   
+  #Compute optimal TSP route, and remove dummy:
   contig.tsp <- TSP(dists)
   contigsOrder <- solve_TSP(contig.tsp, method='2-opt', control=list(rep=reps))
   contigsOrder <- labels(contigsOrder)[-c(which(labels(contigsOrder)=='dummy'))]
-  
-  #order the table entered into function and convert to factor, then add factor levels.
-  linkageGroupReadTable[] <- lapply(linkageGroupReadTable[contigsOrder,], factor)
-  linkageGroupReadTable <- data.frame(lapply(linkageGroupReadTable, 
-  										   function(x){levels(x) <- c(1,2,3); x}) )
-  rownames(linkageGroupReadTable) <- contigsOrder
 
-  return(list(orderVector=contigsOrder, orderedMatrix=linkageGroupReadTable))
+  return(list(orderVector=contigsOrder, orderedMatrix= factorisedLGReadTable[contigsOrder,]))
 }
