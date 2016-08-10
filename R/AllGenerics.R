@@ -120,7 +120,8 @@ setGeneric("barplotLinkageGroupCalls",
            function(object, 
                     chrTable, 
                     by=NULL, 
-                    returnTable=NULL) standardGeneric("barplotLinkageGroupCalls"),
+                    returnTable=NULL,
+                    percentage=NULL) standardGeneric("barplotLinkageGroupCalls"),
 		   signature=c('object', 'chrTable'))
 
 ## =========================================================================
@@ -161,6 +162,7 @@ setGeneric("ideogramPlot",
                     CrickFreqList,
                     chrTable,
                     plotBy=NULL,
+                    sizeProportional=NULL,
                     showPage=NULL,
                     orderFrame=NULL,
    		            orientationData=NULL,
