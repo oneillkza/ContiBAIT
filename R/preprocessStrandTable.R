@@ -63,23 +63,25 @@ preprocessStrandTable.func <- function(strandTable,
 		strandTable <- strandTable[which(apply(strandTable, 1, 
 											   function(x){length(which(!is.na(x)))} >= minLib)),]
 
+		#And ignore libraries that are entirely NA (indicating no cell present)	
+		strandTable <- strandTable[,which(apply(strandTable, 2, 
+												function(x){length(which(is.na(x)))} <= length(x)*filterThreshold ))]
+
 		#Ignore contigs that are entirely WC (likely contain inversions) (NB all <10 contigs have already been excluded)
-		colThresh <- ncol(strandTable)*filterThreshold
-		rowThresh <- nrow(strandTable)*filterThreshold 
+		WCvaluesCon <- sapply(1:nrow(strandTable), 
+							  function(x) length(grep(2, strandTable[x,]) )/length(grep(paste(c(1,2,3), collapse="|"), strandTable[x,])))
+		#And libraries that are entirely WC (whole genome libraries, not strandSeq)
+		WCvaluesLib <- sapply(1:ncol(strandTable), 
+							  function(x) length(grep(2, strandTable[,x]) )/length(grep(paste(c(1,2,3), collapse="|"), strandTable[,x])))
 		if(onlyWC)
 		{
-			strandTable <- strandTable[which(apply(strandTable, 1, 
-												   function(x){length(which(x == 2))} > colThresh )),]
+			strandTable <- strandTable[which(WCvaluesCon > filterThreshold),]
 		}else{
-			strandTable <- strandTable[which(apply(strandTable, 1, 
-												   function(x){length(which(x == 2))} <= colThresh )),]
+			strandTable <-  strandTable[which(WCvaluesCon <= filterThreshold),]
+
 			##### PRE-FILTER LIBRARIES #####
 			#Ignore libraries that are mostly WC (indicating Strand-Seq failure)
-			strandTable <- strandTable[,which(apply(strandTable, 2, 
-													function(x){length(which(x == 2))} <= rowThresh ))]
-			#And ignore libraries that are entirely NA (indicating no cell present)	
-			strandTable <- strandTable[,which(apply(strandTable, 2, 
-													function(x){length(which(is.na(x)))} <= rowThresh ))]
+			strandTable <- strandTable[,which(WCvaluesLib <= filterThreshold)]
 		}
 		return(strandTable)
 	}

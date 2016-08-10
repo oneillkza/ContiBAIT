@@ -1,3 +1,17 @@
+contiBAIT v1.1.4
+==============
+Bug fixes:
+-Major bug uncovered in preProcessStrandTable where contigs that were entirely WC were not being removed since NAs were included in counts.
+This meant that if a contig had 10 libraries with WC, and 90 libraries with NA, the proportion of WC libraries was erroneously called as 10%
+-BarplotLinkageGroupCalls now has a percentage variable that plots the barplots as a % of the chromosome/LG rather than the absolute lenth in Mb
+-Added verbose function to inform user of whether reorientAndMergeLGs finds any contigs to reorient.
+-Fixed bug where mergeFlankedLG was occasionally crashing when no mergeable contigs were found.
+
+Major changes:
+-ideogramPlot now allows closer BAIT-like ideograms using the sizeProportional argument. For example, if three contigs are present in an LG, the plot will be small
+irrespective of the size of the contigs. Using sizeProportional=200000 will divide each contig into 200kb bins, and the reads will be evenly distributed across them 
+to give a better representation of the chromosome size.
+
 contiBAIT v1.1.3
 ==============
 Bug fixes:

@@ -80,6 +80,10 @@ reorientAndMergeLGs.func <- function(object,
 		}
 		completeOrientation <- rbind(completeOrientation, orientationFrame)
 		counter <- counter+1
+
+	if(verbose){message(' -> ', nrow(orientationFrame[which(orientationFrame[,2] == '-'),]), 
+							' fragments reoriented from ', length(linkageGroup), ' within ', lg )}
+
 	}
 
 	toReorient <- as.character(completeOrientation[which(completeOrientation[,2] == '-'),1])

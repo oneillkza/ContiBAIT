@@ -61,68 +61,75 @@ mergeFlankedLGs.func <- function(linkageGroupList,
 
   flankCount <- seq_len(length(linkageflank))
   if(verbose){message(' -> ', length(flankCount), ' mergable LGs found!')}
-  #Now check orientation is ok...
-  toReorient <- vector()
-  for(listElement in flankCount)
-  {
-    if(verbose){message(' -> checking orientation for group ', listElement, ' of ', length(flankCount))}
-    clus <- linkageflank[[listElement]]
-    thisElement <- StrandStateMatrix(justFlankMatrix[clus,])
-    orientClusters <- clusterContigs(thisElement, 
-                                      clusterParam=clusterParam, 
-                                      recluster=cluster, 
-                                      similarityCutoff=0.9,
-                                      clusterBy='homo',
-                                      randomise=TRUE, 
-                                      verbose=FALSE)
-    #If it falls nicely into two groups, take the smaller group to reorient
-    if(length(orientClusters) == 2)
-    {
-      if(verbose){message('  -> Found misorientation in ', listElement)}
-      flipGroup <- as.character(flankKey[match(orientClusters[[2]], flankKey$clusterName), 2])
-      flippedIndex <- names(nameIndex[which(nameIndex %in% toReorient)])
-      flipNames <- unlist(linkageGroupList[names(linkageGroupList) %in% flippedIndex])
-      flippedStateMatrix  <- switchAroo(strandStateMatrix[flipNames,])
-      flippedStateMatrix <-  as.matrix(data.frame(lapply(data.frame(flippedStateMatrix), 
-                                                          function(x){as.numeric(x)}))) 
-      strandStateMatrix[flipNames,] <- flippedStateMatrix
-    }
-  }
-
-  #extract names of the contigs from the contig key
-  linkageflank <- lapply(flankCount, function(x) as.character(flankKey[match(linkageflank[[x]], flankKey$clusterName), 2]))
-
-  #and remove elements where both upstream and downstream merged...
-  linkageflank <- lapply(flankCount, function(x) unique(linkageflank[[x]]))
-
-  #and remove any cluster where the same contig is represented more than one LG...
-  duplicateElements <- sort(unlist(linkageflank))
-  uniqueElements <- duplicateElements[!(duplicated(duplicateElements) | duplicated(duplicateElements, fromLast=TRUE))]
-  linkageflank <- lapply(flankCount, function(x) linkageflank[[x]][linkageflank[[x]] %in% uniqueElements])
  
-  #take only those groups with more than one member (ie these should be merged)
-  linkClusters <- sapply(seq_len(length(linkageflank)), function(x) length(linkageflank[[x]]) > 1)
-  linkageflank <- linkageflank[linkClusters] 
+  #if there are no mergeable contigs, then just return then stop here.
+  if(length(flankCount) == 0)
+  {
+    return(list(linkageGroupList,strandStateMatrix) )
+  }else{
+    #Now check orientation is ok...
+    toReorient <- vector()
+    for(listElement in flankCount)
+    {
+      if(verbose){message(' -> checking orientation for group ', listElement, ' of ', length(flankCount))}
+      clus <- linkageflank[[listElement]]
+      thisElement <- StrandStateMatrix(justFlankMatrix[clus,])
+      orientClusters <- clusterContigs(thisElement, 
+                                        clusterParam=clusterParam, 
+                                        recluster=cluster, 
+                                        similarityCutoff=0.9,
+                                        clusterBy='homo',
+                                        randomise=TRUE, 
+                                        verbose=FALSE)
+      #If it falls nicely into two groups, take the smaller group to reorient
+      if(length(orientClusters) == 2)
+      {
+        if(verbose){message('  -> Found misorientation in ', listElement)}
+        flipGroup <- as.character(flankKey[match(orientClusters[[2]], flankKey$clusterName), 2])
+        flippedIndex <- names(nameIndex[which(nameIndex %in% toReorient)])
+        flipNames <- unlist(linkageGroupList[names(linkageGroupList) %in% flippedIndex])
+        flippedStateMatrix  <- switchAroo(strandStateMatrix[flipNames,])
+        flippedStateMatrix <-  as.matrix(data.frame(lapply(data.frame(flippedStateMatrix), 
+                                                            function(x){as.numeric(x)}))) 
+        strandStateMatrix[flipNames,] <- flippedStateMatrix
+      }
+    }
+
+    #extract names of the contigs from the contig key
+    linkageflank <- lapply(flankCount, function(x) as.character(flankKey[match(linkageflank[[x]], flankKey$clusterName), 2]))
+
+    #and remove elements where both upstream and downstream merged...
+    linkageflank <- lapply(flankCount, function(x) unique(linkageflank[[x]]))
+
+    #and remove any cluster where the same contig is represented more than one LG...
+    duplicateElements <- sort(unlist(linkageflank))
+    uniqueElements <- duplicateElements[!(duplicated(duplicateElements) | duplicated(duplicateElements, fromLast=TRUE))]
+    linkageflank <- lapply(flankCount, function(x) linkageflank[[x]][linkageflank[[x]] %in% uniqueElements])
+   
+    #take only those groups with more than one member (ie these should be merged)
+    linkClusters <- sapply(seq_len(length(linkageflank)), function(x) length(linkageflank[[x]]) > 1)
+    linkageflank <- linkageflank[linkClusters] 
 
 
-  #take only those groups with more than one member (ie these should be merged)
-  linkClusters <- sapply(seq_len(length(linkageflank)), function(x) length(linkageflank[[x]]) > 1)
-  linkageflank <- linkageflank[linkClusters] 
+    #take only those groups with more than one member (ie these should be merged)
+    linkClusters <- sapply(seq_len(length(linkageflank)), function(x) length(linkageflank[[x]]) > 1)
+    linkageflank <- linkageflank[linkClusters] 
 
-  groupsToMerge <- lapply(seq_len(length(linkageflank)), function(x) names(nameIndex[which(nameIndex %in% linkageflank[[x]])]))
+    groupsToMerge <- lapply(seq_len(length(linkageflank)), function(x) names(nameIndex[which(nameIndex %in% linkageflank[[x]])]))
 
-  revisedList <- linkageGroupList[!(names(linkageGroupList) %in% unlist(groupsToMerge))]
-  mergeList <- lapply(seq_len(length(groupsToMerge)), function(x) unname(unlist(linkageGroupList[which(names(linkageGroupList) %in% groupsToMerge[[x]])])))
-  revisedList <- c(revisedList, mergeList)
-  revisedList <- revisedList[order(sapply(revisedList, length), decreasing=TRUE)]
-  revisedList <- LinkageGroupList(
-                          revisedList, 
-                          names= sapply(1:length(revisedList), 
-                                  function(x)
-                                    {
-                                    paste('LG', x, ' (', length(revisedList[[x]]), ')', sep='')
-                                    }))
-  return(list(revisedList, strandStateMatrix))
+    revisedList <- linkageGroupList[!(names(linkageGroupList) %in% unlist(groupsToMerge))]
+    mergeList <- lapply(seq_len(length(groupsToMerge)), function(x) unname(unlist(linkageGroupList[which(names(linkageGroupList) %in% groupsToMerge[[x]])])))
+    revisedList <- c(revisedList, mergeList)
+    revisedList <- revisedList[order(sapply(revisedList, length), decreasing=TRUE)]
+    revisedList <- LinkageGroupList(
+                            revisedList, 
+                            names= sapply(1:length(revisedList), 
+                                    function(x)
+                                      {
+                                      paste('LG', x, ' (', length(revisedList[[x]]), ')', sep='')
+                                      }))
+    return(list(revisedList, strandStateMatrix))
+  }
 }
 
 ####################################################################################################
