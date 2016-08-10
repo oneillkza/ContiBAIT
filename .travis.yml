@@ -1,12 +1,14 @@
 language: R
-sudo: required
-
+r: bioc-devel
 bioc_required: true
-bioc_packages:
-  - BiocCheck
+bioc_use_devel: true
+r_github_packages: hadley/devtools
+cache: packages
 warnings_are_errors: true
-
 after_script:
   - ls -lah
   - FILE=$(ls -1t *.tar.gz | head -n 1)
   - Rscript -e "library(BiocCheck); BiocCheck(\"${FILE}\")"
+notifications:
+  email:
+    - oneillkza@gmail.com

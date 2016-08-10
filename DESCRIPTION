@@ -5,14 +5,12 @@ Version: 1.1.4
 Date: 2016-08-09
 Author: Kieran O'Neill, Mark Hills, Mike Gottlieb
 Maintainer: Kieran O'Neill <koneill@bccrc.ca>
-Description: Using strand inheritance data from multiple single cells from the
-    organism whose genome is to be assembled, contiBAIT can cluster unbridged
-    contigs together into putative chromosomes, and order the contigs within
-    those chromosomes.
+Description: Using strand inheritance data from multiple single cells
+        from the organism whose genome is to be assembled, contiBAIT
+        can cluster unbridged contigs together into putative
+        chromosomes, and order the contigs within those chromosomes.
 License: BSD_2_clause + file LICENSE
-Depends:
-    BH (>= 1.51.0-3),
-    Rsamtools (>= 1.21)
+Depends: BH (>= 1.51.0-3), Rsamtools (>= 1.21)
 LinkingTo: Rcpp, BH
 Imports:
     grDevices,
@@ -70,3 +68,4 @@ Collate:
     'thoroughBed.R'
     'writeBed.R'
 RoxygenNote: 5.0.1
+NeedsCompilation: yes
