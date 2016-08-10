@@ -28,7 +28,7 @@
 
 \item{orderCall}{currently either 'greedy' for greedy algorithm or 'TSP' for travelling salesperson alogrithm (default is 'greedy')}
 
-\item{randomAttempts}{iterger specifying number of randomized clusterings to identify the best ordering. Default is 75}
+\item{randomAttempts}{itenger specifying number of iterations of either the Monte Carlo or the 2-opt TSP solver to identify the best ordering. Default is 75, but higher values (eg 1000) make more sense for the TSP.}
 
 \item{verbose}{Pringts messages to the terminal. Default is TRUE}
 }
@@ -49,5 +49,7 @@ contigOrder <- orderAllLinkageGroups(exampleLGList, exampleWCMatrix, exampleStra
 
 show(contigOrder)
 
+contigOrder <- orderAllLinkageGroups(exampleLGList, exampleWCMatrix, exampleStrandFreq, exampleReadCounts, orderCall='TSP')
+show(contigOrder)
 }
 

@@ -8,3 +8,5 @@ contigOrder <- orderAllLinkageGroups(exampleLGList, exampleWCMatrix, exampleStra
 
 show(contigOrder)
 
+contigOrder <- orderAllLinkageGroups(exampleLGList, exampleWCMatrix, exampleStrandFreq, exampleReadCounts, orderCall='TSP')
+show(contigOrder)
