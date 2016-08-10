@@ -1,5 +1,7 @@
 language: R
 r: bioc-devel
+bioc_required: true
+bioc_use_devel: true
 r_github_packages: hadley/devtools
 cache: packages
 warnings_are_errors: true
