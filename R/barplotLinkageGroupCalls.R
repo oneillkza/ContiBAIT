@@ -1,4 +1,4 @@
-barplotLinkageGroupCalls.func <- function(object, chrTable, by='lg', returnTable=NULL, percentage=NULL)
+barplotLinkageGroupCalls.func <- function(object, chrTable, by='lg', bySize=TRUE, returnTable=NULL, percentage=NULL)
 {
 
 	#Calculate length of each chromosome represented for one linkage group:
@@ -15,10 +15,25 @@ barplotLinkageGroupCalls.func <- function(object, chrTable, by='lg', returnTable
 		chr.vector
 	}
 
+	reCompileObject <- function(linkage.lengths)
+	{
+		totLength <- lapply(linkage.lengths, sum)
+		newOrderNames <- names(totLength[order(unlist(totLength), decreasing=TRUE)])
+		object <- LinkageGroupList(object[newOrderNames],
+								  names= newOrderNames
+								  )
+	}
+
+	if(bySize){
+		linkage.lengths <- lapply(object, 
+								  function(x){ width(chrTable[chrTable$name %in% x])  }) 
+		object <- reCompileObject(linkage.lengths)
+	}
 	linkage.lengths <- lapply(object, 
 							  function(x){ width(chrTable[chrTable$name %in% x])  }) 
 	linkage.chr <- lapply(object, 
 						  function(x){as.character(seqnames(chrTable)[chrTable$name %in% x])  })
+
 	complete.list <- unique(unlist(linkage.chr))
 
 	chr.table <- sapply(1:length(linkage.chr), 
@@ -139,6 +154,7 @@ barplotLinkageGroupCalls.func <- function(object, chrTable, by='lg', returnTable
 #' Note that the rownames of chrTable should be the contig names, as they are used in object, and the first column (chromosome name) will used to order by chromosome if 'chr' option used in by parameter. 
 #' To use a bam file header, the product of makeChrTable(bamFile) is suitable for input
 #' @param by whether to plot by linkage group (if 'lg') or chromosomes ('chr')
+#' @param bySize logical value to return barplot either with LGs sorted by number of contigs or size (in Mb). Default is TRUE.
 #' @param returnTable Logical to return chromosome length matrix. Default is NULL
 #' @param percentage Logical that returns the percentage of different chromosomes or LG within the barplot. Default is NULL
 #' Note to include legend, use legend=rownames(chr.table) for by='lg', and legend=colnames(chr.table) for by='chr'

@@ -109,6 +109,7 @@ setGeneric("plotLGDistances",
                     allStrands,
                     lg=NULL,
                     labels=NULL,
+                    state=NULL,
                     alreadyOrdered=NULL) standardGeneric("plotLGDistances"),
 		   signature=c('object', 'allStrands'))
 
@@ -120,6 +121,7 @@ setGeneric("barplotLinkageGroupCalls",
            function(object, 
                     chrTable, 
                     by=NULL, 
+                    bySize=NULL,
                     returnTable=NULL,
                     percentage=NULL) standardGeneric("barplotLinkageGroupCalls"),
 		   signature=c('object', 'chrTable'))
@@ -193,6 +195,20 @@ setGeneric("fixLinkageGroups",
 					relatedCutOff=NULL,
 					verbose=NULL) standardGeneric("fixLinkageGroups"),
 		   signature=c('contigOrdering', 'orderFrame', 'linkageGroupList'))
+
+## =========================================================================
+## Generic for flipOrderedLinkageGroups
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export flipOrderedLinkageGroups
+setGeneric("flipOrderedLinkageGroups",
+		   function(contigOrdering, 
+					orderFrame, 
+					linkageGroupList,
+					strandStateMatrix,
+					whichLG=NULL,
+					maxiter=NULL,
+					dissimilarityCutoff=NULL) standardGeneric("flipOrderedLinkageGroups"),
+		   signature=c('contigOrdering', 'orderFrame', 'linkageGroupList', 'strandStateMatrix'))
 
 ## =========================================================================
 ## Generic for mergeFlankedLGs
