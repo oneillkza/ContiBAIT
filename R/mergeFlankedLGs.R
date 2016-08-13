@@ -20,19 +20,23 @@ mergeFlankedLGs.func <- function(linkageGroupList,
 
   #Find those elements greater than twice the build consensus (so flanking regions aren't made from the same contigs)
   buildOver <- sapply(seq_len(length(linkageGroupList)), function(x) length(linkageGroupList[[x]]) > (buildConsensus*2))
-  includeCon <- linkageGroupList[buildOver]
-  #Use first contig name from LG as an identified. We'll use this to merge groups back later.
-  consensusNames <- sapply(includeCon, head, 1)
-  #calculate consensus for upstream flank of LG
-  upCont <- lapply(seq_len(length(includeCon)), function(x) head(includeCon[[x]], buildConsensus))
-  consensusTableUp <- data.frame(do.call(rbind, lapply(upCont, computeConsensus, strandStateMatrix))) 
-  #Calculate consensus for downstream flank of LG
-  downCont <- lapply(seq_len(length(includeCon)), function(x) tail(includeCon[[x]], buildConsensus))
-  consensusTableDown <- data.frame(do.call(rbind, lapply(downCont, computeConsensus, strandStateMatrix))) 
-  #merge these together
-  conTab <- rbind(consensusTableUp, consensusTableDown)
-  colnames(conTab) <- colnames(strandStateMatrix)
- 
+
+  #Do this so long as at least one TRUE element in buildOver
+  if(!(all(!(buildOver))))
+  {
+    includeCon <- linkageGroupList[buildOver]
+    #Use first contig name from LG as an identified. We'll use this to merge groups back later.
+    consensusNames <- sapply(includeCon, head, 1)
+    #calculate consensus for upstream flank of LG
+    upCont <- lapply(seq_len(length(includeCon)), function(x) head(includeCon[[x]], buildConsensus))
+    consensusTableUp <- data.frame(do.call(rbind, lapply(upCont, computeConsensus, strandStateMatrix))) 
+    #Calculate consensus for downstream flank of LG
+    downCont <- lapply(seq_len(length(includeCon)), function(x) tail(includeCon[[x]], buildConsensus))
+    consensusTableDown <- data.frame(do.call(rbind, lapply(downCont, computeConsensus, strandStateMatrix))) 
+    #merge these together
+    conTab <- rbind(consensusTableUp, consensusTableDown)
+    colnames(conTab) <- colnames(strandStateMatrix)
+  }
   #Those contigs with not enough elements to make a flank, just compute consensus
   excludeCon <- linkageGroupList[buildOver == FALSE]
   consensusNamesEx <- sapply(excludeCon, head, 1)
@@ -108,27 +112,33 @@ mergeFlankedLGs.func <- function(linkageGroupList,
    
     #take only those groups with more than one member (ie these should be merged)
     linkClusters <- sapply(seq_len(length(linkageflank)), function(x) length(linkageflank[[x]]) > 1)
-    linkageflank <- linkageflank[linkClusters] 
+
+    if(all(!(linkClusters)))
+    {
+        return(list(linkageGroupList,strandStateMatrix) )
+    }else{
+      linkageflank <- linkageflank[linkClusters] 
 
 
-    #take only those groups with more than one member (ie these should be merged)
-    linkClusters <- sapply(seq_len(length(linkageflank)), function(x) length(linkageflank[[x]]) > 1)
-    linkageflank <- linkageflank[linkClusters] 
+      #take only those groups with more than one member (ie these should be merged)
+      linkClusters <- sapply(seq_len(length(linkageflank)), function(x) length(linkageflank[[x]]) > 1)
+      linkageflank <- linkageflank[linkClusters] 
 
-    groupsToMerge <- lapply(seq_len(length(linkageflank)), function(x) names(nameIndex[which(nameIndex %in% linkageflank[[x]])]))
+      groupsToMerge <- lapply(seq_len(length(linkageflank)), function(x) names(nameIndex[which(nameIndex %in% linkageflank[[x]])]))
 
-    revisedList <- linkageGroupList[!(names(linkageGroupList) %in% unlist(groupsToMerge))]
-    mergeList <- lapply(seq_len(length(groupsToMerge)), function(x) unname(unlist(linkageGroupList[which(names(linkageGroupList) %in% groupsToMerge[[x]])])))
-    revisedList <- c(revisedList, mergeList)
-    revisedList <- revisedList[order(sapply(revisedList, length), decreasing=TRUE)]
-    revisedList <- LinkageGroupList(
-                            revisedList, 
-                            names= sapply(1:length(revisedList), 
-                                    function(x)
-                                      {
-                                      paste('LG', x, ' (', length(revisedList[[x]]), ')', sep='')
-                                      }))
-    return(list(revisedList, strandStateMatrix))
+      revisedList <- linkageGroupList[!(names(linkageGroupList) %in% unlist(groupsToMerge))]
+      mergeList <- lapply(seq_len(length(groupsToMerge)), function(x) unname(unlist(linkageGroupList[which(names(linkageGroupList) %in% groupsToMerge[[x]])])))
+      revisedList <- c(revisedList, mergeList)
+      revisedList <- revisedList[order(sapply(revisedList, length), decreasing=TRUE)]
+      revisedList <- LinkageGroupList(
+                              revisedList, 
+                              names= sapply(1:length(revisedList), 
+                                      function(x)
+                                        {
+                                        paste('LG', x, ' (', length(revisedList[[x]]), ')', sep='')
+                                        }))
+      return(list(revisedList, strandStateMatrix))
+    }
   }
 }
 

@@ -1,3 +1,15 @@
+contiBAIT v1.1.5
+==============
+Bug fixes:
+-fixed bug in orderAllLinkageGroups where program was erroring out if only one value sent to whichLG. 
+-fixed bug where mergeFlankedLGs was crashing when no mergable regions were found
+
+Major changes:
+-Added new function, flipOrderedLinkageGroups, that uses a simple greedy algorithm to determine if contigs are misoriented within linkage groups, after ordering has already taken place.
+-orderAllLinkageGroups now also returns a reordered linkageGroupList object as a third list element for use in downstream analysis.
+-barplotLinkageGroupCalls has an additional parameter, bySize, that will order LGs by physical size rather than number of contigs contained therein. This is now the default
+-plotLGDistances has an additional parameter, state, that allows the plotting of all states, only homozygous states ('homo'), or a comparison between homozygous and heterozygous ('hetero')
+
 contiBAIT v1.1.4
 ==============
 Bug fixes:
