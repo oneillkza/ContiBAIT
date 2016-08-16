@@ -33,7 +33,8 @@
 \item{verbose}{Pringts messages to the terminal. Default is TRUE}
 }
 \value{
-a data.frame of ordered contigs with linkage group names
+a list containing a ContigOrdering object consisting of ordered contigs with linkage group names, a StrandStateList consisting of StrandStateMatrices for each LG, and a
+LinkageGroupList consisting of reordered contigs within each list element.
 }
 \description{
 Function to call contig ordering algorithms iteratively across each linkage group element
