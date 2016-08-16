@@ -8,7 +8,8 @@
 \title{plotLGDistances -- plots a heatmap of the distances between linkage groups}
 \usage{
 \S4method{plotLGDistances}{LinkageGroupList,StrandStateMatrix}(object,
-  allStrands, lg = "all", labels = TRUE, alreadyOrdered = FALSE)
+  allStrands, lg = "all", labels = TRUE, state = "all",
+  alreadyOrdered = FALSE)
 }
 \arguments{
 \item{object}{LinkageGroupList}
@@ -19,6 +20,9 @@
 strand calls for all linkage groups and plot them side by side (default it 'all')}
 
 \item{labels}{=TRUE if TRUE, contig names will be plotted on the axes}
+
+\item{state}{string denoting whether only homozygous states should be used ('homo'; just WW vs CC), if a comparison should be made between
+homozygous and heterozygous states only ('hetero'; just homo vs hetero), or if all three states ('all'; WW vs WC vs CC). Default is 'all'}
 
 \item{alreadyOrdered}{if TRUE, the function will assume that the linkageGroupList is already ordered and not 
 create a dendrogram. Default is FALSE}

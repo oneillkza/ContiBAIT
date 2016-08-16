@@ -1,20 +1,28 @@
-plotLGDistances.func <- function(object, allStrands, lg='all', labels=TRUE, alreadyOrdered=FALSE)
+plotLGDistances.func <- function(object, allStrands, lg='all', labels=TRUE, state='all', alreadyOrdered=FALSE)
 {
 
-if(lg[1] == 'all')
-{
-  linkageStrands <- data.frame(do.call(rbind, lapply(object, computeConsensus, allStrands)))
-#  rownames(linkageStrands) <- sapply(1:nrow(linkageStrands), function(x){paste('LG', x, ' (', length(object[[x]]), ')', sep='') })
-}else{
-  linkageStrands <- allStrands[unlist(object[lg]),]
-  #For brevity, only report chromosome name, not split locations.
-  chrName <- as.character(matrix(unlist(strsplit(rownames(linkageStrands), ':')), ncol=2, byrow=TRUE)[,1])
-  chrName <- paste(chrName, '_', seq(1,nrow(linkageStrands)), sep='')
-  linkageStrands <- data.frame(linkageStrands)
-  linkageStrands <-  data.frame(lapply(linkageStrands, function(x) factor(x, levels=c(1,2,3))))
-  rownames(linkageStrands) <- chrName
+  if(lg[1] == 'all')
+  {
+    linkageStrands <- data.frame(do.call(rbind, lapply(object, computeConsensus, allStrands)))
+  #  rownames(linkageStrands) <- sapply(1:nrow(linkageStrands), function(x){paste('LG', x, ' (', length(object[[x]]), ')', sep='') })
+  }else{
+    linkageStrands <- allStrands[unlist(object[lg]),]
+    #For brevity, only report chromosome name, not split locations.
+    chrName <- as.character(matrix(unlist(strsplit(rownames(linkageStrands), ':')), ncol=2, byrow=TRUE)[,1])
+    chrName <- paste(chrName, '_', seq(1,nrow(linkageStrands)), sep='')
 
-}
+    if(state == 'homo')
+    {
+      linkageStrands <- replace(linkageStrands, linkageStrands == 2, NA)
+    }else if(state == 'hetero'){
+      linkageStrands <- replace(linkageStrands, linkageStrands == 3, 1)
+    }
+
+    linkageStrands <- data.frame(linkageStrands)
+    linkageStrands <-  data.frame(lapply(linkageStrands, function(x) factor(x, levels=c(1,2,3))))
+    rownames(linkageStrands) <- chrName
+
+  }
 
   sim <- 1-as.matrix(daisy(data.frame(linkageStrands)))
   rownames(sim) <- rownames(linkageStrands)
@@ -105,6 +113,8 @@ if(lg[1] == 'all')
 #' @param lg ='all' vector of integers to determine which linkage group(s) to plot. 'all' will calculate consensus
 #' strand calls for all linkage groups and plot them side by side (default it 'all')
 #' @param labels =TRUE if TRUE, contig names will be plotted on the axes
+#' @param state string denoting whether only homozygous states should be used ('homo'; just WW vs CC), if a comparison should be made between
+#' homozygous and heterozygous states only ('hetero'; just homo vs hetero), or if all three states ('all'; WW vs WC vs CC). Default is 'all'
 #' @param alreadyOrdered if TRUE, the function will assume that the linkageGroupList is already ordered and not 
 #' create a dendrogram. Default is FALSE
 #' @param ... additional parameters to pass to heatmap.2

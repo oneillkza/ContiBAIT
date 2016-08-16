@@ -80,15 +80,15 @@ orderAllLinkageGroups.func <- function(linkageGroupList,
   orderedGroups <- matrix(nrow=0, ncol=2)
 
   plotGroups <- vector("list", length(whichLG))
-  for(lg in whichLG)
+  for(lg in seq_len(length(whichLG)))
   {
-    if(verbose){message(paste('-> Ordering fragments in LG', lg, sep=""))}
-    if(length(linkageGroupList[[lg]]) > 1)
+    if(verbose){message(paste('-> Ordering fragments in LG', whichLG[lg], sep=""))}
+    if(length(linkageGroupList[[whichLG[lg]]]) > 1)
     {
 
-      linkageGroup <- linkageGroupList[[lg]]
+      linkageGroup <- linkageGroupList[[whichLG[lg]]]
       linkageGroupReadTable <- strandStateMatrix[linkageGroup,]
-      zeroGroups <- combineZeroDistContigs(linkageGroupReadTable, strandFreqMatrix, lg)
+      zeroGroups <- combineZeroDistContigs(linkageGroupReadTable, strandFreqMatrix, whichLG[lg])
       #Make a contig Weight vector
       ordMat <- cbind(zeroGroups[[2]], apply(strandReadCount[which(rownames(strandReadCount) %in% zeroGroups[[2]][,2] ),] , 1, median))
       #Then make a LG weight by taking the sum of all contigs within that LG, and order the linkageGroupTable based on the deepest LG
@@ -124,9 +124,9 @@ orderAllLinkageGroups.func <- function(linkageGroupList,
       if(!(is.null(saveOrdered)))
       {
         #find fragment names from lg
-        chromosome <- sort(table(sapply(seq_len(length(linkageGroupList[[lg]])), function(x) strsplit(linkageGroupList[[lg]][x] ,':')[[1]][1])), decreasing=TRUE)
+        chromosome <- sort(table(sapply(seq_len(length(linkageGroupList[[whichLG[lg]]])), function(x) strsplit(linkageGroupList[[whichLG[lg]]][x] ,':')[[1]][1])), decreasing=TRUE)
         #find predominant fragment name
-        chromosome <- round(chromosome[1]/length(linkageGroupList[[lg]])*100, digits=1)
+        chromosome <- round(chromosome[1]/length(linkageGroupList[[whichLG[lg]]])*100, digits=1)
 
          plotFrame <- data.frame(outOfOrder[[2]])
          plotFrame <- data.frame(lapply(plotFrame, function(x) factor(x, levels=c(1,2,3))))
@@ -146,16 +146,16 @@ orderAllLinkageGroups.func <- function(linkageGroupList,
                                       col=cols(100), 
                                       breaks=breaks, 
                                       trace='none', 
-                                      main=paste(orderCall, '-ordered LG', lg, '\n main fragment: ', names(chromosome), ' (', chromosome, '%)', sep="")))
+                                      main=paste(orderCall, '-ordered LG', whichLG[lg], '\n main fragment: ', names(chromosome), ' (', chromosome, '%)', sep="")))
          }
       }
     }else{
-      groupName <-  paste('LG', lg, '.1', sep='')
-      linkageGroup <- linkageGroupList[[lg]]
+      groupName <-  paste('LG', whichLG[lg], '.1', sep='')
+      linkageGroup <- linkageGroupList[[whichLG[lg]]]
       orderedGroups <- rbind(orderedGroups, c(groupName, linkageGroup))
       linkageGroupReadTable <- t(as.matrix(strandStateMatrix[linkageGroup,]))
       rownames(linkageGroupReadTable) <- groupName
-      plotGroups[[which(whichLG == lg)]] <- StrandStateMatrix(linkageGroupReadTable)
+      plotGroups[[which(whichLG == whichLG[lg])]] <- StrandStateMatrix(linkageGroupReadTable)
     }
   }  
   rownames(orderedGroups) <- NULL
@@ -163,8 +163,17 @@ orderAllLinkageGroups.func <- function(linkageGroupList,
   rownames(orderedGroups) <- sapply(seq_len(nrow(orderedGroups)), function(x) strsplit(orderedGroups[x,], "[.]")[[1]][1])
   orderedGroups <- ContigOrdering(orderedGroups)
 
+  for(lg in whichLG)
+    {
+      lgName <- paste("LG", lg, sep="")
+      orderMyLGs <- orderedGroups[which(rownames(orderedGroups) == lgName),2]
+      names(orderMyLGs) <- NULL
+      linkageGroupList[[lg]] <- orderMyLGs
+    }
+
   plotGroups <- StrandStateList(plotGroups, names=paste('LG', whichLG, ' StrandStateMatrix', sep=''))
-  return(list(orderedGroups, plotGroups))
+
+  return(list(orderedGroups, plotGroups, linkageGroupList))
 }
 
 ####################################################################################################
@@ -182,7 +191,8 @@ orderAllLinkageGroups.func <- function(linkageGroupList,
 #' @aliases orderAllLinkageGroups orderAllLinkageGroups,orderAllLinkageGroups-LinkageGroupList-StrandStateMatrix-StrandFreqMatrix-StrandReadMatrix-method
 #' @rdname orderAllLinkageGroups
 #' 
-#' @return a data.frame of ordered contigs with linkage group names
+#' @return a list containing a ContigOrdering object consisting of ordered contigs with linkage group names, a StrandStateList consisting of StrandStateMatrices for each LG, and a
+#' LinkageGroupList consisting of reordered contigs within each list element.
 #' 
 #' @example inst/examples/orderAllLinkageGroups.R
 #' @export
