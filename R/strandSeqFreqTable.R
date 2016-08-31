@@ -17,8 +17,10 @@
 #' @param fieldSep  The field seperator of the bam file to use to define the field. Default is '.'
 #' @param qual  Mapping quality threshold. Default is 0
 #' @param rmdup  remove duplicates in output file. Default is TRUE 
-#' @param filter  additional file of type GRanges (with a meta column titled 'name' determining contig name) to split chromosomes based on locations. If this parameter is blank,
+#' @param filter  additional file of type ChrTable (GRanges with a meta column titled 'name' determining contig name) to split chromosomes based on locations. If this parameter is blank,
 #' a filter table will be automatically generated from the header of the first file in bamFileList.
+#' @param misorientations additional file of type ChrTable (GRanges with a meta column titled 'name' determining contig name) with putative misorientation locations. These location's
+#' reads are reversed in the output
 #' @param tileChunk  Number of reads to split bam files into (smaller number requires less RAM). Default is 100000.
 #' @param pairedEnd  Whether the bam files being read are in paired end format. Default is TRUE. Note,
 #' since paired reads will be the same direction, only first mate read of pair is used in output
@@ -44,6 +46,7 @@ strandSeqFreqTable <- function(bamFileList,
 							   rmdup=TRUE, 
 							   verbose=TRUE, 
 							   filter=NULL, 
+							   misorientations=NULL,
 							   tileChunk=100000, 
 							   pairedEnd=TRUE,
 							   BAITtables=FALSE)
@@ -129,16 +132,21 @@ strandSeqFreqTable <- function(bamFileList,
 
 
 	#if there is strand information in the filter file, use to flip misoriented fragments
-	if(length(which(strand(filter) == '-')) > 0)
-	{
-		regionsToFlip <- filter$name[which(strand(filter) == '-')]
-		#strandTable[regionsToFlip,]
-		#Now strip strandedness from filter as otherwise will only look for reads on same strand as direciton
-		strand(filter) <- "*" 
-	}else{ 
-		regionsToFlip <- NULL
-	}
+	strand(filter) <- "*" 
 
+	if(!(is.null(misorientations)))
+	{
+		#First, remove strandedness to prevent weird Rsamtools behaviour
+		strand(misorientations) <- "*"
+		#remove the 'chrUn' fragments, if present
+		tempRange <- filter[-(grep("chrUn", filter$name))]
+		#Now, split the misorientations by wherever there are splits in filter. Prevents a misorientation that covers a portion of
+		#two fragments to be excluded. This will chop up the misorientations into chunks that cover each fragment.
+		tempRange <- GRanges(append(tempRange, misorientations))
+		tempRange <- ChrTable(disjoin(tempRange))		
+		misorientations <- tempRange[queryHits(findOverlaps(tempRange, misorientations))]
+		lengthOfNeg <- length(misorientations)
+	}
 
 	for(fileName in bamFileList)
 	{
@@ -169,10 +177,43 @@ strandSeqFreqTable <- function(bamFileList,
 		# Total read number
 		absCount <- resultPos + resultNeg
 		# Calculate strand call
+
+		if(!(is.null(misorientations)))
+		{
+			resultPosMinus <- reduceByYield(bf, strandInfo, 
+										   overlapStrand, DONE=loopedChunk, 
+										   grfilter=misorientations)
+			if(class(resultPosMinus) == 'list'){resultPosMinus <- as.integer(rep(0, lengthOfNeg))}
+
+			resultNegMinus <- reduceByYield(bf, 
+										   strandInfo, 
+										   overlapStrand, 
+										   DONE=loopedChunk, 
+										   grfilter=misorientations, 
+										   strand=FALSE)
+			if(class(resultNeg) == 'list'){resultNegMinus <- as.integer(rep(0, lengthOfNeg))}
+
+			#now find the overlaps, and assign each misorientation a name that corresponds to the location of the fragment in filter
+			names(resultPosMinus) <- subjectHits(findOverlaps(misorientations,filter, type="within"))
+			names(resultNegMinus) <- names(resultPosMinus)
+
+			#condense regions where >1 misorientations occur in the same fragment, by summing the values that have the same name
+			toSwitchToNeg <- tapply(resultPosMinus, names(resultPosMinus), sum)
+			toSwitchToPos <- tapply(resultNegMinus, names(resultNegMinus), sum)
+
+			#Switch the minus reads to plus for the internal misorients
+			resultPos[as.numeric(names(toSwitchToPos))] <- resultPos[as.numeric(names(toSwitchToPos))]+toSwitchToPos
+			resultNeg[as.numeric(names(toSwitchToPos))] <- resultNeg[as.numeric(names(toSwitchToPos))]-toSwitchToPos
+			#And switch the plus reads to minus for internal misorients
+			resultPos[as.numeric(names(toSwitchToNeg))] <- resultPos[as.numeric(names(toSwitchToNeg))]-toSwitchToNeg
+			resultNeg[as.numeric(names(toSwitchToNeg))] <- resultNeg[as.numeric(names(toSwitchToNeg))]+toSwitchToPos
+		}
+
 		strandCall <- (resultPos - resultNeg)/absCount
 			
 		strandTable[,indexCounter] <- strandCall 
 		countTable[,indexCounter] <- absCount
+
 
 		if(BAITtables == TRUE){
 			WatsonTable[,indexCounter] <- resultPos
@@ -184,21 +225,9 @@ strandSeqFreqTable <- function(bamFileList,
 		indexCounter <- indexCounter+1
 	}
 
-	if(length(which(strand(filter) == '-')))
-	{
-		rownames(strandTable)[regionsToFlip] <- paste("-", rownames(strandTable)[regionsToFlip], sep="")
-		rownames(countTable)[regionsToFlip] <- paste("-", rownames(countTable)[regionsToFlip], sep="")
-	}
-
 	#Get rid of contigs that are entirely empty to prevent low quality calls in downstream functions
 	strandTable <- strandTable[which(apply(countTable, 1, sum) > 0),]
 	countTable <- countTable[which(apply(countTable, 1, sum) > 0),]
-
-	if(!(is.null(regionsToFlip)))
-	{ 
-		strandTable[regionsToFlip,] <- strandTable[regionsToFlip,]*-1
-	}
-
 
 	if(BAITtables == FALSE){
   		return(list(strandTable=StrandFreqMatrix(strandTable), 

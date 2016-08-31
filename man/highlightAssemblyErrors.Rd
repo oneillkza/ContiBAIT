@@ -7,7 +7,7 @@
 \usage{
 highlightAssemblyErrors(path, splitBy = 1e+06, cluster = 1,
   clusterParam = NULL, pairedEnd = TRUE, qual = 10, gapFile = NULL,
-  writeBed = NULL, verbose = TRUE)
+  verbose = TRUE)
 }
 \arguments{
 \item{path}{String denoting location of Strand-seq bam files}
@@ -25,8 +25,6 @@ When \code{NULL}, execution will be serial.}
 \item{qual}{Mapping quality threshold. Default is 1}
 
 \item{gapFile}{A GRanges object consisting of start and end locations of assembly gaps (defaul it NULL)}
-
-\item{writeBed}{Character vector, this option will write the resulting bed file to a specified location with the character as the file name. Defulat is NULL}
 
 \item{verbose}{prints messages to the terminal (default is TRUE)}
 }

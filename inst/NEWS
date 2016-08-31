@@ -1,3 +1,23 @@
+contiBAIT v1.1.6
+==============
+Function changes:
+- Added whichGroup option for barplotLinkageGroupCalls, which allows selective plotting of data (for example, the 20 largest LGs or chromosomes)
+- LocateMisorients now returns a list of ChrTable elements, with the first element representing identified misorients, and the second element representing identified chimeras.
+- LocateMisorients no longer creates a table of misorient and chimera information, as this can easily be achieved by summing the width for the two returned elements
+- Added similarityCutoff variable to mergeFlankedLGs.
+- plotContigOrder now uses spearman correlation in determining ordering ability.
+- plotContigOrder now orders zero-distance contig groups sequentially, rather than assigning them the same rank
+- strandSeqFreqTable now includes a misorientation parameter. This parameter (the product of locateMisorients[[1]]) will flip reads contained within this region. For example, if
+a filter element, chr1:1-1000000, has 80 W reads and 20 C reads, and a misorientations element, chr1:400000-500000, has 20 C reads and 0 W reads, then the filter element will be 
+recorded as having 100 W and 0 C reads. 
+
+Bug fixes:
+- Added validity check to LinkageGroupList class, as LinkageGroupList elements with an empty names slot was causing R to crash when running some functions
+- Changed the ChrTable constructor to create a name meta column to the GRanges object if one doesn't already exist
+- Removed writeBed option for locateMisorients, as not necessary
+- When more than one core used in clusterContigs, verbose is forced off to prevent spew of messages from all used cores once analysis completes.
+- Fixed bug in makeBoxPlot, where occasionally the exclude bar was not displaying the percentage excluded
+
 contiBAIT v1.1.5
 ==============
 Bug fixes:

@@ -125,6 +125,8 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 			if(verbose){message(paste('-> Running ', recluster, 
 									  ' clusterings in parallel on ', 
 									  clusterParam$workers, ' processors', sep=""))}
+			#Prevent spew of multiple core verbose messages by turning verbose off
+			verbose=FALSE
 			multiClust <-bplapply(  seq_len(recluster), 
 						  			runOneForTheEnsemble, 
 									object, 

@@ -1,4 +1,4 @@
-locateMisorients.func <- function(compiledGrange, gapFile=NULL, stateNum=3, readCutOff=40, writeBed=NULL, verbose=TRUE )
+locateMisorients.func <- function(compiledGrange, gapFile=NULL, stateNum=3, readCutOff=40, verbose=TRUE )
 {
 
   compiledGrange <- split(compiledGrange, seqnames(compiledGrange), drop=TRUE)
@@ -10,17 +10,13 @@ locateMisorients.func <- function(compiledGrange, gapFile=NULL, stateNum=3, read
     gapFile <- split(gapFile, seqnames(gapFile), drop=TRUE)
   }
 
-  fullBedData <- GRanges()
-
-  statMat <- matrix(nrow=length(names(compiledGrange)), ncol=6)
-  colnames(statMat) <- c('No_miso', 'Size_miso', 'Percent_miso', 'No_chim', 'Size_chim', 'Percent_chim')
-  rownames(statMat) <- names(compiledGrange)
-
+  fullMisoData <- GRanges()
+  fullChimData <- GRanges()
 
   for(num in seq_len(length(names(compiledGrange))) )
   {
     ch <- names(compiledGrange)[num]
-    if(verbose){message("Looking for issues on ", ch, " [",  which(names(compiledGrange) == ch), "/", length(compiledGrange), "]:")}
+    if(verbose){message("Looking for issues on ", ch, " [",  which(names(compiledGrange) == ch), "/", length(compiledGrange), "]")}
     oneChr <- compiledGrange[[ch]]
     plusString <- as.character(strand(oneChr))
     
@@ -113,67 +109,27 @@ locateMisorients.func <- function(compiledGrange, gapFile=NULL, stateNum=3, read
     if(nrow(chimeraCalls) > 0)
     {
       chimeraCalls$name <- paste('chrUn_', chimeraCalls$chr, ':', chimeraCalls$start, '-', chimeraCalls$end , sep='')
-      chimRanges <- GRanges(seqnames=chimeraCalls$chr, IRanges(start=chimeraCalls$start, end=chimeraCalls$end), name=chimeraCalls$name, score=chimeraCalls$count)
+      chimRanges <- GRanges(seqnames=chimeraCalls$chr, IRanges(start=chimeraCalls$start, end=chimeraCalls$end), name=chimeraCalls$name) #, score=chimeraCalls$count)
     }else{ 
       chimRanges <- GRanges()
     }
-     chrCalls <- segs[which(segs$calls != 0.5),]
+
+     chrCalls <- segs[which(segs$calls == 0),]
      if(nrow(chrCalls) > 0)
      {
-        chrCalls$calls[which(chrCalls$calls == 1)] <- '+'
-        chrCalls$calls[which(chrCalls$calls == 0)] <- '-'
         chrCalls$name <- paste(chrCalls$chr, ':', chrCalls$start, '-', chrCalls$end, sep="")
 
-       	gCalls <- GRanges(seqnames=chrCalls$chr, IRanges(start=chrCalls$start, end=chrCalls$end), name=chrCalls$name, score=chrCalls$count)
-        strand(gCalls) <- chrCalls$calls
+       	gCalls <- GRanges(seqnames=chrCalls$chr, IRanges(start=chrCalls$start, end=chrCalls$end), name=chrCalls$name) #, score=chrCalls$count)
+        strand(gCalls) <- '-'
 
-        gCallAll <- suppressWarnings(append(gCalls, chimRanges))
-        gCallAll <- gCallAll[order(unstrand(gCallAll))]
-
-        betweenCalls <- gaps(unstrand(gCallAll))
-
-        totCov <- (sum(width(gCalls)) + sum(width(betweenCalls)))/1e6
-
-        chimSize <- sum(width(chimRanges))/1e6
-        misSize <- sum(width(gCalls[which(strand(gCalls) == "-")]))/1e6
-
-        misO <- length(which(strand(gCalls) == '-'))
-        misOPer <- round(misSize/totCov*100, digits=1)
-        chim <- length(chimRanges)
-        chimPer <- round(chimSize/totCov*100, digits=1)
-
-        statMat[num,] <- c(misO, misSize, misOPer, chim, chimSize, chimPer)
-    
-
-       if(verbose){message("    -> ", 
-                            misO, 
-                            " misorientations (", 
-                            misOPer, 
-                            "%) & ", chim, 
-                            " chimeras found (", 
-                            chimPer, 
-                            "%)." )}
-
-
-        if(length(betweenCalls) > 0)
-        {
-          betweenCalls$name <- paste(ch, ':', start(betweenCalls), '-', end(betweenCalls), sep='')
-          betweenCalls$score <- 0
-          allCalls <- append(gCallAll, betweenCalls)
-          allCalls <- allCalls[order(unstrand(allCalls))]
-          fullBedData <- suppressWarnings(append(fullBedData, allCalls))
-        }
+        fullMisoData <- suppressWarnings(append(fullMisoData, gCalls))
+        fullChimData <- suppressWarnings(append(fullChimData, chimRanges))
       }
   }
 
-
-  if(!(is.null(writeBed)))
-  {
-    export.bed(con=writeBed, fullBedData)
-  }
-  return(list(fullBedData, statMat))
-   
+  return(list(fullMisoData, fullChimData))
 }  
+
 ####################################################################################################
 #' locateMisorients -- function to identify libraries that hare similar WC patterns on chromosomes 
 #' 
@@ -181,10 +137,10 @@ locateMisorients.func <- function(compiledGrange, gapFile=NULL, stateNum=3, read
 #' @param gapFile A GRanges object consisting of start and end locations of assembly gaps (defaul it NULL)
 #' @param stateNum The number of expected strand states. Default is 3 (WW, WC and CC). Function may exhibit unusual behaviour is changed
 #' @param readCutOff The minimal number of reads required to make an accurate strand state call. Default is 40.
-#' @param writeBed Character vector, this option will write the resulting bed file to a specified location with the character as the file name. Defulat is NULL
 #' @param verbose prints messages to the terminal (default is TRUE)
 #' 
-#' @return a directional ChrTable object that can be used in downstream functions (strandSeqFreqTable)
+#' @return a list of ChrTable objects. The first is a ChrTable of misorientations detected. The second is a ChrTable of chimera detected.
+#' Output can be used in downstream functions (strandSeqFreqTable)
 #' @aliases locateMisorients locateMisorients,locateMisorients-GRanges-method
 #' @rdname locateMisorients
 #' @import Rsamtools

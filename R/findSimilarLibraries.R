@@ -82,9 +82,9 @@ findSimilarLibraries.func <- function(strandStateMatrix,
 
           if(maxOne[1] == "Crick")
           {
-            topTwo <- LinkageGroupList(linkage.libraries[1:2])
+            topTwo <- LinkageGroupList(linkage.libraries[1:2], names=names(linkage.libraries[1:2]))
           }else{
-            topTwo <- LinkageGroupList(list(linkage.libraries[[2]], linkage.libraries[[1]]))
+            topTwo <- LinkageGroupList(list(linkage.libraries[[2]], linkage.libraries[[1]]), names=c(names(linkage.libraries[2]), names(linkage.libraries[1])))
           }
           names(topTwo) <- newNames[order(newNames)]
           return(topTwo)
