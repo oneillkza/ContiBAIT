@@ -15,7 +15,7 @@ makeBoxPlot.func <- function(chrTable, linkage.contigs)
 	boxplot(includeLength, 
 	excludeLength, 
 	names=c(paste(sumInclude, ' Mb included (', percentInclude, '%)', sep="" ),
-			paste(sumExclude, ' Mb excluded (', 100 - percentInclude, '%)', sep="") ),
+			paste(sumExclude, ' Mb excluded (', round(100 - percentInclude, digits=1), '%)', sep="") ),
 	main='Length of contigs included in assembly vs excluded',
 	ylab='Contig length (MB)')
 

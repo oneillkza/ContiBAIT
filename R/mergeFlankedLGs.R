@@ -3,6 +3,7 @@ mergeFlankedLGs.func <- function(linkageGroupList,
                                           buildConsensus=1, 
                                           cluster=NULL, 
                                           clusterParam=NULL, 
+                                          similarityCutoff=0.7,
                                           verbose=TRUE)
 {
   switchAroo <- function(dataFrameToSwitch)
@@ -55,7 +56,7 @@ mergeFlankedLGs.func <- function(linkageGroupList,
   linkageflank <- clusterContigs(justFlankMatrix, 
                                     clusterParam=clusterParam, 
                                     recluster=cluster, 
-                                    similarityCutoff=0.9,
+                                    similarityCutoff=similarityCutoff,
                                     minimumLibraryOverlap=10,
                                     randomise=TRUE)
 
@@ -81,7 +82,7 @@ mergeFlankedLGs.func <- function(linkageGroupList,
       orientClusters <- clusterContigs(thisElement, 
                                         clusterParam=clusterParam, 
                                         recluster=cluster, 
-                                        similarityCutoff=0.9,
+                                        similarityCutoff=similarityCutoff,
                                         clusterBy='homo',
                                         randomise=TRUE, 
                                         verbose=FALSE)
@@ -151,6 +152,7 @@ mergeFlankedLGs.func <- function(linkageGroupList,
 #' @param cluster Number of times to recluster and take the consensus of. If NULL, clustering is 
 #' run only once.
 #' @param clusterParam optional \code{BiocParallelParam} specifying cluster to use for parallel execution. When NULL, execution will be serial.
+#' @param similarityCutoff merge contigs that are more similar this this
 #' @param verbose Outputs information to the terminal. Default is TRUE.
 #' @return a list containing a revised LinkageGroupList with merged groups, if appropriate, and 
 #' a StrandStateMatrix with contigs reoriented, if newly merged groups were in opposite orientations.

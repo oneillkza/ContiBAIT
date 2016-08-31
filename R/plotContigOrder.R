@@ -8,6 +8,8 @@ plotContigOrder.func <- function(contigOrder, lg='all', verbose=TRUE)
 	{
 		if(verbose){message(' -> Processing ', link)}
 		contigOrderGrp <- contigOrder[grep(paste(unique(masterGroups)[link],"\\.", sep=""), contigOrder[,1]),]
+#if(KeepZeros){rownames(contigOrderGrp) <- contigOrderGrp[,1]}
+
 		if(nrow(as.matrix(contigOrderGrp)) > 2)
 		{
 			contigChr <- sub(':.*', '', contigOrderGrp[,2])
@@ -16,30 +18,59 @@ plotContigOrder.func <- function(contigOrder, lg='all', verbose=TRUE)
 			contigLengths <- sub('.*:', '', contigOrderGrp[,2])
 			contigStarts <- sub('-.*', '', contigLengths)
 
-			orderedLocation <- unlist(sapply(1:length(unique(contigOrderGrp[,1])), function(x) rep(x, length(contigOrderGrp[,1][which(contigOrderGrp[,1] == unique(contigOrderGrp[,1])[x])]))))
-
-			contigOrderFrame <- data.frame(chr=contigChr, start=as.numeric(contigStarts)/10^6, bin=orderedLocation)
+		if( length(unique(names(contigStarts))) != length(contigStarts))
+		{
+			#If more than one contig in the same sub-LG, take the mean start position.
+			mergeFrame <- data.frame(lg=paste(names(contigStarts), contigChr, sep='LINK'), chr=contigChr, start=as.numeric(contigStarts)/10^6)
+			mergeFrameAg <- aggregate(start~lg, mergeFrame, mean)
+			contigOrderFrame <- mergeFrameAg[mergeFrame$lg,]
+			contigOrderFrame <- data.frame(lg=sub('LINK.*', '', contigOrderFrame$lg), chr=sub('.*LINK', '', contigOrderFrame$lg), start=contigOrderFrame$start)
+			contigOrderFrame$bin <- c(1:nrow(contigOrderFrame))
 			contigOrderFrame$knownOrder <- as.numeric(rownames(contigOrderFrame[order(contigOrderFrame$start),]))
+		}else{
 
-			predominantChr <- names(sort(table(contigOrderFrame$chr), decreasing=T))[1]
+			orderedLocation <- unlist(sapply(1:length(unique(contigOrderGrp[,1])), function(x) rep(x, length(contigOrderGrp[,1][which(contigOrderGrp[,1] == unique(contigOrderGrp[,1])[x])]))))
+			contigOrderFrame <- data.frame(lg=names(contigChr), chr=contigChr, start=as.numeric(contigStarts)/10^6, bin=orderedLocation)
+			contigOrderFrame$knownOrder <- as.numeric(rownames(contigOrderFrame[order(contigOrderFrame$start),]))
+		}
 
-			rsquareOrient <- summary(lm(bin ~ knownOrder, data=contigOrderFrame[which(contigOrderFrame$chr == predominantChr),]))$r.squared
-			if(is.nan(rsquareOrient)){rsquareOrient <- 0}
-			rsquare <- summary(lm(bin ~ -1+knownOrder, data=contigOrderFrame[which(contigOrderFrame$chr == predominantChr),]))$r.squared
-			if(is.nan(rsquare)){rsquare <- 0}
 
-			if(rsquare < rsquareOrient)
+			spearmanCor <- cor(contigOrderFrame$bin[which(contigOrderFrame$chr == primaryContigChr)], 
+							   contigOrderFrame$knownOrder[which(contigOrderFrame$chr == primaryContigChr)], 
+							   use="everything", 
+							   method="spearman")
+
+			if(spearmanCor < 0)
 			{
-				contigOrderFrame[,1:2] <- contigOrderFrame[nrow(contigOrderFrame):1, 1:2]
-				rsquare <- summary(lm(bin ~ 1+knownOrder, data=contigOrderFrame[which(contigOrderFrame$chr == predominantChr),]))$r.squared
-			}
+				contigOrderFrame[,3:4] <- contigOrderFrame[nrow(contigOrderFrame):1, 3:4]
+				spearmanCor <- spearmanCor*-1
+			}		
+	
+#			rsquareOrient <- summary(lm(bin ~ knownOrder, data=contigOrderFrame[which(contigOrderFrame$chr == primaryContigChr),]))$r.squared
+#			if(is.nan(rsquareOrient)){rsquareOrient <- 0}
+#			rsquare <- summary(lm(bin ~ -1+knownOrder, data=contigOrderFrame[which(contigOrderFrame$chr == primaryContigChr),]))$r.squared
+#			if(is.nan(rsquare)){rsquare <- 0}
 
-			rsquare <- round(rsquare, digits=2)
+#			if(rsquare < rsquareOrient)
+#			{
+#				contigOrderFrame[,3:4] <- contigOrderFrame[nrow(contigOrderFrame):1, 3:4]
+#				rsquare <- rsquareOrient
+#			}
+
+			#rsquare <- round(rsquare, digits=2)
+			spearmanCor <- round(spearmanCor, digits=2)
 			print(ggplot(contigOrderFrame, aes_string("bin", "start") )+
 			geom_point(aes_string(x="bin", y="start" , colour="chr"), size=2)+
 			labs(x="contiBAIT predicted location of contigs", y="Assembly ordered location of contigs (Mb)")+
 			geom_smooth(method="lm")+
-			ggtitle(paste(unique(names(contigChr)), " plot of ", length(contigChr), " fragments (", length(unique(contigOrderFrame$bin)), " sub-linkage groups)\nR-squared = ", rsquare,  sep="")))
+			ggtitle(paste(primaryContigChr, 
+						 " plot of ", 
+						 length(contigChr), 
+						 " fragments (", 
+						 length(unique(contigOrderFrame$bin)), 
+						 " sub-linkage groups)\nSpearman correlation = ", 
+						 spearmanCor, 
+						 sep="")))
 		}
 	}
 }

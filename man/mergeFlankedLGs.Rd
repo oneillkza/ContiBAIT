@@ -9,7 +9,7 @@
 
   \S4method{mergeFlankedLGs}{LinkageGroupList,StrandStateMatrix}(linkageGroupList,
   strandStateMatrix, buildConsensus = 1, cluster = NULL,
-  clusterParam = NULL, verbose = TRUE)
+  clusterParam = NULL, similarityCutoff = 0.7, verbose = TRUE)
 }
 \arguments{
 \item{linkageGroupList}{List of ordered vectors containing names of contigs belonging to each LG, of type LinkageGroupList}
@@ -22,6 +22,8 @@
 run only once.}
 
 \item{clusterParam}{optional \code{BiocParallelParam} specifying cluster to use for parallel execution. When NULL, execution will be serial.}
+
+\item{similarityCutoff}{merge contigs that are more similar this this}
 
 \item{verbose}{Outputs information to the terminal. Default is TRUE.}
 }

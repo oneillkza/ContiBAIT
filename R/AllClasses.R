@@ -126,9 +126,9 @@ StrandStateMatrix <- function(states = matrix(integer()))
 #
 #' @export
 #' @rdname LinkageGroupList
-
 setClass("LinkageGroupList", 
-		 representation('list', names='character')
+		 representation('list', names='character'),
+		 validity=function(object){is.list(object) && (length(names(object)) >=1)}
 		 )
 
 #' Constructor forLinkageGroupList
@@ -261,8 +261,7 @@ OrientationFrame <- function(orientation=character())
 #' @rdname ChrTable
 
 setClass("ChrTable",
-		 contains='GRanges',
-		 validity=function(object){length(object$name) > 0})
+		 contains='GRanges')
 
 #' Constructor for ChrTable
 #' @aliases ChrTable
@@ -274,6 +273,7 @@ setClass("ChrTable",
 
 ChrTable <- function(chrRanges=GRanges())
 {
+	if(is.null(chrRanges$name)){chrRanges$name <- paste(seqnames(chrRanges), ':', start(chrRanges), '-', end(chrRanges), sep='')}
 	new('ChrTable', chrRanges)	
 }
 

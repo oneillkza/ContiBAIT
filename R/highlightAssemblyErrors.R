@@ -10,7 +10,6 @@
 #' @param pairedEnd  Whether the bam files being read are in paired end format. Default is TRUE. Note,
 #' @param qual  Mapping quality threshold. Default is 1
 #' @param gapFile A GRanges object consisting of start and end locations of assembly gaps (defaul it NULL)
-#' @param writeBed Character vector, this option will write the resulting bed file to a specified location with the character as the file name. Defulat is NULL
 #' @param verbose prints messages to the terminal (default is TRUE)
 #' 
 #' @return a directional ChrTable object that can be used in downstream functions (strandSeqFreqTable)
@@ -30,7 +29,6 @@ highlightAssemblyErrors <- function(path,
 									pairedEnd=TRUE,
 									qual=10,
 									gapFile=NULL,
-									writeBed=NULL,
 									verbose=TRUE)
 {
 	bamFileList <- list.files(path=path, pattern=".bam$", full.names=TRUE)
@@ -57,8 +55,7 @@ highlightAssemblyErrors <- function(path,
 
 	dirRange <- thoroughBed(bamFileList, relatedLibList, verbose=verbose)
 
-	reorientFile <- locateMisorients(dirRange, gapFile=gapFile, writeBed=writeBed, verbose=verbose)
+	reorientFile <- locateMisorients(dirRange, gapFile=gapFile, verbose=verbose)
 
-	filter <- makeChrTable(bamFileList[1], splitFile=reorientFile, splitBy=splitBy, verbose=verbose)
-	return(filter)
+	return(reorientFile)
 }

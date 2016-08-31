@@ -1,4 +1,4 @@
-barplotLinkageGroupCalls.func <- function(object, chrTable, by='lg', bySize=TRUE, returnTable=NULL, percentage=NULL)
+barplotLinkageGroupCalls.func <- function(object, chrTable, by='lg', bySize=TRUE, returnTable=NULL, whichGroup=NULL, percentage=NULL)
 {
 
 	#Calculate length of each chromosome represented for one linkage group:
@@ -17,7 +17,7 @@ barplotLinkageGroupCalls.func <- function(object, chrTable, by='lg', bySize=TRUE
 
 	reCompileObject <- function(linkage.lengths)
 	{
-		totLength <- lapply(linkage.lengths, sum)
+		totLength <- lapply(linkage.lengths, function(x) sum(as.numeric(x)))
 		newOrderNames <- names(totLength[order(unlist(totLength), decreasing=TRUE)])
 		object <- LinkageGroupList(object[newOrderNames],
 								  names= newOrderNames
@@ -65,7 +65,9 @@ barplotLinkageGroupCalls.func <- function(object, chrTable, by='lg', bySize=TRUE
 			perFrame <- data.frame(t(sapply(seq_len(length(perLength)), function(x) round(chr.table[which(rownames(chr.table) == names(perLength)[x]),]/perLength[x]*100, digits=1)))) 
 			perFrame <- t(apply(perFrame, 1, sort, decreasing=TRUE))
 			perFrame <- perFrame[,which(apply(perFrame, 2, 
-											 function(x){length(which(x == 0))} != nrow(perFrame) ))]
+											 function(x){length(which(x == 0))} != nrow(perFrame) )),drop=FALSE]
+
+			perFrame[apply(perFrame,1,sum)>100,1] <- 100-perFrame[apply(perFrame,1,sum)>100,2:ncol(perFrame)]
 			perFrame <- cbind(perFrame, apply(perFrame, 1, function(x) 100-sum(x)))
 			colnames(perFrame) <- c(paste(1:(ncol(perFrame)-1), sep=""), "empty")
 			rownames(perFrame) <- complete.list
@@ -95,13 +97,14 @@ barplotLinkageGroupCalls.func <- function(object, chrTable, by='lg', bySize=TRUE
 			print(ggplot(chromoFrame, aes_string("LG", "count"))+
 			geom_bar(stat="identity", aes_string(fill="chr"), colour='grey80')+
 			scale_fill_manual(values=jColors)+		
+			coord_cartesian(xlim=whichGroup)+
 			theme(axis.text.x = element_text(angle = 90, hjust = 1))+
 			labs(x="Chromosome", y="DNA Represented in Chromosome (%)")+
 			theme(legend.position='none')+
-			ggtitle(paste("Barplot of ", length(unique(chromoFrame$LG)), 
+			ggtitle(paste("Barplot of ", length(unique(chromoFrame$chr)), 
 						  " contigs clustered into ", 
-						  length(unique(chromoFrame$chr)), 
-						  " chromosomes",  
+						  length(object), 
+						  " linkage groups",  
 						  sep="")))
 		}else{
 			if(length(unique(chromoFrame$chr)) > 50){leg='none'}else{leg='right'}
@@ -110,6 +113,7 @@ barplotLinkageGroupCalls.func <- function(object, chrTable, by='lg', bySize=TRUE
 			geom_bar(stat="identity", aes_string(fill="chr"), colour='black')+
 			theme(axis.text.x = element_text(angle = 90, hjust = 1))+
 			labs(x="Linkage Group", y="DNA Represented in Linkage Groups (Mb)")+
+			coord_cartesian(xlim=whichGroup)+
 			theme(legend.position=leg)+
 			ggtitle(paste("Barplot of ", length(unique(chromoFrame$chr)), 
 						  " contigs clustered into ", 
@@ -129,10 +133,11 @@ barplotLinkageGroupCalls.func <- function(object, chrTable, by='lg', bySize=TRUE
 			print(ggplot(chromoFrame, aes_string("chr", "count"))+
 			geom_bar(stat="identity", aes_string(fill="LG"), colour='grey80')+
 			scale_fill_manual(values=jColors)+		
+			coord_cartesian(xlim=whichGroup)+
 			theme(axis.text.x = element_text(angle = 90, hjust = 1))+
 			labs(x="Chromosome", y="DNA Represented in Chromosome (%)")+
 			theme(legend.position='none')+
-			ggtitle(paste("Barplot of ", length(unique(chromoFrame$LG)), 
+			ggtitle(paste("Barplot of ", length(object), 
 						  " linkage groups clustering into ", 
 						  length(unique(chromoFrame$chr)), " chromosomes",  sep="")))
 		}else{
@@ -141,6 +146,7 @@ barplotLinkageGroupCalls.func <- function(object, chrTable, by='lg', bySize=TRUE
 			print(ggplot(chromoFrame, aes_string("chr", "count"))+
 			geom_bar(stat="identity", aes_string(fill="LG"), colour='black')+
 			theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+			coord_cartesian(xlim=whichGroup)+
 			labs(x="Chromosome", y="DNA Represented in Chromosome (Mb)")+
 			theme(legend.position=leg)+
 			ggtitle(paste("Barplot of ", length(unique(chromoFrame$LG)), 
@@ -163,6 +169,8 @@ barplotLinkageGroupCalls.func <- function(object, chrTable, by='lg', bySize=TRUE
 #' @param bySize logical value to return barplot either with LGs sorted by number of contigs or size (in Mb). Default is TRUE.
 #' @param returnTable Logical to return chromosome length matrix. Default is NULL
 #' @param percentage Logical that returns the percentage of different chromosomes or LG within the barplot. Default is NULL
+#' @param whichGroup Numeric vector of groups to analyse. If by='lg', then only the subset of LGs selected by whichGroup will be analyzed. If by='chr', then only
+#' subset of chromosomes selected by whichGroup will be analyzed.
 #' Note to include legend, use legend=rownames(chr.table) for by='lg', and legend=colnames(chr.table) for by='chr'
 #' 
 #' @return a matrix of lengths of each chromosome (rows) in each linkage group (columns)

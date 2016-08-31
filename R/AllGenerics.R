@@ -66,7 +66,6 @@ setGeneric("locateMisorients",
 		   		 	gapFile=NULL,
 		   		 	stateNum=NULL,
 		   		 	readCutOff=NULL,
-			   		writeBed=NULL, 
 			   		verbose=NULL) standardGeneric("locateMisorients"),
 			   		signature='compiledGrange')
 
@@ -123,6 +122,7 @@ setGeneric("barplotLinkageGroupCalls",
                     by=NULL, 
                     bySize=NULL,
                     returnTable=NULL,
+                    whichGroup=NULL,
                     percentage=NULL) standardGeneric("barplotLinkageGroupCalls"),
 		   signature=c('object', 'chrTable'))
 
@@ -220,6 +220,7 @@ setGeneric("mergeFlankedLGs",
 					buildConsensus=NULL,
 					cluster=NULL,
 					clusterParam=NULL,
+					similarityCutoff=NULL,
 					verbose=NULL) standardGeneric("mergeFlankedLGs"),
 		   signature=c('linkageGroupList', 'strandStateMatrix'))
 

@@ -8,7 +8,7 @@
 \title{locateMisorients -- function to identify libraries that hare similar WC patterns on chromosomes}
 \usage{
 \S4method{locateMisorients}{GRanges}(compiledGrange, gapFile = NULL,
-  stateNum = 3, readCutOff = 40, writeBed = NULL, verbose = TRUE)
+  stateNum = 3, readCutOff = 40, verbose = TRUE)
 }
 \arguments{
 \item{compiledGrange}{A GRanges object consisting of read locations. Can be an individual file or the product of thoroughBed}
@@ -19,12 +19,11 @@
 
 \item{readCutOff}{The minimal number of reads required to make an accurate strand state call. Default is 40.}
 
-\item{writeBed}{Character vector, this option will write the resulting bed file to a specified location with the character as the file name. Defulat is NULL}
-
 \item{verbose}{prints messages to the terminal (default is TRUE)}
 }
 \value{
-a directional ChrTable object that can be used in downstream functions (strandSeqFreqTable)
+a list of ChrTable objects. The first is a ChrTable of misorientations detected. The second is a ChrTable of chimera detected.
+Output can be used in downstream functions (strandSeqFreqTable)
 }
 \description{
 locateMisorients -- function to identify libraries that hare similar WC patterns on chromosomes
