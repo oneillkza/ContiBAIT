@@ -95,7 +95,8 @@ setGeneric("orderAllLinkageGroups",
             		whichLG=NULL, 
             		saveOrdered=NULL, 
             		orderCall=NULL, 
-            		randomAttempts=NULL, 
+            		randomAttempts=NULL,
+            		nProcesses = 1,
             		verbose=NULL) standardGeneric("orderAllLinkageGroups"),
 		   signature=c('linkageGroupList', 'strandStateMatrix','strandFreqMatrix', 'strandReadCount' ))
 
