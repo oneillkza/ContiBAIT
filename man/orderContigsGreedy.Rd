@@ -6,12 +6,14 @@
 Attempt to order contigs within}
 \usage{
 orderContigsGreedy(linkageGroupReadTable, randomAttempts = 75,
-  verbose = TRUE)
+  nProcesses = 1, verbose = TRUE)
 }
 \arguments{
 \item{linkageGroupReadTable}{dataframe of strand calls (product of combineZeroDists or preprocessStrandTable)}
 
 \item{randomAttempts}{number of times to repeat the greedy algortihm with a random restart}
+
+\item{nProcesses}{number of processes to attempt ordering in parallel}
 
 \item{verbose}{whether to print verbose messages}
 }
