@@ -57,7 +57,6 @@ orderContigsGreedy <- function(linkageGroupReadTable, randomAttempts=75,nProcess
       for (i in res[-1]){
         if (i[[3]] < best_order[[3]])
         {
-          print(paste(best_order[[3]],i[[3]],sep=' replaced by'))
           best_order <<- i
         }
         
