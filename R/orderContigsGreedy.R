@@ -30,7 +30,7 @@ orderContigsGreedy <- function(linkageGroupReadTable, randomAttempts=75, verbose
       temp_table <- as.matrix(linkageGroupReadTable[sample(nrow(linkageGroupReadTable)),])
       temp_order <- .Call('orderContigsGreedy', temp_table)
 
-      if ( temp_order$score > best_order$score){
+      if ( temp_order$score < best_order$score){
         if(verbose){message('     -> Found better ordering!')}  
         best_order <- temp_order
         best_table <- temp_table
