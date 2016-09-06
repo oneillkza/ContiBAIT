@@ -137,15 +137,12 @@ orderAllLinkageGroups.func <- function(linkageGroupList,
 
          if(nrow(similarLinkageStrands) > 1)
          {
-           breaks <- seq(0, 100, length.out=101)/100 
-           cols <- colorRampPalette(c("cyan", "blue", "grey30", "black", "grey30", "red", "orange"))
-           suppressWarnings(heatmap.2(similarLinkageStrands, 
+          suppressWarnings(heatmap.2(similarLinkageStrands, 
                                       Rowv=NA, 
                                       Colv=NA, 
                                       dendrogram="none", 
                                       revC=TRUE, 
                                       col=colorRampPalette(c("#f7fcfd", "#00441b"))(n=9), 
-                                      # breaks=breaks, 
                                       labRow = "",
                                       labCol = "",
                                       trace='none', 
