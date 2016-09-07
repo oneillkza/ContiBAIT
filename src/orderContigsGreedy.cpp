@@ -1,58 +1,52 @@
 //Greedy ordering based on contig quality.
-#include <R_ext/Print.h>
 #include <Rcpp.h>
-#include <boost/dynamic_bitset.hpp>
-#include <stdio.h>
-#include <stdlib.h>
-#define  STD_COUT
+#include <limits.h>
 #include "orderContigsGreedy.h" 
-#include <map>
-#include <vector>
-#include <math.h>
-using namespace Rcpp ;
-using namespace boost;
-
-
-
+using namespace Rcpp;
 
 int nRows;
 int nCols;
 IntegerMatrix strandMatrix;
 
-
-float score_order(std::vector<int> order_vector)
-{
-
+int quick_score_cell(int *order, int pos, int size, int cell, int numSCE) {
+  int elm = strandMatrix(order[size], cell);
   
-  int numSCE = 0;
-  int prev_states[nCols];
-  for (int i = 0; i < nCols; i++){
-    prev_states[i] = 0;
-  } 
-  for (int i = 0; i < (int)order_vector.size(); i++)
-  {
-    IntegerVector states = strandMatrix.row(order_vector[i]);
-    for (int j = 0; j < nCols; j++)
-    {
-      if (states[j] == prev_states[j] || states[j] == 0)
-      {
-        continue;
-      }
-      if ((prev_states[j] == 1 && states[j] == 3) || (prev_states[j] == 3 && states[j] == 1 )){
-        numSCE += 5;
-      }
-      if (prev_states[j] != 0)
-      {
-        numSCE++;
-      }
-      prev_states[j] = states[j];        
+  int k = pos - 1;
+  // skip backward over 0 contigs to find prev_state at pos
+  while(k >= 0 && strandMatrix(order[k], cell) == 0) --k;
+  int p0 = k < 0 ? 0 : strandMatrix(order[k], cell);
+  
+  // if new contig is 0 or same as prev_state then score unchanged
+  if(elm == 0 || p0 == elm) { return numSCE; }
+  
+  // add score for new contig
+  if(p0 != 0) ++numSCE;
+  if((p0 == 1 && elm == 3) || (p0 == 3 && elm == 1)) numSCE += 5;
+  
+  int p1 = elm, j = pos;
+  
+  // skip 0 contigs; they have no contribution to score but let changed prev_state pass through	
+  while(j < size && strandMatrix(order[j], cell) == 0) { ++j; }
+  
+  if(j < size) {
+    int s = strandMatrix(order[j], cell);
+    
+    // remove old contribution from shifted contig
+    if(p0 != s) {
+      if(p0 != 0) --numSCE;
+      if((p0 == 1 && s == 3) || (p0 == 3 && s == 1)) numSCE -= 5;
     }
-   }
-  return int ((nRows*nCols) - numSCE);
-};
-
-
+    
+    // calculate new contribution from shifted contig
+    if(p1 != s) {
+      ++numSCE; // we know p1 != 0;
+      if((p1 == 1 && s == 3) || (p1 == 3 && s == 1)) numSCE += 5;
+    }
+  }
   
+  return numSCE;  
+}
+
 /*****************************************************************************
 * Function to greedily order contigs based on their strand state using contig quality 
 * 
@@ -60,48 +54,58 @@ float score_order(std::vector<int> order_vector)
 
 //@Param SStrandMatrix  Strand state for all contigs across all libraries
 RcppExport  SEXP orderContigsGreedy(
-                SEXP SStrandMatrix                
-                )
+    SEXP SStrandMatrix                
+)
 {
   IntegerMatrix sMatrix(SStrandMatrix);
   strandMatrix = sMatrix; 
   nRows = strandMatrix.nrow();
   nCols = strandMatrix.ncol();
-  std::vector<int> best_order;
-  best_order.push_back(0);
-  best_order.push_back(1);
-  for(int i = 2; i < nRows; i++){
+  
+  int *order = new int[nRows * nCols];
+  int *score = new int[nCols];
+  for(int cell = 0; cell < nCols; ++cell) {
+    score[cell] = 0;
+  }
+  
+  order[0] = 0;
+  int best_score = 0;
+  for(int i = 1; i < nRows; i++) {
+    order[i] = i;
+    best_score = INT_MAX;
+
     int best_index = 0;
-    int best_index_score = 0;
-    for(int j = 0; j <= (int)best_order.size(); j++){
-      std::vector<int> order;
-      for(int k = 0; k < (int)best_order.size(); k++){
-        order.push_back(best_order[k]);
+    for(int j = 0; j <= i; j++) {
+      int total = 0;      
+      for(int cell = 0; cell < nCols; ++cell) {
+        total += quick_score_cell(order, j, i, cell, score[cell]);
       }
-    if (j == (int)order.size()){
-      order.push_back(j);
-    } else{
-      std::vector<int>::iterator it2 = order.begin();
-      order.insert(it2 + j, i);
-    }
-      int temp_score = score_order(order);
-      if (temp_score > best_index_score){
+      
+      if(total < best_score) {
         best_index = j;
-        best_index_score = temp_score;
-      }      
+        best_score = total;
+      }
     }
-    if (best_index == (int)best_order.size()){
-      best_order.push_back(i);
-    }else{
-    std::vector<int>::iterator it = best_order.begin();
-    best_order.insert(it + best_index, i);
-    }
-  }
-  IntegerVector result(nRows);
-  for (int i = 0; i < nRows; i++){
-    result[i] = best_order[i] + 1;
-  }
- return Rcpp::List::create(Rcpp::Named("order") = result,
-                       Rcpp::Named("score") = score_order(best_order));
     
+    // update cell scores
+    for(int cell = 0; cell < nCols; ++cell) {
+      score[cell] = quick_score_cell(order, best_index, i, cell, score[cell]);
+    }
+    
+    // rearrange order to best new order
+    for(int k = i; k > best_index; --k) {
+      order[k] = order[k-1];
+    }
+    order[best_index] = i;
+  }
+  
+  IntegerVector result(nRows);
+  for(int i = 0; i < nRows; i++) {
+    result[i] = order[i] + 1;
+  }
+  
+  delete[] order;
+  delete[] score;
+  
+  return Rcpp::List::create(Rcpp::Named("order") = result, Rcpp::Named("score") = best_score);
 }

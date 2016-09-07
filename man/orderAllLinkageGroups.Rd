@@ -11,7 +11,7 @@
   \S4method{orderAllLinkageGroups}{LinkageGroupList,StrandStateMatrix,StrandFreqMatrix,StrandReadMatrix}(linkageGroupList,
   strandStateMatrix, strandFreqMatrix, strandReadCount, whichLG = NULL,
   saveOrdered = NULL, orderCall = "greedy", randomAttempts = 75,
-  verbose = TRUE)
+  nProcesses = 1, verbose = TRUE)
 }
 \arguments{
 \item{linkageGroupList}{list of vectors, each specifying which contigs belong in which linkage group (product of clusterContigs)}
@@ -29,6 +29,8 @@
 \item{orderCall}{currently either 'greedy' for greedy algorithm or 'TSP' for travelling salesperson alogrithm (default is 'greedy')}
 
 \item{randomAttempts}{itenger specifying number of iterations of either the Monte Carlo or the 2-opt TSP solver to identify the best ordering. Default is 75, but higher values (eg 1000) make more sense for the TSP.}
+
+\item{nProcesses}{number of processes to attempt ordering in parallel}
 
 \item{verbose}{Pringts messages to the terminal. Default is TRUE}
 }
