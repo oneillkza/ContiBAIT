@@ -5,7 +5,8 @@ orderAllLinkageGroups.func <- function(linkageGroupList,
                                        whichLG=NULL, 
                                        saveOrdered=NULL, 
                                        orderCall='greedy', 
-                                       randomAttempts=75, 
+                                       randomAttempts=75,
+                                       nProcesses = 1,
                                        verbose=TRUE)
 {
 
@@ -105,7 +106,7 @@ orderAllLinkageGroups.func <- function(linkageGroupList,
       #Choose which ordering method to use
       if(orderCall == 'greedy')
       {
-        outOfOrder <- orderContigsGreedy(linkageGroupReadTable, randomAttempts=randomAttempts)
+        outOfOrder <- orderContigsGreedy(linkageGroupReadTable, randomAttempts=randomAttempts,nProcesses = nProcesses,verbose=verbose)
       }else if (orderCall == 'TSP')
       {
         outOfOrder <- orderContigsTSP(linkageGroupReadTable, reps=randomAttempts)
@@ -136,15 +137,14 @@ orderAllLinkageGroups.func <- function(linkageGroupList,
 
          if(nrow(similarLinkageStrands) > 1)
          {
-           breaks <- seq(0, 100, length.out=101)/100 
-           cols <- colorRampPalette(c("cyan", "blue", "grey30", "black", "grey30", "red", "orange"))
-           suppressWarnings(heatmap.2(similarLinkageStrands, 
+          suppressWarnings(heatmap.2(similarLinkageStrands, 
                                       Rowv=NA, 
                                       Colv=NA, 
                                       dendrogram="none", 
                                       revC=TRUE, 
-                                      col=cols(100), 
-                                      breaks=breaks, 
+                                      col=colorRampPalette(c("#f7fcfd", "#00441b"))(n=9), 
+                                      labRow = "",
+                                      labCol = "",
                                       trace='none', 
                                       main=paste(orderCall, '-ordered LG', whichLG[lg], '\n main fragment: ', names(chromosome), ' (', chromosome, '%)', sep="")))
          }
@@ -188,6 +188,7 @@ orderAllLinkageGroups.func <- function(linkageGroupList,
 #' @param orderCall currently either 'greedy' for greedy algorithm or 'TSP' for travelling salesperson alogrithm (default is 'greedy')
 #' @param verbose Pringts messages to the terminal. Default is TRUE
 #' @param randomAttempts itenger specifying number of iterations of either the Monte Carlo or the 2-opt TSP solver to identify the best ordering. Default is 75, but higher values (eg 1000) make more sense for the TSP.
+#' @param nProcesses number of processes to attempt ordering in parallel
 #' @aliases orderAllLinkageGroups orderAllLinkageGroups,orderAllLinkageGroups-LinkageGroupList-StrandStateMatrix-StrandFreqMatrix-StrandReadMatrix-method
 #' @rdname orderAllLinkageGroups
 #' 
