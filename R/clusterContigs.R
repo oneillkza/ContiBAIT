@@ -8,83 +8,32 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 						   clusterParam=NULL,
 						   clusterBy='hetero',
 						   verbose=TRUE)
-{
-	
+{	
 	if(!is.null(randomSeed))
 		set.seed(randomSeed)
 	
 	
 	runOnce <- function(object, randomise, randomWeight, similarityCutoff)
 	{
-		randomOrder <- rownames(object) # by default, no reordering
-		names(randomOrder) <- rownames(object)
 		#Randomise object contig order:
-		if(randomise)
+		if(randomise) 
+		{			
 			if(!is.null(randomWeight))
 			{
-				#dequantise by adding some tiny random noise in case there are many zeroes:
-				randomWeight <- randomWeight + 
-					runif(length(randomWeight)) / (10^5*max(randomWeight))
-				names(randomOrder) <- sample(rownames(object), prob=randomWeight)
-				
-			}else
-			{
-				names(randomOrder) <- sample(rownames(object))
+				#dequantise by adding some tiny random noise in case there are many zeroes:				
+				randomWeight <- randomWeight + runif(length(randomWeight)) / (10^5*max(randomWeight))
 			}
-		#Use as data.frame in case only one column is present
-		object <- as.data.frame(object[names(randomOrder),])
-		
-	
-		#Set up a list for storing linkage groups (clusters):
-		#Pre-filled to the maximum possible size, though it's expected to rarely 
-		#go beyond a fraction of that:
-		linkageGroups = vector("list", nrow(object))
-		linkageStrands <- object[1,]
-		
-		contigs <- rownames(object)
-		linkageGroups[[1]] <- c(1)
-		lg.num <- 1 #index to keep track of location in list
-		
-		#Function to assign a new contig to an existing linkage group, or create a new one:
-		if(verbose){message(paste('Initializing contig ', contigs[1], 
-								  ' [1/', nrow(object), '] as LG1', sep=""))}		
 
-		for (contig.num in 2:nrow(object))
-		{
-			if(verbose){message('Clustering contig ', contigs[contig.num], 
-								' [', contig.num, '/', nrow(object), ']   \r', appendLF=FALSE )}
-			computePairwiseSim <- function(linkage.num, contig.num)
-			{
-				contigStrand <- object[contig.num,]
-				linkageStrand <- linkageStrands[linkage.num,]
-				contigStrand[which(contigStrand==3)] <- 2
-				linkageStrand[which(linkageStrand==3)] <- 2	
-				computeSim(contigStrand, linkageStrand, minimumLibraryOverlap)
-			}
-			similarities <- sapply(1:nrow(linkageStrands), computePairwiseSim, contig.num)
-			best.match <- which.max(similarities)
-			#If no good match, make this contig the founder of a new linkage group:
-			if (length(best.match) ==0 || similarities[best.match] < similarityCutoff)
-			{
-				lg.num <- lg.num + 1
-				linkageGroups[[lg.num]] <- c(contig.num)
-				linkageStrands <- rbind(linkageStrands, object[contig.num,])
-			}else
-				#Otherwise, add this to the best matched group, and recompute the strand state for that group:
-			{
-				if(verbose){message(paste('\n  -> Adding ', 
-										  contigs[contig.num],' to LG', best.match, 
-										  ' for a cluster of ',
-										  length(linkageGroups[[best.match]])+1 , sep=""))}
-				linkageGroups[[best.match]] <- append(linkageGroups[[best.match]], contig.num)
-				strandVec <- computeConsensus(linkageGroups[[best.match]], object)
-				linkageStrands[best.match,] <- strandVec
-			}
+			object <- object[sample(1:nrow(object), prob=randomWeight),]
 		}
-		linkageGroups <- linkageGroups[1:lg.num]
 		
-		linkageGroups <- lapply(linkageGroups, function(lg){names(randomOrder)[lg]})
+		#Use as data.frame in case only one column is present
+		object <- as.data.frame(object)
 
+		linkageGroups <- .Call('buildLinkageGroups', data.matrix(object), similarityCutoff, minimumLibraryOverlap, 
+			verbose, if(verbose) rownames(object) else vector("character", 0))
+			
+		linkageGroups <- lapply(linkageGroups, function(lg){rownames(object)[lg]})
 		return(linkageGroups)
 	}	
 	
