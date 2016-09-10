@@ -106,28 +106,14 @@ preprocessStrandTable.func <- function(strandTable,
 		contigNAs <- apply(strandTable, 1, 
 						   function(x){length(which(!is.na(x)))}) / ncol(strandTable) #number of libraries contig is non-NA 
 		#Compute the divergence between the call for a contig and the raw value used to make that call:
-		computeOneAgreement <- function(contigName)
-		{
-			contigDists <- vector()
-			for(lib in 1:ncol(strandTable))
-			{
-				contigCall <- strandTable[contigName, lib]
-				if(!is.na(contigCall))
-				{
-					contigRaw <- rawTable[contigName, lib]
-					if(contigCall == 2)
-					{
-						contigDist <- (strandTableThreshold - abs(contigRaw)) /
-							strandTableThreshold
-					}else
-					{
-						contigDist <- (abs(contigRaw) - strandTableThreshold) / 
-							(1-strandTableThreshold)
-					}
-					contigDists <- append(contigDists, contigDist)
-				}
-			}
-			mean(contigDists)
+		computeOneAgreement <- function(contigName) {
+			contigCall <- strandTable[contigName,]			
+			contigRaw <- rawTable[contigName,]
+
+			mean(ifelse(contigCall == 2, 
+					(strandTableThreshold - abs(contigRaw)) / strandTableThreshold,
+					(abs(contigRaw) - strandTableThreshold) / (1 - strandTableThreshold))
+				[!is.na(contigCall)])
 		}
 		
 		contigAgreement <- sapply(rownames(strandTable), computeOneAgreement)
