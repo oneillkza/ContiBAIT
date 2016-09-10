@@ -6,6 +6,7 @@
 
 computeSim <- function(contigStrand, linkageStrand, minimumLibraryOverlap)
 {
-	.Call('computeSim', as.integer(contigStrand), 
-		  as.integer(linkageStrand), minimumLibraryOverlap)
+	numCommon <- sum(!is.na(contigStrand) & !is.na(linkageStrand))
+	numEqual <- sum((contigStrand == 2) == (linkageStrand == 2), na.rm=TRUE)
+	if(numCommon < minimumLibraryOverlap) NA else numEqual / numCommon
 }
