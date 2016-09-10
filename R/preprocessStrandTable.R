@@ -68,11 +68,11 @@ preprocessStrandTable.func <- function(strandTable,
 												function(x){length(which(is.na(x)))} <= length(x)*filterThreshold ))]
 
 		#Ignore contigs that are entirely WC (likely contain inversions) (NB all <10 contigs have already been excluded)
-		WCvaluesCon <- sapply(1:nrow(strandTable), 
-							  function(x) length(grep(2, strandTable[x,]) )/length(grep(paste(c(1,2,3), collapse="|"), strandTable[x,])))
+		WCvaluesCon <- apply(strandTable, 1, function(row) { sum(row == 2, na.rm=TRUE) / sum(is.element(row, c(1,2,3)), na.rm=TRUE) })		
+
 		#And libraries that are entirely WC (whole genome libraries, not strandSeq)
-		WCvaluesLib <- sapply(1:ncol(strandTable), 
-							  function(x) length(grep(2, strandTable[,x]) )/length(grep(paste(c(1,2,3), collapse="|"), strandTable[,x])))
+		WCvaluesLib <- apply(strandTable, 2, function(col) { sum(col == 2, na.rm=TRUE) / sum(is.element(col, c(1,2,3)), na.rm=TRUE) })
+
 		if(onlyWC)
 		{
 			strandTable <- strandTable[which(WCvaluesCon > filterThreshold),]
@@ -106,28 +106,14 @@ preprocessStrandTable.func <- function(strandTable,
 		contigNAs <- apply(strandTable, 1, 
 						   function(x){length(which(!is.na(x)))}) / ncol(strandTable) #number of libraries contig is non-NA 
 		#Compute the divergence between the call for a contig and the raw value used to make that call:
-		computeOneAgreement <- function(contigName)
-		{
-			contigDists <- vector()
-			for(lib in 1:ncol(strandTable))
-			{
-				contigCall <- strandTable[contigName, lib]
-				if(!is.na(contigCall))
-				{
-					contigRaw <- rawTable[contigName, lib]
-					if(contigCall == 2)
-					{
-						contigDist <- (strandTableThreshold - abs(contigRaw)) /
-							strandTableThreshold
-					}else
-					{
-						contigDist <- (abs(contigRaw) - strandTableThreshold) / 
-							(1-strandTableThreshold)
-					}
-					contigDists <- append(contigDists, contigDist)
-				}
-			}
-			mean(contigDists)
+		computeOneAgreement <- function(contigName) {
+			contigCall <- strandTable[contigName,]			
+			contigRaw <- rawTable[contigName,]
+
+			mean(ifelse(contigCall == 2, 
+					(strandTableThreshold - abs(contigRaw)) / strandTableThreshold,
+					(abs(contigRaw) - strandTableThreshold) / (1 - strandTableThreshold))
+				[!is.na(contigCall)])
 		}
 		
 		contigAgreement <- sapply(rownames(strandTable), computeOneAgreement)
