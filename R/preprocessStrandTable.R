@@ -68,11 +68,11 @@ preprocessStrandTable.func <- function(strandTable,
 												function(x){length(which(is.na(x)))} <= length(x)*filterThreshold ))]
 
 		#Ignore contigs that are entirely WC (likely contain inversions) (NB all <10 contigs have already been excluded)
-		WCvaluesCon <- sapply(1:nrow(strandTable), 
-							  function(x) length(grep(2, strandTable[x,]) )/length(grep(paste(c(1,2,3), collapse="|"), strandTable[x,])))
+		WCvaluesCon <- apply(strandTable, 1, function(row) { sum(row == 2, na.rm=TRUE) / sum(is.element(row, c(1,2,3)), na.rm=TRUE) })		
+
 		#And libraries that are entirely WC (whole genome libraries, not strandSeq)
-		WCvaluesLib <- sapply(1:ncol(strandTable), 
-							  function(x) length(grep(2, strandTable[,x]) )/length(grep(paste(c(1,2,3), collapse="|"), strandTable[,x])))
+		WCvaluesLib <- apply(strandTable, 2, function(col) { sum(col == 2, na.rm=TRUE) / sum(is.element(col, c(1,2,3)), na.rm=TRUE) })
+
 		if(onlyWC)
 		{
 			strandTable <- strandTable[which(WCvaluesCon > filterThreshold),]
