@@ -1,6 +1,6 @@
 # ContiBAIT
 
-[![Build Status](https://travis-ci.org/oneillkza/ContiBAIT.svg?branch=master)](https://travis-ci.org/oneillkza/ContiBAIT)
+[![Build Status](https://travis-ci.org/oneillkza/ContiBAIT.svg?branch=master)](https://travis-ci.org/mgottl04/ContiBAIT)
 
 Using strand inheritance data from multiple single cells from the organism whose genome is to be assembled, contiBAIT can cluster unbridged contigs together into putative chromosomes, and order the contigs within those chromosomes.
 
