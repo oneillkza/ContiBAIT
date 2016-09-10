@@ -15,6 +15,7 @@ Depends:
     Rsamtools (>= 1.21)
 LinkingTo: Rcpp, BH
 Imports:
+    data.table,
     grDevices,
     clue,
     cluster,
