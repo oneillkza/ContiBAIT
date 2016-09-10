@@ -138,13 +138,12 @@ orderAllLinkageGroups.func <- function(linkageGroupList,
          if(nrow(similarLinkageStrands) > 1)
          {
           suppressWarnings(heatmap.2(similarLinkageStrands, 
+                                     breaks= (seq(0:11)-1)/11,
                                       Rowv=NA, 
                                       Colv=NA, 
                                       dendrogram="none", 
                                       revC=TRUE, 
-                                      col=colorRampPalette(c("#f7fcfd", "#00441b"))(n=9), 
-                                      labRow = "",
-                                      labCol = "",
+                                      col=colorRampPalette(c('#a50026','#ffffbf','#313695'))(11),
                                       trace='none', 
                                       main=paste(orderCall, '-ordered LG', whichLG[lg], '\n main fragment: ', names(chromosome), ' (', chromosome, '%)', sep="")))
          }
