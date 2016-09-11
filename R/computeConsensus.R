@@ -13,29 +13,22 @@
 
 computeConsensus <- function(groupMembers, allStrands, minSupport=0.05)
 {
-	#counter <- 1
 #	if(!is.data.frame(allStrands))
 #		stop('the allStrands variable passed to computeConsensus function must be a data frame.')
-	
-	
-	if(length(groupMembers) > 1)
-	{
-		groupStrands <- allStrands[groupMembers,]
-		#one liner to make a table
-		tables <- sapply(1:ncol(groupStrands), 
-						 function(y) sapply(1:3, 
-						 function(x) length(grep(x, groupStrands[,y]))))
-		rownames(tables) <- seq_len(3)
-		strandVec <- apply(tables, 2, function(x){names(which.max(x))})
-		qcScores <- apply(groupStrands, 2, 
-						  function(x){length(which(!is.na(x)))}) / nrow(groupStrands)
-		strandVec[which(qcScores<minSupport)] <- NA
-		#scores <- apply(tables, 2, function(x){})
-		#counter <- counter + 1
+
+	strandVec <- allStrands[groupMembers,]
+
+	if(length(groupMembers) > 1) {
+		# score support
+		qcScores <- apply(strandVec, 2, function(col) { sum(!is.na(col)) / length(groupMembers) })
+
+		# make vector which, for each column, holds that column's most occuring state (1, 2, or 3)
+		strandVec <- apply(strandVec, 2, function(col) { 
+			which.max(sapply(1:3, function(i) { sum(col == i, na.rm=TRUE) })) })			
+			
+		# replace with NA those columns that were predominantly NA
+		strandVec[qcScores < minSupport] <- NA
 	}
-	else
-	{
-			strandVec <- allStrands[groupMembers,]
-	}
+
 	strandVec
 }
