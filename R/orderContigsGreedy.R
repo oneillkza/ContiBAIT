@@ -48,9 +48,12 @@ orderContigsGreedy <- function(linkageGroupReadTable, randomAttempts=75,nProcess
     {
       cl <- makeCluster(getOption("cl.cores",nProcesses))
       
-      
-      clusterExport(cl,'contiBAIT')
-      res <- clusterCall(cl,order_contigs,linkageGroupReadTable,randomAttempts,verbose,factorizedLinkageGroupReadTable)
+      order_contigs_cluster <- function(linkageGroupReadTable,randomAttempts,verbose,factorizedLinkageGroupReadTable){
+        library(contiBAIT)
+        order_contigs(linkageGroupReadTable,randomAttempts,verbose,factorizedLinkageGroupReadTable)
+      }
+ 
+      res <- clusterCall(cl,order_contigs_cluster,linkageGroupReadTable,randomAttempts,verbose,factorizedLinkageGroupReadTable)
       
       stopCluster(cl)
       best_order <- res[[1]]
