@@ -396,6 +396,9 @@ ideogramPlot.func <- function(WatsonFreqList,
 #' @return ordered contigs in bed format. Depending on options, intermediate files and plots will also be generated
 #' @import ggplot2
 #' @importFrom data.table rbindlist
+#' @importFrom data.table data.table
+#' @importFrom data.table tstrsplit
+#' @importFrom data.table :=
 #' @importFrom gtools mixedsort chr
 #' @importFrom S4Vectors DataFrame
 #' @aliases ideogramPlot ideogramPlot,StrandReadMatrix,StrandReadMatrix-method,ChrTable,ChrTable-method
