@@ -203,7 +203,7 @@ ideogramPlot.func <- function(WatsonFreqList,
         chr = unique(seqnames(chrTable))
       )
       allChrDataFrame <-
-        rbindlist(allChrDataFrameList, use.names = T)
+        as.data.frame(rbindlist(allChrDataFrameList, use.names = T))
       maxCap <- max(maxCap, na.rm = TRUE)
       plotList <- capOffPlots(allChrDataFrame, maxCap)
       levels(plotList[[1]]$chr) <-
@@ -275,7 +275,7 @@ ideogramPlot.func <- function(WatsonFreqList,
   if (plotBy == 'chr')
   {
     allLibraryDataFrame <-
-      rbindlist(allLibraryDataFrameList, use.names = T)
+      as.data.frame(rbindlist(allLibraryDataFrameList, use.names = T))
     for (chr in unique(allLibraryDataFrame$chr))
     {
       print(chr)
