@@ -38,12 +38,11 @@ ideogramPlot.func <- function(WatsonFreqList,
     return(list(object, pointFrameW, pointFrameC))
   }
   
-  roorientBAITtables <-
-    function(WatsonFreqList,
-             CrickFreqList,
-             orientationFrame)
+  roorientBAITtables <-function(WatsonFreqList,
+             					CrickFreqList,
+             					orientationFrame)
     {
-      toFlip <- orientationFrame[which(orientationFrame[, 2] == '-'), 1]
+      toFlip <- orientationFrame[strand(orientationFrame) == '-']$name
       tempWatson <- WatsonFreqList
       WatsonFreqList[which(rownames(WatsonFreqList) %in% toFlip), ] <-
         CrickFreqList[which(rownames(CrickFreqList) %in% toFlip), ]
@@ -390,7 +389,7 @@ ideogramPlot.func <- function(WatsonFreqList,
 #' such that LGs with the greatest DNA content are the biggest, as opposed to teh LGs with the most contigs. Default value is NULL
 #' @param showPage Integer specifying which LG (if plotBy='chr') or libraries (if plotBy='lib') to plot. Useful when not plotting to a file, or when wishing to subset data. Default is NULL
 #' @param orderFrame ordered data.frame of contigs (produced by orderAllLinkageGroups). Default is FALSE, where plots will be made from elements in chrTable.
-#' @param orientationData data.frame of contig orientations of type OrientationFrame telling which reads to flip Watson and Crick counts
+#' @param orientationData ChrTable of contig orientations telling which reads to flip Watson and Crick counts
 #' @param verbose prints messages to the terminal (default is TRUE)
 #'
 #' @return ordered contigs in bed format. Depending on options, intermediate files and plots will also be generated
