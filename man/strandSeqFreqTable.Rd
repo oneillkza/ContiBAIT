@@ -6,7 +6,8 @@
 \usage{
 strandSeqFreqTable(bamFileList, fieldSep = ".", field = 1, qual = 0,
   rmdup = TRUE, verbose = TRUE, filter = NULL, misorientations = NULL,
-  tileChunk = 1e+05, pairedEnd = TRUE, BAITtables = FALSE)
+  chimeras = NULL, tileChunk = 1e+05, pairedEnd = TRUE,
+  BAITtables = FALSE)
 }
 \arguments{
 \item{bamFileList}{vector containing the location of the bams file to be read}
@@ -21,11 +22,11 @@ strandSeqFreqTable(bamFileList, fieldSep = ".", field = 1, qual = 0,
 
 \item{verbose}{prints messages to the terminal (default is TRUE)}
 
-\item{filter}{additional file of type ChrTable (GRanges with a meta column titled 'name' determining contig name) to split chromosomes based on locations. If this parameter is blank,
+\item{filter}{additional file of type ChrTable (GRanges with a meta column titled 'name' determining contig name) to split chromosomes based on locations. If this parameter is NULL (default),
 a filter table will be automatically generated from the header of the first file in bamFileList.}
 
 \item{misorientations}{additional file of type ChrTable (GRanges with a meta column titled 'name' determining contig name) with putative misorientation locations. These location's
-reads are reversed in the output}
+reads are reversed in the regions of filter that they lie within. Product of locateMisorients[[1]]. Default is NULL}
 
 \item{tileChunk}{Number of reads to split bam files into (smaller number requires less RAM). Default is 100000.}
 
@@ -33,6 +34,9 @@ reads are reversed in the output}
 since paired reads will be the same direction, only first mate read of pair is used in output}
 
 \item{BAITtables}{creates additional matrices in the returned list with just Watson and Crick read counts to be used in downstreat BAIT plotting. Default is FALSE}
+
+\item{misorientations}{additional file of type ChrTable (GRanges with a meta column titled 'name' determining contig name) with putative chimeric locations. These location's
+reads are masked in the regions of filter that they lie within, and are appended to the end of the output file. Product of locateMisorients[[2]]. Default is NULL}
 }
 \value{
 a list containing two matrices: a StrandFreqMatrix of W:C read frequencies, and a StrandReadMatrix of read counts

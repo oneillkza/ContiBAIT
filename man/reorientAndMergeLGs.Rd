@@ -27,7 +27,7 @@ When \code{NULL}, execution will be serial.}
 \item{verbose}{Outputs information to the terminal. Default is TRUE.}
 }
 \value{
-a list consisting of a strandStateMatrix (a reoriented version of allStrands), a data.frame of type OrientationFrame 
+a list consisting of a strandStateMatrix (a reoriented version of allStrands), a ChrTable 
 containing contig names and orientations, as '+' or '-' and a merged LinkageGroupList.
 }
 \description{

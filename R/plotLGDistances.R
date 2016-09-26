@@ -24,7 +24,7 @@ plotLGDistances.func <- function(object, allStrands, lg='all', labels=TRUE, stat
 
   }
 
-  sim <- 1-as.matrix(daisy(data.frame(linkageStrands)))
+  sim <- suppressWarnings(1-as.matrix(daisy(data.frame(linkageStrands))))
   rownames(sim) <- rownames(linkageStrands)
   colnames(sim) <- rownames(linkageStrands)
 
@@ -39,71 +39,49 @@ plotLGDistances.func <- function(object, allStrands, lg='all', labels=TRUE, stat
   }
   labelScale <- min(1, 32/nrow(sim))
 
+  if(alreadyOrdered)
+  {
+    plotDen=FALSE
+    dend='none'
+  }else{
+    plotDen=TRUE
+    dend='both'
+  }
+
   breaks <- seq(0, 100, length.out=101)/100 
   cols <- colorRampPalette(c("cyan", "blue", "grey30", "black", "grey30", "red", "orange"))
 
-  if(alreadyOrdered == FALSE)
-  { 
-    if(length(lg) > 1)
-    {
-
-      chrLabels <- melt(object[lg])
-      chrCols <- rainbow_hcl(length(unique(chrLabels[,2])), c=90, l=60)
-      names(chrCols) <- unique(chrLabels[,2])
-      rowCols <- chrCols[chrLabels[,2]]
-      colCols <- rowCols
-      heatmap.2(sim, 
-                trace='none', 
-                col=cols(100), 
-                labRow=labRow, 
-                breaks=breaks, 
-                labCol=labCol, 
-                RowSideColors=rowCols, 
-                ColSideColors=colCols, 
-                main=paste('Distances of ', nrow(sim),' linkage groups', sep=''))
-      legend("topright",
-              legend=unique(names(rowCols)),
-              fill=unique(rowCols), 
-              border=FALSE, 
-              bty="n", 
-              cex=0.7)
-    }else{
-      heatmap.2(sim, 
-                trace='none', 
-                col=cols(100), 
-                breaks=breaks, 
-                labRow=labRow, 
-                labCol=labCol, 
-                cexRow=labelScale, 
-                cexCol=labelScale, 
-                main=paste('Distances of ', nrow(sim) , ' linkage groups', sep=''))
-    }
+  if(lg[1] == 'all')
+  {
+    chrLabels <- data.frame(1:length(object), names(object))   
   }else{
-      if(length(lg) > 1)
-      {
-         suppressWarnings(heatmap.2(sim, 
-                                     Rowv=NA, 
-                                     Colv=NA, 
-                                     dendrogram="none", 
-                                     revC=TRUE, 
-                                     RowSideColors=rowCols, 
-                                     ColSideColors=colCols, 
-                                     col=cols(100), 
-                                     breaks=breaks, 
-                                     trace='none', 
-                                     main=paste('Distances of ', nrow(sim) , ' linkage groups', sep='')))
-         }else{
-          suppressWarnings(heatmap.2(sim, 
-                                     Rowv=NA, 
-                                     Colv=NA, 
-                                     dendrogram="none", 
-                                     revC=TRUE, 
-                                     col=cols(100), 
-                                     breaks=breaks, 
-                                     trace='none', 
-                                     main=paste('Distances of ', nrow(sim) , ' linkage groups', sep='')))
-        } 
-    }
+   chrLabels <- melt(object[lg])
+  }
+  chrCols <- rainbow_hcl(length(unique(chrLabels[,2])), c=90, l=60)
+  names(chrCols) <- unique(chrLabels[,2])
+  rowCols <- chrCols[chrLabels[,2]]
+  colCols <- rowCols
+  heatmap.2(sim, 
+            trace='none', 
+            col=cols(100),
+            Rowv=plotDen,
+            Colv=plotDen,
+            dendrogram=dend, 
+            labRow=labRow, 
+            breaks=breaks, 
+            labCol=labCol, 
+            cexRow=labelScale, 
+            cexCol=labelScale,
+            RowSideColors=rowCols, 
+            ColSideColors=colCols, 
+            main=paste('Distances of ', nrow(sim),' linkage groups', sep=''))
+  legend("topright",
+          legend=unique(names(rowCols)),
+          fill=unique(rowCols), 
+          border=FALSE, 
+          bty="n", 
+          cex=0.7)
+
 }
  
 ####################################################################################################

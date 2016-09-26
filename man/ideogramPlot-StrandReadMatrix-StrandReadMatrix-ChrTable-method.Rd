@@ -30,7 +30,7 @@ such that LGs with the greatest DNA content are the biggest, as opposed to teh L
 
 \item{orderFrame}{ordered data.frame of contigs (produced by orderAllLinkageGroups). Default is FALSE, where plots will be made from elements in chrTable.}
 
-\item{orientationData}{data.frame of contig orientations of type OrientationFrame telling which reads to flip Watson and Crick counts}
+\item{orientationData}{ChrTable of contig orientations telling which reads to flip Watson and Crick counts}
 
 \item{verbose}{prints messages to the terminal (default is TRUE)}
 }

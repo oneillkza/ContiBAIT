@@ -1,3 +1,17 @@
+contiBAIT v1.1.7
+==============
+Function changes:
+- strandSeqFreqTable now takes in a chimera file, the product of the second element of LocateMisroients.
+- OrientationFrame has been depreciated. ReorientAndMergeLGs now generates a ChrTable with the strand information rather than the OrientationFrame data.frame
+- ideogramPlot has been changed to accept the ChrTable orientation element
+- writeBed has been changed to accept the ChrTable orientation element
+- preProcessStrandTable now returns a ChrTable of AWC regions, rather than a vector
+
+Minor changes:
+- plotContigOrder tidied up
+- plotLGDistances tidied up
+- barplotLinkageGroupCalls tidied up
+
 contiBAIT v1.1.6
 ==============
 Function changes:

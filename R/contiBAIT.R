@@ -164,6 +164,7 @@ contiBAIT <- function(path=".",
                                          strandFrequencyList[[2]], 
                                          saveOrdered=TRUE, 
                                          randomAttempts=100)
+
     ideogramPlot(strandFrequencyList[[3]], 
                  strandFrequencyList[[4]], 
                  chrTable, 
