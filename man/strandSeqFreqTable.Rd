@@ -37,6 +37,9 @@ reads are masked in the regions of filter that they lie within, and are appended
 since paired reads will be the same direction, only first mate read of pair is used in output}
 
 \item{BAITtables}{creates additional matrices in the returned list with just Watson and Crick read counts to be used in downstreat BAIT plotting. Default is FALSE}
+
+\item{misorientations}{additional file of type ChrTable (GRanges with a meta column titled 'name' determining contig name) with putative chimeric locations. These location's
+reads are masked in the regions of filter that they lie within, and are appended to the end of the output file. Product of locateMisorients[[2]]. Default is NULL}
 }
 \value{
 a list containing two matrices: a StrandFreqMatrix of W:C read frequencies, and a StrandReadMatrix of read counts
