@@ -372,25 +372,6 @@ setMethod("show",
 		  }
 )
 
-## show OrientationFrame
-#' @name show,OrientationFrame-method
-#' @export
-#' @docType methods
-#' @title show-methods
-#' @param object a OrientationFrame
-#' @return nothing
-#' @description Shows a OrientationFrame
-setMethod("show",
-		  signature=signature(object="OrientationFrame"),
-		  definition=function(object)
-		  {
-		  	elements <- nrow(object)
-		  	misorientations <- nrow(object[which(object[,2] == '-'),])
-		  	cat('A matrix of', elements, 'contigs with ',
-		  		misorientations,'identified misorientations.\n')
-		  }
-)
-
 ## show StrandStateList
 #' @name show,StrandStateList-method
 #' @export

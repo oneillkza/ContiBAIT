@@ -30,7 +30,7 @@ Very chimeric assemblies can appear low quality across all libraries.}
 \item{minLib}{minimum number of libraries a contig must be present in to be included in the output}
 }
 \value{
-A list of one matrix and three quality data.frames -- 1: a matrix of WW/WC/WW calls for all contigs; 3: the quality of libraries used (based on frequencies outside expected ranges); 4: A data.frame of libraries that are of low quality and therefore excluded from analysis; 5: contigs that are present as WC in more libraries than expected. These are excluded from the strandStateMatrix, but are potentially worth investigating for chimerism.
+A list of one matrix and three quality data.frames -- 1: a matrix of WW/WC/WW calls for all contigs; 2: the quality of libraries used (based on frequencies outside expected ranges); 3: A data.frame of libraries that are of low quality and therefore excluded from analysis; 5: A ChrTable object containing contigs that are present as WC in more libraries than expected. These are excluded from the strandStateMatrix, but are potentially worth investigating for chimerism.
 }
 \description{
 preprocessStrandTable -- remove low quality libraries and contigs before attempting to build

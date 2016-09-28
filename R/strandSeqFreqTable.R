@@ -17,10 +17,12 @@
 #' @param fieldSep  The field seperator of the bam file to use to define the field. Default is '.'
 #' @param qual  Mapping quality threshold. Default is 0
 #' @param rmdup  remove duplicates in output file. Default is TRUE 
-#' @param filter  additional file of type ChrTable (GRanges with a meta column titled 'name' determining contig name) to split chromosomes based on locations. If this parameter is blank,
+#' @param filter  additional file of type ChrTable (GRanges with a meta column titled 'name' determining contig name) to split chromosomes based on locations. If this parameter is NULL (default),
 #' a filter table will be automatically generated from the header of the first file in bamFileList.
 #' @param misorientations additional file of type ChrTable (GRanges with a meta column titled 'name' determining contig name) with putative misorientation locations. These location's
-#' reads are reversed in the output
+#' reads are reversed in the regions of filter that they lie within. Product of locateMisorients[[1]]. Default is NULL
+#' @param chimeras additional file of type ChrTable (GRanges with a meta column titled 'name' determining contig name) with putative chimeric locations. These location's
+#' reads are masked in the regions of filter that they lie within, and are appended to the end of the output file. Product of locateMisorients[[2]]. Default is NULL
 #' @param tileChunk  Number of reads to split bam files into (smaller number requires less RAM). Default is 100000.
 #' @param pairedEnd  Whether the bam files being read are in paired end format. Default is TRUE. Note,
 #' since paired reads will be the same direction, only first mate read of pair is used in output
@@ -47,6 +49,7 @@ strandSeqFreqTable <- function(bamFileList,
 							   verbose=TRUE, 
 							   filter=NULL, 
 							   misorientations=NULL,
+							   chimeras=NULL,
 							   tileChunk=100000, 
 							   pairedEnd=TRUE,
 							   BAITtables=FALSE)
@@ -90,6 +93,19 @@ strandSeqFreqTable <- function(bamFileList,
 	    length(x[["rname"]]) == 0L
 	}
 
+	ProcessBam <- function(filt, str, bf) {
+		# Count plus strand reads from first read
+		result <- reduceByYield(bf, strandInfo, 
+								   overlapStrand, 
+								   DONE=loopedChunk, 
+								   grfilter=filt,
+								   strand=str)
+		#fixes bug where no reads returns a list rather than an integer
+		if(class(result) == 'list'){result <- as.integer(rep(0, length(filter)))}
+		return(result)
+	}
+
+
 	##### PROCESS DATA
 
 	bamFileLength <- length(bamFileList)
@@ -101,10 +117,15 @@ strandSeqFreqTable <- function(bamFileList,
 	{
 		filter <- makeChrTable(bamFileList[1])
 		lengthOfContigs <- length(filter)
-		if(verbose){message(paste("-> ", lengthOfContigs," fragments found", sep=""))}
+		if(verbose){message(paste(" -> ", lengthOfContigs," fragments found", sep=""))}
 	}else{
-		lengthOfContigs <- length(filter)
-		if(verbose){message(paste("-> ", lengthOfContigs," fragments found", sep=""))}
+		if(!(is.null(chimeras)))
+		{
+			lengthOfContigs <- length(filter)+length(chimeras)
+		}else{
+			lengthOfContigs <- length(filter)
+		}
+		if(verbose){message(paste(" -> ", lengthOfContigs," fragments found", sep=""))}
 	}
 
 	strandTable <- matrix(nrow=lengthOfContigs, ncol=bamFileLength)
@@ -122,7 +143,7 @@ strandSeqFreqTable <- function(bamFileList,
 	colnames(strandTable) [grep("^[0-9]", colnames(strandTable) )] <- 
 		paste('lib', colnames(strandTable) [grep("[0-9]", colnames(strandTable) )], sep='_')
 
-	rownames(strandTable) <- filter$name
+	if(!(is.null(chimeras))){rownames(strandTable) <- c(filter$name, chimeras$name)}else{rownames(strandTable) <- filter$name}
 	countTable <- strandTable
 	
 	if(BAITtables == TRUE){
@@ -136,16 +157,35 @@ strandSeqFreqTable <- function(bamFileList,
 
 	if(!(is.null(misorientations)))
 	{
+		if(verbose){message(' -> Processing ', length(misorientations), ' misorientations')}
 		#First, remove strandedness to prevent weird Rsamtools behaviour
 		strand(misorientations) <- "*"
-		#remove the 'chrUn' fragments, if present
-		tempRange <- filter[-(grep("chrUn", filter$name))]
 		#Now, split the misorientations by wherever there are splits in filter. Prevents a misorientation that covers a portion of
 		#two fragments to be excluded. This will chop up the misorientations into chunks that cover each fragment.
-		tempRange <- GRanges(append(tempRange, misorientations))
+		tempRange <- GRanges(append(filter, misorientations))
 		tempRange <- ChrTable(disjoin(tempRange))		
 		misorientations <- tempRange[queryHits(findOverlaps(tempRange, misorientations))]
 		lengthOfNeg <- length(misorientations)
+	}
+
+	if(!(is.null(chimeras)))
+	{
+		if(verbose){message(' -> Processing ', length(chimeras), ' chimeras')}
+		#First, remove strandedness to prevent weird Rsamtools behaviour
+		strand(chimeras) <- "*"
+		#Now, split the chimeras by wherever there are splits in filter. Prevents a misorientation that covers a portion of
+		#two fragments to be excluded. This will chop up the chimeras into chunks that cover each fragment.
+		tempRange <- GRanges(append(filter, chimeras))
+		tempRange <- ChrTable(disjoin(tempRange))		
+		chimerasSplit <- tempRange[queryHits(findOverlaps(tempRange, chimeras))]
+		#Now prevent bug where misorientation regions with chimeras screw things up
+		if(!(is.null(misorientations)))
+		{
+			tempRange <- GRanges(append(ChrTable(chimerasSplit), misorientations))
+			tempRange <- ChrTable(disjoin(tempRange))		
+			chimerasSplit <- tempRange[queryHits(findOverlaps(tempRange, chimeras))]
+		}
+		lengthOfChim <- length(chimerasSplit)
 	}
 
 	for(fileName in bamFileList)
@@ -154,44 +194,14 @@ strandSeqFreqTable <- function(bamFileList,
 		# Read bamfile into tileChunk pieces
 		bf = BamFile(fileName, yieldSize=tileChunk)
 		# Count plus strand reads from first read
-		resultPos <- reduceByYield(bf, strandInfo, 
-								   overlapStrand, DONE=loopedChunk, 
-								   grfilter=filter)
-		#fixes bug where no reads returns a list rather than an integer
-		if(class(resultPos) == 'list'){resultPos <- as.integer(rep(0, lengthOfContigs))}
 
-		if(is.list(resultPos)){
-			warning('\n####################\n WARNING! BAM FILE', 
-					index, 'APPEARS TO BE SINGLE-END. TRY RERUNNING WITH pairedEnd=FALSE \n####################')
-			break
-		}
-		# Count minus strand reads from first read
-		resultNeg <- reduceByYield(bf, 
-								   strandInfo, 
-								   overlapStrand, 
-								   DONE=loopedChunk, 
-								   grfilter=filter, 
-								   strand=FALSE)
-
-		if(class(resultNeg) == 'list'){resultNeg <- as.integer(rep(0, lengthOfContigs))}
-		# Total read number
-		absCount <- resultPos + resultNeg
-		# Calculate strand call
+		resultPos <- ProcessBam(filter, TRUE, bf)
+		resultNeg <- ProcessBam(filter, FALSE, bf)
 
 		if(!(is.null(misorientations)))
 		{
-			resultPosMinus <- reduceByYield(bf, strandInfo, 
-										   overlapStrand, DONE=loopedChunk, 
-										   grfilter=misorientations)
-			if(class(resultPosMinus) == 'list'){resultPosMinus <- as.integer(rep(0, lengthOfNeg))}
-
-			resultNegMinus <- reduceByYield(bf, 
-										   strandInfo, 
-										   overlapStrand, 
-										   DONE=loopedChunk, 
-										   grfilter=misorientations, 
-										   strand=FALSE)
-			if(class(resultNeg) == 'list'){resultNegMinus <- as.integer(rep(0, lengthOfNeg))}
+			resultPosMinus <- ProcessBam(misorientations, TRUE, bf)
+			resultNegMinus <- ProcessBam(misorientations, FALSE, bf)
 
 			#now find the overlaps, and assign each misorientation a name that corresponds to the location of the fragment in filter
 			names(resultPosMinus) <- subjectHits(findOverlaps(misorientations,filter, type="within"))
@@ -206,8 +216,49 @@ strandSeqFreqTable <- function(bamFileList,
 			resultNeg[as.numeric(names(toSwitchToPos))] <- resultNeg[as.numeric(names(toSwitchToPos))]-toSwitchToPos
 			#And switch the plus reads to minus for internal misorients
 			resultPos[as.numeric(names(toSwitchToNeg))] <- resultPos[as.numeric(names(toSwitchToNeg))]-toSwitchToNeg
-			resultNeg[as.numeric(names(toSwitchToNeg))] <- resultNeg[as.numeric(names(toSwitchToNeg))]+toSwitchToPos
+			resultNeg[as.numeric(names(toSwitchToNeg))] <- resultNeg[as.numeric(names(toSwitchToNeg))]+toSwitchToNeg
 		}
+
+		if(!(is.null(chimeras)))
+		{
+
+			#calculate dijoined chimeras to mask filter
+			resultPosChim <- ProcessBam(chimerasSplit, TRUE, bf)
+			resultNegChim <- ProcessBam(chimerasSplit, FALSE, bf)
+
+			if(!(is.null(misorientations)))
+			{
+				resultPosTemp <- resultPosChim
+				hits <- subjectHits(findOverlaps(misorientations, chimerasSplit, type='within'))
+				resultPosChim[hits] <- resultNegChim[hits]
+				resultNegChim[hits] <- resultPosTemp[hits]
+			}
+
+			#and calculate undisjoined chimeras to append to results
+			chimResultPos <- ProcessBam(chimeras, TRUE, bf)
+			chimResultNeg <- ProcessBam(chimeras, FALSE, bf)
+
+			#now find the overlaps, and assign each misorientation a name that corresponds to the location of the fragment in filter
+			names(resultPosChim) <- subjectHits(findOverlaps(chimerasSplit,filter, type="within"))
+			names(resultNegChim) <- names(resultPosChim)
+
+			#condense regions where >1 misorientations occur in the same fragment, by summing the values that have the same name
+			toRemovePosChim <- tapply(resultPosChim, names(resultPosChim), sum)
+			toRemoveNegChim <- tapply(resultNegChim, names(resultNegChim), sum)
+
+			#Remove reads from chimeric regions
+			resultPos[as.numeric(names(toRemovePosChim))] <- resultPos[as.numeric(names(toRemovePosChim))]-toRemovePosChim
+			resultNeg[as.numeric(names(toRemoveNegChim))] <- resultNeg[as.numeric(names(toRemoveNegChim))]-toRemoveNegChim
+			resultPos <- c(resultPos, chimResultPos)
+			resultNeg <- c(resultNeg, chimResultNeg)
+
+			resultPos[which(resultPos < 0)] <- 0
+			resultNeg[which(resultNeg < 0)] <- 0
+		}
+
+
+		# Total read number
+		absCount <- resultPos + resultNeg
 
 		strandCall <- (resultPos - resultNeg)/absCount
 			

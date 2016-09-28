@@ -24,6 +24,9 @@ barplotLinkageGroupCalls.func <- function(object, chrTable, by='lg', bySize=TRUE
 								  )
 	}
 
+	gg_color_hue <- function(n) {hues = seq(15, 375, length = n + 1)
+								 hcl(h = hues, l = 65, c = 100)[1:n]}	
+
 	linkage.lengths <- lapply(object, 
 							  function(x){ width(chrTable[chrTable$name %in% x])  }) 
 	if(bySize){
@@ -52,7 +55,6 @@ barplotLinkageGroupCalls.func <- function(object, chrTable, by='lg', bySize=TRUE
 		if(by=='lg')
 		{
 			perLength <- unlist(lapply(linkage.lengths, sum))/10^6
-			names(perLength) <- c(paste('LG', 1:length(perLength), sep=""))
 			perFrame <- data.frame(sapply(seq_len(length(perLength)), function(x) round(chr.table[,which(colnames(chr.table) == names(perLength)[x])]/perLength[x]*100, digits=1)))
 			perFrame <- apply(perFrame, 2, sort, decreasing=TRUE)
 			perFrame <- perFrame[which(apply(perFrame, 1, 
@@ -74,86 +76,55 @@ barplotLinkageGroupCalls.func <- function(object, chrTable, by='lg', bySize=TRUE
 			perFrame <- as.matrix(perFrame[mixedsort(rownames(perFrame)),])
 		}
 		chromoFrame <- melt(perFrame)
+
 	}else{
 		chromoFrame <- melt(chr.table)
 	}
-	colnames(chromoFrame) <- c('chr', 'LG', 'count')
 
 	if(bySize){
-		chromoFrame$LG <- factor(chromoFrame$LG, levels=levels(chromoFrame$LG)) 
+		chromoFrame[,2] <- factor(chromoFrame[,2], levels=levels(chromoFrame[,2])) 
 	}else{
-		chromoFrame$LG <- factor(chromoFrame$LG, levels=mixedsort(levels(chromoFrame$LG)) )
+		chromoFrame[,2] <- factor(chromoFrame[,2], levels=mixedsort(levels(chromoFrame[,2])) )
 	}
-	chromoFrame$chr <- factor(chromoFrame$chr, levels=mixedsort(levels(chromoFrame$chr)))
+	chromoFrame[,1] <- factor(chromoFrame[,1], levels=mixedsort(levels(chromoFrame[,1])))
 
-
-	#Plot by linkage group
 	if(by=='lg')
-	{	
-		if(!(is.null(percentage)))
-		{
-			jColors <- c("#000000", rep("#989898", nrow(perFrame)-1))
-			names(jColors) <- levels(chromoFrame$chr)
-			print(ggplot(chromoFrame, aes_string("LG", "count"))+
-			geom_bar(stat="identity", aes_string(fill="chr"), colour='grey80')+
-			scale_fill_manual(values=jColors)+		
-			coord_cartesian(xlim=whichGroup)+
-			theme(axis.text.x = element_text(angle = 90, hjust = 1))+
-			labs(x="Chromosome", y="DNA Represented in Chromosome (%)")+
-			theme(legend.position='none')+
-			ggtitle(paste("Barplot of ", length(unique(chromoFrame$chr)), 
-						  " contigs clustered into ", 
-						  length(object), 
-						  " linkage groups",  
-						  sep="")))
-		}else{
-			if(length(unique(chromoFrame$chr)) > 50){leg='none'}else{leg='right'}
+	{
+		colnames(chromoFrame) <- c('chr', 'LG', 'count')
+		titleString <- c('contigs', 'linkage groups')
+		titleData <- dim(chr.table)
+	}else{
+		colnames(chromoFrame) <- c('LG','chr', 'count')
+		titleString <- c('linkage groups','contigs')
+		titleData <- rev(dim(chr.table))
+	}
 
-			print(ggplot(chromoFrame, aes_string("LG", "count"))+
-			geom_bar(stat="identity", aes_string(fill="chr"), colour='black')+
-			theme(axis.text.x = element_text(angle = 90, hjust = 1))+
-			labs(x="Linkage Group", y="DNA Represented in Linkage Groups (Mb)")+
-			coord_cartesian(xlim=whichGroup)+
-			theme(legend.position=leg)+
-			ggtitle(paste("Barplot of ", length(unique(chromoFrame$chr)), 
-						  " contigs clustered into ", 
-						  length(unique(chromoFrame$LG)), 
-						  " linkage groups",  
-						  sep="")))
-		}
+	if(!(is.null(percentage)))
+	{
+		jColors <- c("#000000", rep("#989898", nrow(perFrame)-1))
+		names(jColors) <- levels(chromoFrame$chr)
+		bordCol='grey80'
+	}else{
+		jColors <- gg_color_hue(titleData[1])
+		bordCol='black'
+		yLen <- '(Mb)'
 	}
 	
-	#Alternately, plot by chromosome:
-	if(by=='chr')
-	{
-		if(!(is.null(percentage)))
-		{
-			jColors <- c("#000000", rep("#989898", ncol(perFrame)-2), "#ffffff")
-			names(jColors) <- levels(chromoFrame$LG)
-			print(ggplot(chromoFrame, aes_string("chr", "count"))+
-			geom_bar(stat="identity", aes_string(fill="LG"), colour='grey80')+
-			scale_fill_manual(values=jColors)+		
-			coord_cartesian(xlim=whichGroup)+
-			theme(axis.text.x = element_text(angle = 90, hjust = 1))+
-			labs(x="Chromosome", y="DNA Represented in Chromosome (%)")+
-			theme(legend.position='none')+
-			ggtitle(paste("Barplot of ", length(object), 
-						  " linkage groups clustering into ", 
-						  length(unique(chromoFrame$chr)), " chromosomes",  sep="")))
-		}else{
-			if(length(unique(chromoFrame$LG)) > 50){leg='none'}else{leg='right'}
-
-			print(ggplot(chromoFrame, aes_string("chr", "count"))+
-			geom_bar(stat="identity", aes_string(fill="LG"), colour='black')+
-			theme(axis.text.x = element_text(angle = 90, hjust = 1))+
-			coord_cartesian(xlim=whichGroup)+
-			labs(x="Chromosome", y="DNA Represented in Chromosome (Mb)")+
-			theme(legend.position=leg)+
-			ggtitle(paste("Barplot of ", length(unique(chromoFrame$LG)), 
-						  " linkage groups clustering into ", 
-						  length(unique(chromoFrame$chr)), " chromosomes",  sep="")))
-		}
-	}
+	if(length(unique(chromoFrame$chr)) > 50){leg='none'}else{leg='right'}
+	print(ggplot(chromoFrame, aes_string("LG", "count"))+
+	geom_bar(stat="identity", aes_string(fill="chr"), colour=bordCol)+
+	scale_fill_manual(values=jColors)+		
+	coord_cartesian(xlim=whichGroup)+
+	theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+	labs(x=titleString[2], y=paste("DNA Represented in", titleString[1], yLen, sep=" "))+
+	theme(legend.position=leg)+
+	ggtitle(paste("Barplot of", 
+				  titleData[1], 
+				  titleString[1],
+				  "clustered into", 
+				  titleData[2],
+				  titleString[2],  
+				  sep=" ")))
 
 	if(!(is.null(returnTable))){return(chr.table)}
 }

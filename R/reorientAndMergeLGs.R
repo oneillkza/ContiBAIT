@@ -163,7 +163,14 @@ reorientAndMergeLGs.func <- function(object,
                           			  	paste('LG', x, ' (', length(mergeThoseGroups[[x]]), ')', sep='')
                           			  	}))
 
-	return(list(StrandStateMatrix(allStrands), OrientationFrame(completeOrientation), mergeThoseGroups))
+	   flipLengths <- sub('.*:', '', completeOrientation[,1])
+	   completeOrientation <- ChrTable(GRanges(seqnames=sub(':.*', '', completeOrientation[,1]), 
+	   										   IRanges(start=as.numeric(sub('-.*', '', flipLengths)), 
+	   										   		   end=as.integer(sub('.*-', '', flipLengths))),
+	   										   strand=as.character(completeOrientation[,2]),
+	  								 		   name=as.character(completeOrientation[,1])))
+
+	return(list(StrandStateMatrix(allStrands), completeOrientation, mergeThoseGroups))
 }
 
 ####################################################################################################
@@ -179,7 +186,7 @@ reorientAndMergeLGs.func <- function(object,
 #' @aliases reorientAndMergeLGs reorientAndMergeLGs-LinkageGroupList-StrandStateMatrix-method
 #' @rdname reorientAndMergeLGs
 #' @example inst/examples/reorientAndMergeLGs.R
-#' @return a list consisting of a strandStateMatrix (a reoriented version of allStrands), a data.frame of type OrientationFrame 
+#' @return a list consisting of a strandStateMatrix (a reoriented version of allStrands), a ChrTable 
 #' containing contig names and orientations, as '+' or '-' and a merged LinkageGroupList.
 #' 
 #' @import GenomicRanges

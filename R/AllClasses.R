@@ -217,39 +217,6 @@ ContigOrdering <- function(ordering=character())
 	new('ContigOrdering', ordering)	
 }
 
-
-# =========================================================================
-#' A class for storing contig orientations
-#'
-#' \describe{
-#'  This class is a matrix of two character vectors that represent the orientation of contigs. 
-#'  The first element of thismatrix is the contigs name
-#'  The second element is the orinetation (as either + or -).
-#' }
-#
-#' @export
-#' @rdname OrientationFrame
-
-setClass("OrientationFrame",
-		 contains='matrix')
-
-#' Constructor for OrientationFrame
-#' @aliases OrientationFrame
-#' @rdname OrientationFrame
-#' @param orientation  a matrix of two character vectors that represent the orientation of contigs. 
-#'  The first element of thismatrix is the contigs name
-#'  The second element is the orinetation (as either + or -).
-#' @return a \code{OrientationFrame}
-#' @export
-#' @examples
-#' OrientationFrame(matrix(ncol=2, c("chr4:3002423-4003230", "+", 
-#' 		"chr4:140113083-141113889", "+")))
-
-OrientationFrame <- function(orientation=character())
-{
-	new('OrientationFrame', orientation)	
-}
-
 # =========================================================================
 #' A class for storing chromosome/fragment lengths
 #'

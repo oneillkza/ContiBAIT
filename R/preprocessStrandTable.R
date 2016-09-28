@@ -92,6 +92,10 @@ preprocessStrandTable.func <- function(strandTable,
 									minLib,
 									onlyWC=TRUE)
 
+	AWCrange <- rownames(strandTableAWC)
+	AWClengths <- sub('.*:', '', AWCrange)
+	AWCrange <- GRanges(seqnames=sub(':.*', '', AWCrange), IRanges(start=as.numeric(sub('-.*', '', AWClengths)), end=as.integer(sub('.*-', '', AWClengths))))
+
 	strandTable <- preFilterData(strandTable, 
 								 filterThreshold,
 								 minLib)
@@ -131,7 +135,7 @@ preprocessStrandTable.func <- function(strandTable,
 	return(list(strandMatrix=strandTable,
 				qualList=qualList, 
 				lowQualList=lowQualList, 
-				AWCcontigs=row.names(strandTableAWC)))
+				AWCcontigs=AWCrange))
 }
 
 # Copyright (c) 2015, Mark Hills & Kieran O'Neill
@@ -159,7 +163,7 @@ preprocessStrandTable.func <- function(strandTable,
 #' 
 #' @example inst/examples/preprocessStrandTable.R
 #' 
-#' @return A list of one matrix and three quality data.frames -- 1: a matrix of WW/WC/WW calls for all contigs; 3: the quality of libraries used (based on frequencies outside expected ranges); 4: A data.frame of libraries that are of low quality and therefore excluded from analysis; 5: contigs that are present as WC in more libraries than expected. These are excluded from the strandStateMatrix, but are potentially worth investigating for chimerism.
+#' @return A list of one matrix and three quality data.frames -- 1: a matrix of WW/WC/WW calls for all contigs; 2: the quality of libraries used (based on frequencies outside expected ranges); 3: A data.frame of libraries that are of low quality and therefore excluded from analysis; 5: A ChrTable object containing contigs that are present as WC in more libraries than expected. These are excluded from the strandStateMatrix, but are potentially worth investigating for chimerism.
 #' 
 #' @export
 #
