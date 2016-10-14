@@ -171,6 +171,7 @@ orderAllLinkageGroups.func <- function(linkageGroupList,
     }
 
   plotGroups <- StrandStateList(plotGroups, names=paste('LG', whichLG, ' StrandStateMatrix', sep=''))
+  linkageGroupList <- LinkageGroupList(linkageGroupList, names=paste('LG', seq_len(length(linkageGroupList)), sep=''))
 
   return(list(orderedGroups, plotGroups, linkageGroupList))
 }

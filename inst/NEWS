@@ -1,3 +1,17 @@
+contBAIT v1.1.8
+==============
+Function changes:
+- Added findSexGroup that attempts to find sec chromosomes (or any monosome chromosomes) within the assembly
+
+Minor changes:
+- fixed a bug where findSimilarLibraries was crashing if no similarities were found
+- fixed a bug where flipOrderedLinkageGroups was taking consecutive LGs rather than specifies LGs, causing the occassional crash
+- fixed a bug in mergeFlankedLGs where if all LGs had fewer numbers than buildConsensus, or all LGs had higher numbers than buildConsensus there would be a crash.
+- fixed a bug in orderAllLinkageGroups where the returned LinkageGroupList did not have a names attribute, and so would cause errors in downstream processes.
+- plotLGDistances now has same colour scheme as orderAllLinkage groups. Also removed legend, as it was overlayed over the data
+- thoroughBed now has a rmdup option (defaulted to TRUE) to presevent bug where sequencing duplicates were being called chimeras.
+
+
 contiBAIT v1.1.7
 ==============
 Function changes:

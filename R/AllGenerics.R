@@ -54,6 +54,7 @@ setGeneric("thoroughBed",
 		   			relatedLibList, 
 		   		 	qual=NULL,
 		   		 	pairedEnd=NULL,
+		   		 	rmdup=NULL,
 		   			verbose=NULL) standardGeneric("thoroughBed"),
 			   		signature=c('bamFileList', 'relatedLibList'))
 
@@ -224,6 +225,18 @@ setGeneric("mergeFlankedLGs",
 					similarityCutoff=NULL,
 					verbose=NULL) standardGeneric("mergeFlankedLGs"),
 		   signature=c('linkageGroupList', 'strandStateMatrix'))
+
+
+## =========================================================================
+## Generic for findSexGroups
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#' @export findSexGroups
+setGeneric("findSexGroups",
+		   function(linkageGroupList, 
+					strandStateMatrix, 
+					callThreshold=0.2) standardGeneric("findSexGroups"),
+		   signature=c('linkageGroupList', 'strandStateMatrix'))
+
 
 
 ## =========================================================================
