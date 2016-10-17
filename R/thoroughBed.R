@@ -1,4 +1,4 @@
-thoroughBed.func <- function(bamFileList, relatedLibList, qual=10, pairedEnd=TRUE, verbose=TRUE)
+thoroughBed.func <- function(bamFileList, relatedLibList, qual=10, pairedEnd=TRUE, rmdup=TRUE, verbose=TRUE)
 {   
   directionalRange <- GRanges()
   #set parameters. Parameters are different if paired end data is used.  
@@ -24,6 +24,9 @@ thoroughBed.func <- function(bamFileList, relatedLibList, qual=10, pairedEnd=TRU
 
       readTable <- granges(readGAlignments(fileName, param=param))
       readTable <- readTable[which(seqnames(readTable) %in% readLocations)]
+
+      if(rmdup){readTable <- unique(readTable)}
+
       #get strand data from mostly Watson libraries
       getWatsonStrand <- as.vector(strand(readTable[which(seqnames(readTable) %in% readLocationsW)] ))    
       #flip the read direction
@@ -48,6 +51,7 @@ thoroughBed.func <- function(bamFileList, relatedLibList, qual=10, pairedEnd=TRU
 #' @param qual Mapping quality threshold. Default is 10 
 #' @param pairedEnd Whether the bam files being read are in paired end format. Default is TRUE. Note,
 #' since paired reads will be the same direction, only first mate read of pair is used in output to reduce file size
+#' @param rmdup Logical as to whether to remove duplicate reads within each library. Default is TRUE.
 #' @param verbose prints messages to the terminal (default is TRUE)
 #' 
 #' @return a GRanges object comprising merged directional reads from all libraries in relatedLibList. 

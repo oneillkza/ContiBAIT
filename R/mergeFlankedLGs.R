@@ -40,17 +40,34 @@ mergeFlankedLGs.func <- function(linkageGroupList,
   }
   #Those contigs with not enough elements to make a flank, just compute consensus
   excludeCon <- linkageGroupList[buildOver == FALSE]
-  consensusNamesEx <- sapply(excludeCon, head, 1)
-  nameIndex <- c(consensusNames, consensusNamesEx)
+  if(length(excludeCon) > 0)
+  {
+    consensusNamesEx <- sapply(excludeCon, head, 1)
+    consensusTableExclude <- data.frame(do.call(rbind, lapply(excludeCon, computeConsensus, strandStateMatrix))) 
+    rownames(consensusTableExclude) <- NULL
+    colnames(consensusTableExclude) <- colnames(strandStateMatrix)
+  }else{ 
+      consensusNamesEx <- NULL
+      consensusTableExclude <- NULL
+  }
 
-  consensusTableExclude <- data.frame(do.call(rbind, lapply(excludeCon, computeConsensus, strandStateMatrix))) 
-  rownames(consensusTableExclude) <- NULL
-  colnames(consensusTableExclude) <- colnames(strandStateMatrix)
+  if(!(all(!(buildOver))))
+  {
+    nameIndex <- c(consensusNames, consensusNamesEx)
+    conName <- c(consensusNames, consensusNames, consensusNamesEx)
+    conLoc <- c(rep('up', length(consensusNames)), rep('down', length(consensusNames)), rep('all', length(consensusNamesEx)) )
+  }else{ 
+    nameIndex <- consensusNamesEx
+    conTab <- NULL
+    conName <- consensusNamesEx
+    conLoc <- rep('all', length(consensusNamesEx))
+  }
+
   justFlankMatrix <- StrandStateMatrix(as.matrix(rbind(conTab, consensusTableExclude)))
   #Make a ket so the rownames can be traced back to the contig names/LGs
   flankKey <- data.frame(clusterName=rownames(justFlankMatrix), 
-                           contigName=c(consensusNames, consensusNames, consensusNamesEx), 
-                           location=c(rep('up', length(consensusNames)), rep('down', length(consensusNames)), rep('all', length(consensusNamesEx)) ))
+                           contigName=conName, 
+                           location=conLoc)
 
   #Cluster these consensus regions to see if LGs need to be merged
   linkageflank <- clusterContigs(justFlankMatrix, 

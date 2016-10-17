@@ -47,9 +47,8 @@ plotLGDistances.func <- function(object, allStrands, lg='all', labels=TRUE, stat
     plotDen=TRUE
     dend='both'
   }
-
-  breaks <- seq(0, 100, length.out=101)/100 
-  cols <- colorRampPalette(c("cyan", "blue", "grey30", "black", "grey30", "red", "orange"))
+  breaks <- (seq(0:11)-1)/11
+  cols <- colorRampPalette(c('#a50026','#ffffbf','#313695'))(11)
 
   if(lg[1] == 'all')
   {
@@ -63,7 +62,7 @@ plotLGDistances.func <- function(object, allStrands, lg='all', labels=TRUE, stat
   colCols <- rowCols
   heatmap.2(sim, 
             trace='none', 
-            col=cols(100),
+            col=cols,
             Rowv=plotDen,
             Colv=plotDen,
             dendrogram=dend, 
@@ -75,12 +74,12 @@ plotLGDistances.func <- function(object, allStrands, lg='all', labels=TRUE, stat
             RowSideColors=rowCols, 
             ColSideColors=colCols, 
             main=paste('Distances of ', nrow(sim),' linkage groups', sep=''))
-  legend("topright",
-          legend=unique(names(rowCols)),
-          fill=unique(rowCols), 
-          border=FALSE, 
-          bty="n", 
-          cex=0.7)
+  #legend("topright",
+   #       legend=unique(names(rowCols)),
+   #       fill=unique(rowCols), 
+   #       border=FALSE, 
+   #       bty="n", 
+   #       cex=0.7)
 
 }
  

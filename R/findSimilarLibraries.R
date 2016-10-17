@@ -53,41 +53,44 @@ findSimilarLibraries.func <- function(strandStateMatrix,
       if(!(is.null(tables)))
       {
         hom.libraries <- linkage.libraries[[which(tables < 0.9)[1]]]
-        strandStateHom <- strandStateLibrary[hom.libraries,]
-        strandReadHom <- strandReadLibrary[hom.libraries,]
-        libWeight <- getLibWeight(strandStateHom, strandReadHom)
-
-        strandStateHom <- StrandStateMatrix(strandStateHom)
-        #at least 20% of contigs must overlap for a call to be made
-        atLeast20percent <- floor(length(which(seqnames(chrGrange) == chrToUse[chrNum]))/5)
-
-        linkage.libraries <- clusterContigs(strandStateHom, 
-                                           randomWeight=libWeight, 
-                                           clusterParam=clusterParam, 
-                                           similarityCutoff=0.9,
-                                           minimumLibraryOverlap=atLeast20percent,
-                                           recluster=cluster,
-                                           clusterBy='homo',
-                                           randomise=TRUE,
-                                           verbose=FALSE)
-
-        if(length(linkage.libraries) > 1)
+        if(!(is.null(hom.libraries)))
         {
-          groupCon <- computeConsensus(linkage.libraries[[1]], strandStateLibrary)
-          maxOne <- sapply(c(1,3), function(x) length(which(groupCon == x)))
-          maxOne <- which(maxOne == max(maxOne))[1]
-          maxOne <- if(maxOne == 1){c("Watson", "Crick")}else{c("Crick", "Watson")}
-          newNames <- c(paste(chrToUse[chrNum], "_mostly_", maxOne[1], "_(", length(linkage.libraries[[1]]), ")", sep="" ),
-                         paste(chrToUse[chrNum], "_mostly_", maxOne[2], "_(", length(linkage.libraries[[2]]), ")", sep=""))
+          strandStateHom <- strandStateLibrary[hom.libraries,]
+          strandReadHom <- strandReadLibrary[hom.libraries,]
+          libWeight <- getLibWeight(strandStateHom, strandReadHom)
 
-          if(maxOne[1] == "Crick")
+          strandStateHom <- StrandStateMatrix(strandStateHom)
+          #at least 20% of contigs must overlap for a call to be made
+          atLeast20percent <- floor(length(which(seqnames(chrGrange) == chrToUse[chrNum]))/5)
+
+          linkage.libraries <- clusterContigs(strandStateHom, 
+                                             randomWeight=libWeight, 
+                                             clusterParam=clusterParam, 
+                                             similarityCutoff=0.9,
+                                             minimumLibraryOverlap=atLeast20percent,
+                                             recluster=cluster,
+                                             clusterBy='homo',
+                                             randomise=TRUE,
+                                             verbose=FALSE)
+
+          if(length(linkage.libraries) > 1)
           {
-            topTwo <- LinkageGroupList(linkage.libraries[1:2], names=names(linkage.libraries[1:2]))
-          }else{
-            topTwo <- LinkageGroupList(list(linkage.libraries[[2]], linkage.libraries[[1]]), names=c(names(linkage.libraries[2]), names(linkage.libraries[1])))
+            groupCon <- computeConsensus(linkage.libraries[[1]], strandStateLibrary)
+            maxOne <- sapply(c(1,3), function(x) length(which(groupCon == x)))
+            maxOne <- which(maxOne == max(maxOne))[1]
+            maxOne <- if(maxOne == 1){c("Watson", "Crick")}else{c("Crick", "Watson")}
+            newNames <- c(paste(chrToUse[chrNum], "_mostly_", maxOne[1], "_(", length(linkage.libraries[[1]]), ")", sep="" ),
+                           paste(chrToUse[chrNum], "_mostly_", maxOne[2], "_(", length(linkage.libraries[[2]]), ")", sep=""))
+
+            if(maxOne[1] == "Crick")
+            {
+              topTwo <- LinkageGroupList(linkage.libraries[1:2], names=names(linkage.libraries[1:2]))
+            }else{
+              topTwo <- LinkageGroupList(list(linkage.libraries[[2]], linkage.libraries[[1]]), names=c(names(linkage.libraries[2]), names(linkage.libraries[1])))
+            }
+            names(topTwo) <- newNames[order(newNames)]
+            return(topTwo)
           }
-          names(topTwo) <- newNames[order(newNames)]
-          return(topTwo)
         }
       }
     }

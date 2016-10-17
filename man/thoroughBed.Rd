@@ -8,7 +8,7 @@
 \title{thoroughBed -- function to merge chromosomes from libraries that have the same strand states}
 \usage{
 \S4method{thoroughBed}{ANY,LibraryGroupList}(bamFileList, relatedLibList,
-  qual = 10, pairedEnd = TRUE, verbose = TRUE)
+  qual = 10, pairedEnd = TRUE, rmdup = TRUE, verbose = TRUE)
 }
 \arguments{
 \item{bamFileList}{vector containing the location of the bams file to be read}
@@ -19,6 +19,8 @@
 
 \item{pairedEnd}{Whether the bam files being read are in paired end format. Default is TRUE. Note,
 since paired reads will be the same direction, only first mate read of pair is used in output to reduce file size}
+
+\item{rmdup}{Logical as to whether to remove duplicate reads within each library. Default is TRUE.}
 
 \item{verbose}{prints messages to the terminal (default is TRUE)}
 }

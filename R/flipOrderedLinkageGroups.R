@@ -68,11 +68,15 @@ flipOrderedLinkageGroups.func <- function(contigOrdering, orderFrame, linkageGro
 	}    
 
 	# CODE STARTS HERE. TAKE ALL LGs WITH >1 ELEMENTS
-	if(is.null(whichLG)){whichLG=length(which(sapply(seq_len(length(orderFrame)), function(x) nrow(orderFrame[[x]])) > 1))}
+	if(is.null(whichLG)){whichLG=which(sapply(seq_len(length(orderFrame)), function(x) nrow(orderFrame[[x]])) > 1)}
+	if(length(whichLG) == 0){
+		warning('No LG with more than one element. Cannot Reorient!')
+		return(strandStateMatrix)
+	}
 
  	rownames(contigOrdering) <- contigOrdering[,1]
 
-	for(lg in seq_len(whichLG))
+	for(lg in whichLG)
   	{
   		orderGroup <- orderFrame[[lg]]
   		chrNames <- rownames(orderGroup)
