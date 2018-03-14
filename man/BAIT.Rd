@@ -39,4 +39,3 @@ bamPath=file.path(system.file(package='contiBAIT'), 'extdata')
 BAIT(bamPath, pairedEnd = FALSE) #our example data is single-end
 }
 }
-

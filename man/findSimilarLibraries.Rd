@@ -2,8 +2,8 @@
 % Please edit documentation in R/findSimilarLibraries.R
 \docType{methods}
 \name{findSimilarLibraries,StrandStateMatrix,StrandReadMatrix,ChrTable-method}
-\alias{findSimilarLibraries}
 \alias{findSimilarLibraries,StrandStateMatrix,StrandReadMatrix,ChrTable-method}
+\alias{findSimilarLibraries}
 \alias{findSimilarLibraries,findSimilarLibraries-StrandStateMatrix-StrandReadMatrix-ChrTable-method}
 \title{findSimilarLibraries -- function to identify libraries that hare similar WC patterns on chromosomes}
 \usage{
@@ -55,4 +55,3 @@ exampleLibList <- LibraryGroupList(exampleLibList)
 
 show(exampleLibList)
 }
-

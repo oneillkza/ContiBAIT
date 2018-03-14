@@ -2,8 +2,8 @@
 % Please edit documentation in R/AllClasses.R
 \docType{class}
 \name{ContigOrdering-class}
-\alias{ContigOrdering}
 \alias{ContigOrdering-class}
+\alias{ContigOrdering}
 \title{A class for storing contig ordering of a linkage group}
 \usage{
 ContigOrdering(ordering = character())
@@ -24,11 +24,8 @@ a \code{ContigOrdering}
  in the calculated order. 
  The second element is the names of names of each contig in the calculated order.
 }
-
-Constructor for ContigOrdering
 }
 \examples{
 thisOrdering <- ContigOrdering(matrix(ncol=2, c( "LG1.11", "chr2:1000820-2001640", 
 			"LG1.1", "chr2:3002461-4003281")))
 }
-

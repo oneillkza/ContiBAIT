@@ -2,8 +2,8 @@
 % Please edit documentation in R/AllClasses.R
 \docType{class}
 \name{StrandStateMatrix-class}
-\alias{StrandStateMatrix}
 \alias{StrandStateMatrix-class}
+\alias{StrandStateMatrix}
 \title{A class for storing a data frame of discrete strand states 
 of a set of contigs over several libraries}
 \usage{
@@ -22,10 +22,7 @@ a \code{StrandStateMatrix}
  mapping to each contig in each library (cell). This should fall within the range (-1,1).
 This class simply extends matrix, but with additional validity checking.
 }
-
-Constructor for StrandStateMatrix
 }
 \examples{
 StrandStateMatrix(matrix(ncol=2, c(1,3,1,2)))
 }
-

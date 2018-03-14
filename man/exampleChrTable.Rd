@@ -8,4 +8,3 @@
 Example of a ChromosomeTable, containing contigs and their lengths
 }
 \keyword{data}
-

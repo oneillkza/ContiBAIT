@@ -8,4 +8,3 @@
 An example Crick strand frequences extracted from BAMS by strandSeqFreqTable where BAITtables=TRUE
 }
 \keyword{data}
-

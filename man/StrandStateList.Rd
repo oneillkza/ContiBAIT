@@ -2,8 +2,8 @@
 % Please edit documentation in R/AllClasses.R
 \docType{class}
 \name{StrandStateList-class}
-\alias{StrandStateList}
 \alias{StrandStateList-class}
+\alias{StrandStateList}
 \title{A class for storing StrandStateList lists for contigs}
 \usage{
 StrandStateList(strandGroupList = list(), names = character())
@@ -20,7 +20,4 @@ a \code{StrandStateList}
 \describe{
  This class is a list of StrandStateMatrices, each a subset of the StrandStateMatrix split by linkagegroups
 }
-
-Constructor StrandStateList
 }
-

@@ -2,8 +2,8 @@
 % Please edit documentation in R/thoroughBed.R
 \docType{methods}
 \name{thoroughBed,ANY,LibraryGroupList-method}
-\alias{thoroughBed}
 \alias{thoroughBed,ANY,LibraryGroupList-method}
+\alias{thoroughBed}
 \alias{thoroughBed,thoroughBed-LibraryGroupList-method}
 \title{thoroughBed -- function to merge chromosomes from libraries that have the same strand states}
 \usage{
@@ -44,4 +44,3 @@ exampleRange <- thoroughBed(example.dir, exampleLibList)
 
 show(exampleRange)
 }
-

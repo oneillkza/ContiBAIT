@@ -2,8 +2,8 @@
 % Please edit documentation in R/fixLinkageGroups.R
 \docType{methods}
 \name{fixLinkageGroups,ContigOrdering,StrandStateList,LinkageGroupList-method}
-\alias{fixLinkageGroups}
 \alias{fixLinkageGroups,ContigOrdering,StrandStateList,LinkageGroupList-method}
+\alias{fixLinkageGroups}
 \alias{fixLinkageGroups-ContigOrdering-StrandStateList-method}
 \title{fixLinkageGroups -- searches for discrepancies within ordered contigs to highlight erroneously merged fragments.}
 \usage{
@@ -31,4 +31,3 @@ a LinkageGroupList with erroneously clustered contigs seperated into their own g
 \description{
 fixLinkageGroups -- searches for discrepancies within ordered contigs to highlight erroneously merged fragments.
 }
-

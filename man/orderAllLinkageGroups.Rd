@@ -2,8 +2,8 @@
 % Please edit documentation in R/orderAllLinkageGroups.R
 \docType{methods}
 \name{orderAllLinkageGroups,LinkageGroupList,StrandStateMatrix,StrandFreqMatrix,StrandReadMatrix-method}
-\alias{orderAllLinkageGroups}
 \alias{orderAllLinkageGroups,LinkageGroupList,StrandStateMatrix,StrandFreqMatrix,StrandReadMatrix-method}
+\alias{orderAllLinkageGroups}
 \alias{orderAllLinkageGroups,orderAllLinkageGroups-LinkageGroupList-StrandStateMatrix-StrandFreqMatrix-StrandReadMatrix-method}
 \title{Function to call contig ordering algorithms iteratively across each linkage group element}
 \usage{
@@ -55,4 +55,3 @@ show(contigOrder)
 contigOrder <- orderAllLinkageGroups(exampleLGList, exampleWCMatrix, exampleStrandFreq, exampleReadCounts, orderCall='TSP')
 show(contigOrder)
 }
-

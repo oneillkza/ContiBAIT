@@ -2,9 +2,9 @@
 % Please edit documentation in R/preprocessStrandTable.R
 \docType{methods}
 \name{preprocessStrandTable,StrandFreqMatrix-method}
+\alias{preprocessStrandTable,StrandFreqMatrix-method}
 \alias{preprocessStrandTable}
 \alias{preprocessStrandTable,StrandFreqMatrix,StrandFreqMatrix-method}
-\alias{preprocessStrandTable,StrandFreqMatrix-method}
 \title{preprocessStrandTable -- remove low quality libraries and contigs before attempting to build
 a genome}
 \usage{
@@ -43,4 +43,3 @@ strandStates <- preprocessStrandTable(exampleStrandFreq, lowQualThreshold=0.8)
 
 show(strandStates[[1]]) # WW-WC-CC matrix
 }
-

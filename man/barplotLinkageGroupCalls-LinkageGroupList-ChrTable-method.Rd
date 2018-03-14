@@ -2,8 +2,8 @@
 % Please edit documentation in R/barplotLinkageGroupCalls.R
 \docType{methods}
 \name{barplotLinkageGroupCalls,LinkageGroupList,ChrTable-method}
-\alias{barplotLinkageGroupCalls}
 \alias{barplotLinkageGroupCalls,LinkageGroupList,ChrTable-method}
+\alias{barplotLinkageGroupCalls}
 \alias{barplotLinkageGroupCalls,LinkageGroupList,LinkageGroupList-method,ChrTable,ChrTable-method}
 \title{Bar plot all linkage groups, with the true chromosomes of contigs coloured.}
 \usage{
@@ -43,4 +43,3 @@ data("exampleDividedChr")
 barplotLinkageGroupCalls(exampleLGList, exampleDividedChr)
 
 }
-

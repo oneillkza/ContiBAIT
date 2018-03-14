@@ -8,4 +8,3 @@
 Example of read counts extracted from BAMS by strandSeqFreqTable
 }
 \keyword{data}
-

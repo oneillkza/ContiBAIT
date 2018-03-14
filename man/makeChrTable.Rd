@@ -39,4 +39,3 @@ dividedChr <- makeChrTable(example.bam, splitBy=1000000)
 
 show(dividedChr)
 }
-

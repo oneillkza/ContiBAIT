@@ -8,4 +8,3 @@
 An example StrandStateMatrix containing WW, CC and WC calls for contigs
 }
 \keyword{data}
-

@@ -2,8 +2,8 @@
 % Please edit documentation in R/ideogramPlot.R
 \docType{methods}
 \name{ideogramPlot,StrandReadMatrix,StrandReadMatrix,ChrTable-method}
-\alias{ideogramPlot}
 \alias{ideogramPlot,StrandReadMatrix,StrandReadMatrix,ChrTable-method}
+\alias{ideogramPlot}
 \alias{ideogramPlot,StrandReadMatrix,StrandReadMatrix-method,ChrTable,ChrTable-method}
 \title{ideogramPlot -- plots BAIT-like ideograms}
 \usage{
@@ -50,4 +50,3 @@ singleCrickLibrary <- StrandReadMatrix(exampleCrickFreq[,2, drop=FALSE])
 
 ideogramPlot(singleWatsonLibrary, singleCrickLibrary, exampleDividedChr)
 }
-

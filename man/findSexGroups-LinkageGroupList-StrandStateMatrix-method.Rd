@@ -2,8 +2,8 @@
 % Please edit documentation in R/findSexGroups.R
 \docType{methods}
 \name{findSexGroups,LinkageGroupList,StrandStateMatrix-method}
-\alias{findSexGroups}
 \alias{findSexGroups,LinkageGroupList,StrandStateMatrix-method}
+\alias{findSexGroups}
 \title{Bar plot all linkage groups, with the true chromosomes of contigs coloured.}
 \usage{
 \S4method{findSexGroups}{LinkageGroupList,StrandStateMatrix}(linkageGroupList,
@@ -23,4 +23,3 @@ the same LinkageGroupList entered into the function, but with potential sex chro
 \description{
 Bar plot all linkage groups, with the true chromosomes of contigs coloured.
 }
-

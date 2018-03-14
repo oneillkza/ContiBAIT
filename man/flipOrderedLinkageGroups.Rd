@@ -2,8 +2,8 @@
 % Please edit documentation in R/flipOrderedLinkageGroups.R
 \docType{methods}
 \name{flipOrderedLinkageGroups,ContigOrdering,StrandStateList,LinkageGroupList,StrandStateMatrix-method}
-\alias{flipOrderedLinkageGroups}
 \alias{flipOrderedLinkageGroups,ContigOrdering,StrandStateList,LinkageGroupList,StrandStateMatrix-method}
+\alias{flipOrderedLinkageGroups}
 \alias{flipOrderedLinkageGroups-ContigOrdering-StrandStateList-method}
 \title{flipOrderedLinkageGroups -- Simple greedy algorithm to find misorientations within previously ordered LG.}
 \usage{
@@ -33,4 +33,3 @@ a StrandStateMatrix with misorientations resolved
 \description{
 flipOrderedLinkageGroups -- Simple greedy algorithm to find misorientations within previously ordered LG.
 }
-

@@ -2,8 +2,8 @@
 % Please edit documentation in R/AllClasses.R
 \docType{class}
 \name{ChrTable-class}
-\alias{ChrTable}
 \alias{ChrTable-class}
+\alias{ChrTable}
 \title{A class for storing chromosome/fragment lengths}
 \usage{
 ChrTable(chrRanges = GRanges())
@@ -19,7 +19,4 @@ a \code{ChrTable}
 \describe{
  This class is a GRanges object with a meta column called name, which represents the fragment name.
 }
-
-Constructor for ChrTable
 }
-

@@ -10,4 +10,3 @@ Example of a ContigOrdering table, containing a list with a matrix of ordered gr
 and a StrandStateList element
 }
 \keyword{data}
-
