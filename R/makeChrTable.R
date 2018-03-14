@@ -25,6 +25,7 @@
 #' @import Rsamtools
 #' @import GenomicRanges
 #' @importFrom exomeCopy subdivideGRanges
+#' @importFrom stats aggregate rbinom runif
 #' @include AllClasses.R
 #' @export
 #

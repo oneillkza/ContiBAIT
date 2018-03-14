@@ -47,6 +47,7 @@ plotWCdistribution.func <- function(object, filterThreshold=0.8)
 #' @example inst/examples/plotWCdistribution.R
 #' @return nothing, just plots.
 #' @export
+#' @importFrom graphics boxplot hist lines text
 ####################################################################################################
 
 setMethod('plotWCdistribution',
