@@ -2,8 +2,8 @@
 % Please edit documentation in R/locateMisorients.R
 \docType{methods}
 \name{locateMisorients,GRanges-method}
-\alias{locateMisorients}
 \alias{locateMisorients,GRanges-method}
+\alias{locateMisorients}
 \alias{locateMisorients,locateMisorients-GRanges-method}
 \title{locateMisorients -- function to identify libraries that hare similar WC patterns on chromosomes}
 \usage{
@@ -28,4 +28,3 @@ Output can be used in downstream functions (strandSeqFreqTable)
 \description{
 locateMisorients -- function to identify libraries that hare similar WC patterns on chromosomes
 }
-

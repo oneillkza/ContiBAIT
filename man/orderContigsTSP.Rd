@@ -17,4 +17,3 @@ list of two members: 1) contig names in order, 2) the original data.frame entere
 \description{
 Attempt to order contigs within linkage groups using travelling salesperson algorithm
 }
-

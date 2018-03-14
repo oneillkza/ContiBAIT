@@ -2,8 +2,8 @@
 % Please edit documentation in R/plotContigOrder.R
 \docType{methods}
 \name{plotContigOrder,ContigOrdering-method}
-\alias{plotContigOrder}
 \alias{plotContigOrder,ContigOrdering-method}
+\alias{plotContigOrder}
 \title{Plot ordering of contigs within a single linkage group.}
 \usage{
 \S4method{plotContigOrder}{ContigOrdering}(contigOrder, lg = "all",
@@ -29,4 +29,3 @@ data("exampleContigOrder")
 
 plotContigOrder(exampleContigOrder[[1]], lg=1)
 }
-

@@ -2,8 +2,8 @@
 % Please edit documentation in R/makeBoxPlot.R
 \docType{methods}
 \name{makeBoxPlot,ChrTable,LinkageGroupList-method}
-\alias{makeBoxPlot}
 \alias{makeBoxPlot,ChrTable,LinkageGroupList-method}
+\alias{makeBoxPlot}
 \alias{makeBoxPlot-ChrTable-LinkageGroupList-method}
 \title{makeBoxPlot -- creates boxplot of contigs included in the analysis vs those excluded}
 \usage{
@@ -29,4 +29,3 @@ data("exampleChrTable")
 makeBoxPlot(exampleChrTable, exampleLGList)
 
 }
-

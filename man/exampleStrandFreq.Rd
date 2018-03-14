@@ -8,4 +8,3 @@
 Example of strand frequencies extracted from BAMS by strandSeqFreqTable
 }
 \keyword{data}
-

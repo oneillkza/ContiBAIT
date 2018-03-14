@@ -72,5 +72,5 @@ Collate:
     'strandSeqFreqTable.R'
     'thoroughBed.R'
     'writeBed.R'
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1.9000
 NeedsCompilation: yes

@@ -2,8 +2,8 @@
 % Please edit documentation in R/AllClasses.R
 \docType{class}
 \name{StrandReadMatrix-class}
-\alias{StrandReadMatrix}
 \alias{StrandReadMatrix-class}
+\alias{StrandReadMatrix}
 \title{A class for storing read counts for a set of contigs over several libraries}
 \usage{
 StrandReadMatrix(counts = matrix(integer()))
@@ -18,11 +18,8 @@ a \code{StrandReadMatrix}
 \describe{
  The information stored in this class is simple read counts, so should be integers >=0.
 }
-
-Constructor for StrandReadMatrix
 }
 \examples{
 data("exampleWatsonFreq")
 StrandReadMatrix(exampleWatsonFreq[,2, drop=FALSE])
 }
-

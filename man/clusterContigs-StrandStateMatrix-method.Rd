@@ -2,9 +2,9 @@
 % Please edit documentation in R/clusterContigs.R
 \docType{methods}
 \name{clusterContigs,StrandStateMatrix-method}
+\alias{clusterContigs,StrandStateMatrix-method}
 \alias{clusterContigs}
 \alias{clusterContigs,StrandStateMatrix,StrandStateMatrix-method}
-\alias{clusterContigs,StrandStateMatrix-method}
 \title{clusterContigs -- agglomeratively clusters contigs into linkage groups based on strand inheritance}
 \usage{
 \S4method{clusterContigs}{StrandStateMatrix}(object, similarityCutoff = 0.7,
@@ -62,4 +62,3 @@ clusteredContigs <- clusterContigs(exampleWCMatrix, verbose=FALSE)
 show(clusteredContigs)
 show(clusteredContigs[[1]])
 }
-

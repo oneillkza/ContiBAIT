@@ -254,7 +254,7 @@ ideogramPlot.func <- function(WatsonFreqList,
           coord_flip() +
           scale_x_reverse() +
           ggtitle(paste("Library ", colnames(WFreqs)[lib],  sep = "")) +
-          facet_wrap(~ chr, nrow = 2, switch = 'x') +
+          facet_wrap(~ chr, nrow = 2, strip.position = 'bottom') +
           
           theme(
             legend.position = "none",
@@ -349,7 +349,7 @@ ideogramPlot.func <- function(WatsonFreqList,
             ggtitle(paste(
               "Chromosome ", chr, "  (Page", page, ")", sep = ""
             )) +
-            facet_wrap(~ lib, nrow = 2, switch = 'x') +
+            facet_wrap(~ lib, nrow = 2, strip.position = 'bottom') +
             
             theme(
               legend.position = "none",

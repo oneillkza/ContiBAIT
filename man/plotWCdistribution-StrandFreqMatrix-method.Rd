@@ -2,9 +2,9 @@
 % Please edit documentation in R/plotWCdistribution.R
 \docType{methods}
 \name{plotWCdistribution,StrandFreqMatrix-method}
+\alias{plotWCdistribution,StrandFreqMatrix-method}
 \alias{plotWCdistribution}
 \alias{plotWCdistribution,StrandFreqMatrix,StrandFreqMatrix-method}
-\alias{plotWCdistribution,StrandFreqMatrix-method}
 \title{Creates median distribution boxplots across all libraries and contigs}
 \usage{
 \S4method{plotWCdistribution}{StrandFreqMatrix}(object, filterThreshold = 0.8)
@@ -25,4 +25,3 @@ data("exampleStrandFreq")
 
 plotWCdistribution(exampleStrandFreq, filterThreshold=0.8)
 }
-

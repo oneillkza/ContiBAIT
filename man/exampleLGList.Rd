@@ -8,4 +8,3 @@
 Example of a LinkageGroupList output from clusterContigs
 }
 \keyword{data}
-

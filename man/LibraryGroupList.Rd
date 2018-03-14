@@ -2,8 +2,8 @@
 % Please edit documentation in R/AllClasses.R
 \docType{class}
 \name{LibraryGroupList-class}
-\alias{LibraryGroupList}
 \alias{LibraryGroupList-class}
+\alias{LibraryGroupList}
 \title{A class for storing library group calls for contigs}
 \usage{
 LibraryGroupList(libraryGroups = list(), names = character())
@@ -20,12 +20,9 @@ a \code{LibraryGroupList}
 \describe{
  This class is a list of lists, each primary list element is a chromosome/contig, and contains 2 sub-list elements: a list of 'Mostly Watson" and "Mostly Crick" library names. 
 }
-
-Constructor forLibraryGroupList
 }
 \examples{
 lg1 <- LinkageGroupList(list(a=c('library1', 'library2'), b=c('library3')), names=c('chr1_Mostly_Crick', 'chr1_Mostly_Watson'))
 lg2 <- LinkageGroupList(list(a=c('library1'), b=c('library6', 'library4')), names=c('chr2_Mostly_Crick', 'chr2_Mostly_Watson'))
 libList <- LibraryGroupList(list(lg1, lg2))
 }
-

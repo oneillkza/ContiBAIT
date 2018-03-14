@@ -388,6 +388,7 @@ setMethod("show",
 ## show StrandStateList
 #' @name show,StrandStateList-method
 #' @export
+#' @importFrom utils head tail
 #' @docType methods
 #' @title show-methods
 #' @param object a StrandStateList

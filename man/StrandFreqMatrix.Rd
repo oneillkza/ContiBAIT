@@ -2,8 +2,8 @@
 % Please edit documentation in R/AllClasses.R
 \docType{class}
 \name{StrandFreqMatrix-class}
-\alias{StrandFreqMatrix}
 \alias{StrandFreqMatrix-class}
+\alias{StrandFreqMatrix}
 \title{A class for storing a matrix of frequencies of Watson to Crick reads
 for a set of contigs over several libraries}
 \usage{
@@ -21,8 +21,6 @@ a \code{StrandFreqMatrix}
  mapping to each contig in each library (cell). This should fall within the range (-1,1).
 This class simply extends matrix, but with additional validity checking.
 }
-
-Constructor for StrandFreqMatrix
 }
 \examples{
 data("exampleWatsonFreq")
@@ -32,4 +30,3 @@ function(colNum){exampleCrickFreq[,colNum] / exampleWatsonFreq[,colNum]})
 
 StrandFreqMatrix(frequencyMatrix)
 }
-

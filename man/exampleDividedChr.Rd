@@ -8,4 +8,3 @@
 Example of a divided chromosome, containing contigs and their lengths
 }
 \keyword{data}
-

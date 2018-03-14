@@ -2,9 +2,9 @@
 % Please edit documentation in R/plotLGDistances.R
 \docType{methods}
 \name{plotLGDistances,LinkageGroupList,StrandStateMatrix-method}
+\alias{plotLGDistances,LinkageGroupList,StrandStateMatrix-method}
 \alias{plotLGDistances}
 \alias{plotLGDistances,LinkageGroupList,LinkageGroupList-method}
-\alias{plotLGDistances,LinkageGroupList,StrandStateMatrix-method}
 \title{plotLGDistances -- plots a heatmap of the distances between linkage groups}
 \usage{
 \S4method{plotLGDistances}{LinkageGroupList,StrandStateMatrix}(object,
@@ -42,4 +42,3 @@ data("exampleWCMatrix")
 plotLGDistances(exampleLGList, exampleWCMatrix)
 plotLGDistances(exampleLGList, exampleWCMatrix, lg=1)
 }
-

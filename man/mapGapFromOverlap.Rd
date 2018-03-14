@@ -24,4 +24,3 @@ a GRanges object of all contigs split by regions where the sceFile and gapFile G
 \description{
 mapGapFromOverlap -- function to co-localize strand state changes with assembly gaps
 }
-

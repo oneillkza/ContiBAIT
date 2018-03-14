@@ -2,8 +2,8 @@
 % Please edit documentation in R/reorientAndMergeLGs.R
 \docType{methods}
 \name{reorientAndMergeLGs,LinkageGroupList,StrandStateMatrix-method}
-\alias{reorientAndMergeLGs}
 \alias{reorientAndMergeLGs,LinkageGroupList,StrandStateMatrix-method}
+\alias{reorientAndMergeLGs}
 \alias{reorientAndMergeLGs-LinkageGroupList-StrandStateMatrix-method}
 \title{reorientAndMergeLGs uses a simple dissimilarity to find misoriented fragments within linkage groups.}
 \usage{
@@ -43,4 +43,3 @@ reorientedMatrix <- reorientAndMergeLGs(exampleLGList,
 # Note that in this example data, everything is correctly oreiented to
 # to begin with, so all contigs come out as + orientation
 }
-

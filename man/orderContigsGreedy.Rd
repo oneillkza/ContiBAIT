@@ -24,4 +24,3 @@ list of two members: 1) contig names in order, 2) the original data.frame entere
 Function to order contigs within a single linkage group using a greedy algorithms
 Attempt to order contigs within
 }
-

@@ -83,8 +83,7 @@ contiBAIT <- function(path=".",
 
   if(length(bamFileList) ==0)
   {
-    warning('\n####################\nWARNING! NO BAM FILES PRESENT IN ', path, '. CHECK PATH LOCATION! \n####################')
-    break
+    stop('\n####################\nWARNING! NO BAM FILES PRESENT IN ', path, '. CHECK PATH LOCATION! \n####################')
   }
   strandFrequencyList <- strandSeqFreqTable(bamFileList, 
                                             filter=filter, 

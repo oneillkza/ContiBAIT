@@ -2,8 +2,8 @@
 % Please edit documentation in R/mergeFlankedLGs.R
 \docType{methods}
 \name{mergeFlankedLGs,LinkageGroupList,StrandStateMatrix-method}
-\alias{mergeFlankedLGs}
 \alias{mergeFlankedLGs,LinkageGroupList,StrandStateMatrix-method}
+\alias{mergeFlankedLGs}
 \title{mergeFlankedLGs -- searches for similarities at the ends of ordered linkage groups to chain groups together}
 \usage{
 
@@ -34,4 +34,3 @@ a StrandStateMatrix with contigs reoriented, if newly merged groups were in oppo
 \description{
 mergeFlankedLGs -- searches for similarities at the ends of ordered linkage groups to chain groups together
 }
-

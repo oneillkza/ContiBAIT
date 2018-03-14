@@ -51,4 +51,3 @@ orderedContigs <- contiBAIT(path=example.dir,
 							filter=exampleDividedChr, 
 							pairedEnd=FALSE)
 }
-

@@ -8,4 +8,3 @@
 Example of a LibraryGroupList, containing library names
 }
 \keyword{data}
-

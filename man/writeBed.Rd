@@ -2,8 +2,8 @@
 % Please edit documentation in R/writeBed.R
 \docType{methods}
 \name{writeBed,ANY,ChrTable,ContigOrdering-method}
-\alias{writeBed}
 \alias{writeBed,ANY,ChrTable,ContigOrdering-method}
+\alias{writeBed}
 \alias{writeBed-ChrTable-ContigOrdering-method}
 \title{function to write contig order to BED file}
 \usage{
@@ -37,4 +37,3 @@ writeBed(exampleDividedChr,
 		 contigOrder)
 }
 }
-

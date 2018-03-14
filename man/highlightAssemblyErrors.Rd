@@ -34,4 +34,3 @@ a directional ChrTable object that can be used in downstream functions (strandSe
 \description{
 highlightAssemblyErrors -- Master function to identify misorientations and chimeras in the assembly
 }
-

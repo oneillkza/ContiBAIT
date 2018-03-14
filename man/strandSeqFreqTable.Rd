@@ -57,4 +57,3 @@ show(strand.freq[[1]])
 show(strand.freq[[2]])
 
 }
-
