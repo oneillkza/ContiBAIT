@@ -48,8 +48,7 @@ clusterContigs.func <- function(object, #heatFile from contiBAIT; a data frame c
 	}else if (clusterBy == 'hetero'){
 		object <- replace(object, object == 3, 1)
 	}else{
-		warning('### Unrecognized clusterBy parameter! ###')
-		break
+		stop('### Unrecognized clusterBy parameter! ###')
 	}
 	
 

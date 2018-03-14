@@ -111,8 +111,8 @@ orderAllLinkageGroups.func <- function(linkageGroupList,
       {
         outOfOrder <- orderContigsTSP(linkageGroupReadTable, reps=randomAttempts)
       }else{
-        warning('###### WARNING! orderCall parameter not recognized! No ordering Performed. ######')
-        break
+        stop('###### WARNING! orderCall parameter not recognized! No ordering Performed. ######')
+        
       }
 
       mergedGroups <- matrix(nrow=0, ncol=2)
