@@ -8,8 +8,9 @@ Using strand inheritance data from multiple single cells from the organism whose
 Currently ContiBAIT is under review at Bioconductor, but once it is accepted, you can install it via:
 
 ```{r}
-source("https://bioconductor.org/biocLite.R")
-biocLite('ContiBAIT')
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install('ContiBAIT')
 ```
 
 If you want the development version, you can get it from GitHub:
