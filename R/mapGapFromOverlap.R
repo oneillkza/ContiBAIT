@@ -20,7 +20,8 @@
 #' 
 #' @return a GRanges object of all contigs split by regions where the sceFile and gapFile GRanges objects overlap.
 #' @import GenomicRanges
-#' @import DNAcopy 
+#' @import DNAcopy
+#' @importFrom BiocGenerics "%in%"
 #' @importFrom S4Vectors DataFrame
 #' @export
 #' @include AllClasses.R

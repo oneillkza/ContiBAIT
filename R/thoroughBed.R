@@ -1,3 +1,5 @@
+#' @importFrom BiocGenerics "%in%"
+
 thoroughBed.func <- function(bamFileList, relatedLibList, qual=10, pairedEnd=TRUE, rmdup=TRUE, verbose=TRUE)
 {   
   directionalRange <- GRanges()

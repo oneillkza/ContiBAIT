@@ -1,3 +1,5 @@
+#' @importFrom BiocGenerics "%in%"
+
 locateMisorients.func <- function(compiledGrange, gapFile=NULL, stateNum=3, readCutOff=40, verbose=TRUE )
 {
 
