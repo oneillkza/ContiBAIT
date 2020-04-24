@@ -65,7 +65,7 @@ orderAllLinkageGroups.func <- function(linkageGroupList,
 
     orderedContigMatrix <- ContigOrdering(orderedContigMatrix)
 
-    if(class(mergedStrands) != 'matrix')
+    if(!is(mergedStrands, 'matrix'))
     {
       mergedStrands <- t(as.matrix(mergedStrands))
       rownames(mergedStrands) <- names(mergedContigs)
