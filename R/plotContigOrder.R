@@ -22,10 +22,11 @@ plotContigOrder.func <- function(contigOrder, lg='all', verbose=TRUE)
 			#If more than one contig in the same sub-LG, take the mean start position.
 			mergeFrame <- data.frame(lg=paste(contigOrderGrp[,1], contigChr, sep='LINK'), chr=contigChr, start=as.numeric(contigStarts)/10^6)
 			mergeFrameAg <- aggregate(start~lg, mergeFrame, mean)
+			rownames(mergeFrameAg) <- mergeFrameAg$lg
 			contigOrderFrame <- mergeFrameAg[mergeFrame$lg,]
 			contigOrderFrame <- data.frame(lg=sub('LINK.*', '', contigOrderFrame$lg), chr=sub('.*LINK', '', contigOrderFrame$lg), start=contigOrderFrame$start)
 			contigOrderFrame$bin <- c(1:nrow(contigOrderFrame))
-			contigOrderFrame$knownOrder <- as.numeric(rownames(contigOrderFrame[order(contigOrderFrame$start),]))
+			contigOrderFrame$knownOrder <- (1:nrow(contigOrderFrame))[order(contigOrderFrame$start)]
 		}else{
 
 			orderedLocation <- unlist(sapply(1:length(unique(contigOrderGrp[,1])), function(x) rep(x, length(contigOrderGrp[,1][which(contigOrderGrp[,1] == unique(contigOrderGrp[,1])[x])]))))
