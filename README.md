@@ -4,8 +4,9 @@
 
 Using strand inheritance data from multiple single cells from the organism whose genome is to be assembled, contiBAIT can cluster unbridged contigs together into putative chromosomes, and order the contigs within those chromosomes.
 
-##Installation
-Currently ContiBAIT is under review at Bioconductor, but once it is accepted, you can install it via:
+## Installation
+
+ContiBAIT is best installed via Bioconductor:
 
 ```{r}
 if (!requireNamespace("BiocManager", quietly=TRUE))
@@ -16,6 +17,6 @@ BiocManager::install('ContiBAIT')
 If you want the development version, you can get it from GitHub:
 
 ```{r}
-# install.packages("devtools")
+install.packages("devtools")
 devtools::install_github("oneillkza/ContiBAIT")
 ```
