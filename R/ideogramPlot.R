@@ -289,6 +289,7 @@ ideogramPlot.func <- function(WatsonFreqList,
         elementEnd <- seq(0, (page * 26), by = 26)[page + 1]
         subsetLib <-
           subsetChr[which(subsetChr$lib %in% unique(subsetChr$lib)[elementStart:elementEnd]), ]
+        subsetLib$lib <- factor(subsetLib$lib)
         
         #If less than 26 chr, create empty spaces
         padIdeos <- 26 - length(unique(subsetLib$lib))
