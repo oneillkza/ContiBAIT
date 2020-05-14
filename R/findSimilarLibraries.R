@@ -30,7 +30,7 @@ findSimilarLibraries.func <- function(strandStateMatrix,
   strandReadMatrix <- strandReadMatrix[which(rownames(strandReadMatrix) %in% chrGrange$name[which(seqnames(chrGrange) == chrToUse[chrNum])]),]
   if(!(is.null(nrow(strandStateMatrix))))
   { 
-    if(class(strandStateMatrix) == 'matrix')
+    if(is(strandStateMatrix, 'matrix'))
     {
       strandStateMatrix <- StrandStateMatrix(strandStateMatrix)
 
