@@ -101,7 +101,7 @@ strandSeqFreqTable <- function(bamFileList,
 								   grfilter=filt,
 								   strand=str)
 		#fixes bug where no reads returns a list rather than an integer
-		if(class(result) == 'list'){result <- as.integer(rep(0, length(filter)))}
+		if(is(result, 'list')){result <- as.integer(rep(0, length(filter)))}
 		return(result)
 	}
 
