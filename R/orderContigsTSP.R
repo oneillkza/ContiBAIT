@@ -12,7 +12,7 @@
 orderContigsTSP <- function(linkageGroupReadTable, reps)
 {
 
-  factorisedLGReadTable <- data.frame(apply(linkageGroupReadTable, 2, as.factor))
+  factorisedLGReadTable <- data.frame(apply(linkageGroupReadTable, 2, as.factor), stringsAsFactors = TRUE)
   
   dists <- as.matrix(daisy(factorisedLGReadTable))
   
