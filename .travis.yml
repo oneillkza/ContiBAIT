@@ -5,7 +5,7 @@ bioc_use_devel: true
 dist: bionic
 r_github_packages: hadley/devtools
 cache: packages
-warnings_are_errors: true
+warnings_are_errors: false
 after_script:
   - ls -lah
   - FILE=$(ls -1t *.tar.gz | head -n 1)
